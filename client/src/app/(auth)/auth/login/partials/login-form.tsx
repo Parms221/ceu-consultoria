@@ -43,6 +43,7 @@ export default function LoginForm() {
       await signIn("credentials", {
         email: data.email,
         password: data.password,
+        callbackUrl: searchParams.get("callbackUrl") ?? "/",
       });
     } catch (error) {
       console.error(error);

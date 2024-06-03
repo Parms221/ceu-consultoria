@@ -16,7 +16,6 @@ export const authOptions: AuthOptions = {
 
       async authorize(credentials, req) {
         // TODO implement authorize
-        console.log(credentials);
 
         if (
           credentials?.email == "admin@gmail.com" &&
