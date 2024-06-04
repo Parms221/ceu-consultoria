@@ -95,19 +95,6 @@ export default function LoginForm() {
             )}
           />
 
-          <div className="text-right">
-            <Link
-              href={"/cambio-contrasena"}
-              className={buttonVariants({
-                variant: "link",
-                size: "sm",
-                className: "text-sm",
-              })}
-            >
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
-
           {/* Submit */}
           <Button
             type="submit"
