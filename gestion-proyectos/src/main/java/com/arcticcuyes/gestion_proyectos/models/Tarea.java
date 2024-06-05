@@ -62,7 +62,7 @@ public class Tarea {
     private List<Recurso> recursos;
 
     @OneToOne(optional = true)
-    @JoinColumn(name="id_tarea_anterior", referencedColumnName = "id_tarea", nullable = true)
+    @JoinColumn(name="id_tarea_anterior", nullable = true)
     private Tarea tareaAnterior;
 
     @ManyToMany

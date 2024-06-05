@@ -61,7 +61,7 @@ public class Proyecto {
     private Servicio servicio;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_estado", referencedColumnName = "id_estado", nullable = false)
+    @JoinColumn(name="id_estado", nullable = false)
     private Estado estado;
 
     @OneToMany(mappedBy = "proyecto")

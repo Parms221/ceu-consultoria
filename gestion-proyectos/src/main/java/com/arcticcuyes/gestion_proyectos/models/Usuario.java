@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name="USER")
-public class User {
+@Table(name="USUARIO")
+public class Usuario {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
@@ -40,9 +40,9 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-        name="users_roles",
-        joinColumns = @JoinColumn(name="id_user"),
-        inverseJoinColumns = @JoinColumn(name="id_role")
+        name="usuarios_roles",
+        joinColumns = @JoinColumn(name="id_usuario"),
+        inverseJoinColumns = @JoinColumn(name="id_rol")
     )
-    private Set<Role> roles;
+    private Set<Rol> roles;
 }

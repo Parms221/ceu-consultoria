@@ -47,11 +47,11 @@ public class Recurso {
     private Timestamp createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_proyecto", referencedColumnName = "id_proyecto")
+    @JoinColumn(name="id_proyecto")
     private Proyecto proyectoAsociado;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_tarea", referencedColumnName = "id_tarea")
+    @JoinColumn(name="id_tarea")
     private Tarea tareaAsociada;
 
 }

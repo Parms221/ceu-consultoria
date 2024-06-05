@@ -37,11 +37,11 @@ public class Participante {
     private Timestamp createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_proyecto", referencedColumnName = "id_proyecto", nullable = false)
+    @JoinColumn(name="id_proyecto", nullable = false)
     private Proyecto proyectoIngresado;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_consultor", referencedColumnName = "id_consultor", nullable = false)
+    @JoinColumn(name="id_consultor", nullable = false)
     private Consultor consultorParticipante;
 
     @ManyToMany(mappedBy = "participantesAsignados")

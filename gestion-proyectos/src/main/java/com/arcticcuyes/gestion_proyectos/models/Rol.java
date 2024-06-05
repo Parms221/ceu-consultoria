@@ -8,17 +8,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 
 @Entity
-public class Role {
+@Table(name="ROL")
+public class Rol {
     @Id
-    @Column(name="id_role")
+    @Column(name="id_rol")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idRole;
     
     @Column(nullable = false)
-    private String role;
+    private String rol;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    private Set<Usuario> usuarios;
 }

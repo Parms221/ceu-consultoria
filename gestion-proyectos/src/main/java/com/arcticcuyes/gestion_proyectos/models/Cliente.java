@@ -41,7 +41,7 @@ public class Cliente {
     private String cargo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_empresa", referencedColumnName = "id_empresa")
+    @JoinColumn(name="id_empresa")
     private Empresa empresa;
 
     @CreationTimestamp(source = SourceType.DB)

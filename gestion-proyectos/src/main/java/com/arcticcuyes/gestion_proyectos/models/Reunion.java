@@ -47,7 +47,7 @@ public class Reunion {
     private Timestamp fechaFin;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_proyecto", referencedColumnName = "id_proyecto", nullable = false)
+    @JoinColumn(name="id_proyecto", nullable = false)
     private Proyecto proyecto;
 
     @CreationTimestamp(source = SourceType.DB)
