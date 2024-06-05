@@ -1,7 +1,5 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.repositories.UsuarioRepository;
-import com.arcticcuyes.gestion_proyectos.security.CustomUserDetails;
+import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService{
@@ -24,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService{
         if(usuario == null){
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
-        return new CustomUserDetails(usuario);
+        return new UsuarioAuth(usuario);
     }
 
 }

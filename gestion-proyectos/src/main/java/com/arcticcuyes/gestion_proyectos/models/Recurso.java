@@ -54,4 +54,8 @@ public class Recurso {
     @JoinColumn(name="id_tarea")
     private Tarea tareaAsociada;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_usuario")
+    private Usuario propietario;
+
 }

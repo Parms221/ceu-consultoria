@@ -1,6 +1,11 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
+import java.sql.Timestamp;
 import java.util.Set;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,4 +51,13 @@ public class Usuario {
         inverseJoinColumns = @JoinColumn(name="id_rol")
     )
     private Set<Rol> roles;
+
+    @CreationTimestamp(source = SourceType.DB)
+    @Column(name="created_at", nullable = false, updatable = false)
+    private Timestamp createdAt;
+
+    @UpdateTimestamp(source = SourceType.DB)
+    @Column(name="updated_at", insertable = false)
+    private Timestamp updatedAt;
+    
 }

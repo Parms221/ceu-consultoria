@@ -3,8 +3,6 @@ package com.arcticcuyes.gestion_proyectos.runners;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.management.relation.Role;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,8 +12,6 @@ import com.arcticcuyes.gestion_proyectos.models.Rol;
 import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.repositories.RolRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.UsuarioRepository;
-
-import jakarta.transaction.Transactional;
 
 @Component
 public class UserRolesDataLoader implements CommandLineRunner{

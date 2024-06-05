@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,6 +44,10 @@ public class Cliente {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_empresa")
     private Empresa empresa;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_usuario", unique = true, nullable = false)
+    private Usuario usuarioCliente;
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
