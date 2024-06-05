@@ -1,4 +1,4 @@
-package com.arcticcuyes.gestion_proyectos.modelos;
+package com.arcticcuyes.gestion_proyectos.models;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;

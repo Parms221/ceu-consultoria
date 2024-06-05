@@ -1,10 +1,10 @@
-package com.arcticcuyes.gestion_proyectos.modelos;
-
+package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,20 +20,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="HITO")
-public class Hito {
+@Table(name="CONSULTOR")
+public class Consultor {
     @Id
-    @Column(name="id_hito")
+    @Column(name="id_consultor")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long idHito;
+    private long idConsultor;
 
     @Column(nullable = false, length = 50)
-    private String titulo;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp fecha_finalizacion;
+    private String nombres;
+    @Column(nullable = false, length = 50)
+    private String apellidos;
+    @Column(nullable = false)
+    private char genero;
+    @Column(nullable = true)
+    private String cargo;
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
+
+    @UpdateTimestamp(source = SourceType.DB)
+    @Column(name="updated_at", insertable = false)
+    private Timestamp updatedAt;
+
 }

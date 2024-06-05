@@ -1,4 +1,4 @@
-package com.arcticcuyes.gestion_proyectos.modelos;
+package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -7,16 +7,16 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -28,47 +28,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="PROYECTO")
-public class Proyecto {
+@Table(name="TAREA")
+public class Tarea {
     @Id
-    @Column(name="id_proyecto")
+    @Column(name="id_tarea")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long idProyecto;
+    private long idTarea;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
-
-    @Column(columnDefinition = "TEXT")
-    private String objetivos;
-
+    
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="fecha_inicio", nullable = false)
+    @Column(name="fecha_inicio")
     private Timestamp fechaInicio;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="fecha_limite", nullable = false)
-    private Timestamp fechaLimite;
-
-    @Basic
-    private Double cotizacion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_cliente", referencedColumnName = "id_cliente", nullable = false)
-    private Cliente cliente;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_servicio", referencedColumnName = "id_servicio")
-    private Servicio servicio;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_estado", referencedColumnName = "id_estado", nullable = false)
-    private Estado estado;
-
-    @OneToMany(mappedBy = "proyecto")
-    private List<Reunion> reuniones;
-
-    @OneToMany(mappedBy = "proyectoAsociado")
-    private List<Recurso> recursos;
+    @Column(name="fecha_fin")
+    private Timestamp fechaFin;
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
@@ -78,6 +54,20 @@ public class Proyecto {
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "proyectoIngresado")
-    private List<Participante> participantes;
+    @OneToMany(mappedBy = "tarea")
+    private List<SubTarea> subTareas;
+
+    @OneToMany(mappedBy = "tareaAsociada")
+    private List<Recurso> recursos;
+
+    @OneToOne(optional = true)
+    @JoinColumn(name="id_tarea_anterior", referencedColumnName = "id_tarea", nullable = true)
+    private Tarea tareaAnterior;
+
+    @ManyToMany
+    @JoinTable(name="ASIGNACION", 
+        joinColumns = @JoinColumn(name="id_tarea"), 
+        inverseJoinColumns = @JoinColumn(name="id_participante")
+    )
+    private List<Participante> participantesAsignados;
 }

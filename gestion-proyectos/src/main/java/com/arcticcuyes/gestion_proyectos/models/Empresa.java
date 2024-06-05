@@ -1,4 +1,4 @@
-package com.arcticcuyes.gestion_proyectos.modelos;
+package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
 
