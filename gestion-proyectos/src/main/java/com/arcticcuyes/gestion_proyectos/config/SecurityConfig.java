@@ -18,7 +18,8 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         
-        return http.authorizeHttpRequests(request -> request.anyRequest().authenticated())
+        return http.authorizeHttpRequests(request -> request.requestMatchers("/usuarios", "/rols").hasRole("ADMIN"))
+            .authorizeHttpRequests(request -> request.anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .build();

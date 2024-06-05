@@ -39,6 +39,18 @@ public class UserRolesDataLoader implements CommandLineRunner{
             roleRepository.save(userRole);
         }
 
+        if (roleRepository.findByRol("ROLE_CLIENTE") == null) {
+            Rol userRole = new Rol();
+            userRole.setRol("ROLE_CLIENTE");
+            roleRepository.save(userRole);
+        }
+
+        if (roleRepository.findByRol("ROLE_CONSULTOR") == null) {
+            Rol userRole = new Rol();
+            userRole.setRol("ROLE_CONSULTOR");
+            roleRepository.save(userRole);
+        }
+
         // Crear usuario administrador si no existe
         if (userRepository.findByEmail("admin@example.org") == null) {
             Usuario adminUser = new Usuario();
@@ -51,6 +63,19 @@ public class UserRolesDataLoader implements CommandLineRunner{
             adminUser.setRoles(roles);
 
             userRepository.save(adminUser);
+        }
+
+        if (userRepository.findByEmail("consultor@example.org") == null) {
+            Usuario consultorUser = new Usuario();
+            consultorUser.setEmail("consultor@example.org");
+            consultorUser.setName("consultor");
+            consultorUser.setPassword(passwordEncoder.encode("password"));  // Ajusta la contraseña según tus necesidades
+
+            Set<Rol> roles = new HashSet<>();
+            roles.add(roleRepository.findByRol("ROLE_CONSULTOR"));
+            consultorUser.setRoles(roles);
+
+            userRepository.save(consultorUser);
         }
     }
 }
