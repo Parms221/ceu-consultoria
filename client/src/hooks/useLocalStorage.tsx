@@ -14,13 +14,16 @@ function useLocalStorage<T>(
       // Get from local storage by key
       if (typeof window !== "undefined") {
         // browser code
-        const item = window.localStorage.getItem(key);
+        const item =
+          typeof window !== "undefined"
+            ? window.localStorage.getItem(key)
+            : ({} as any);
         // Parse stored json or if none return initialValue
         return item ? JSON.parse(item) : initialValue;
       }
     } catch (error) {
       // If error also return initialValue
-      console.log(error);
+      console.log("vvv", error);
       return initialValue;
     }
   });
@@ -40,7 +43,7 @@ function useLocalStorage<T>(
       }
     } catch (error) {
       // A more advanced implementation would handle the error case
-      console.log(error);
+      console.log("aa", error);
     }
   }, [key, storedValue]);
 

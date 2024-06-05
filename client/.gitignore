@@ -38,4 +38,6 @@ next-env.d.ts
 
 bun.lockb
 
+.env
+
 .idea
