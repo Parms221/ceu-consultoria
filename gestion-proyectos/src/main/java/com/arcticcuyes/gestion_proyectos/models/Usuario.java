@@ -4,6 +4,7 @@ import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,16 +30,16 @@ public class Usuario {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    private boolean enabled;
+    private boolean enabled = true;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name="usuarios_roles",
         joinColumns = @JoinColumn(name="id_usuario"),
