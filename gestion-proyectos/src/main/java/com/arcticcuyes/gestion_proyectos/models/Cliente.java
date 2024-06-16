@@ -38,7 +38,7 @@ public class Cliente {
     private String apellidos;
     @Column(nullable = false)
     private char genero;
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String cargo;
 
     @ManyToOne(fetch = FetchType.LAZY)

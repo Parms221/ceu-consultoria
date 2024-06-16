@@ -38,6 +38,9 @@ public class Tarea {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idTarea;
 
+    @Column(nullable = false, length = 50)
+    private String titulo;
+
     @Column(columnDefinition = "TEXT")
     private String descripcion;
     
@@ -57,19 +60,17 @@ public class Tarea {
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "tarea")
-    private List<SubTarea> subTareas;
-
-    @OneToMany(mappedBy = "tareaAsociada")
-    private List<Recurso> recursos;
-
     @OneToOne(optional = true)
-    @JoinColumn(name="id_tarea_anterior", nullable = true)
+    @JoinColumn(name="id_tarea_anterior")
     private Tarea tareaAnterior;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_estado", nullable = false)
     private Estado estado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_hito", nullable = false)
+    private Hito hito;
 
     @ManyToMany
     @JoinTable(name="ASIGNACION", 
@@ -78,7 +79,6 @@ public class Tarea {
     )
     private Set<Participante> participantesAsignados;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_hito", nullable = false)
-    private Hito hito;
+    @OneToMany(mappedBy = "tarea")
+    private List<SubTarea> subTareas;
 }

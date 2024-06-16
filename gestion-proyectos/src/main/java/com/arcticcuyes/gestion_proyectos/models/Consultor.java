@@ -36,7 +36,7 @@ public class Consultor {
     private String apellidos;
     @Column(nullable = false)
     private char genero;
-    @Column(nullable = true)
+    @Column(length = 50)
     private String cargo;
 
     @OneToOne(fetch = FetchType.LAZY)
