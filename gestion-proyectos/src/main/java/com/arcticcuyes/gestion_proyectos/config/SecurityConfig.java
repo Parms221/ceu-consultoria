@@ -1,10 +1,15 @@
 package com.arcticcuyes.gestion_proyectos.config;
 
+import java.security.spec.KeySpec;
 import java.util.Date;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +31,7 @@ import org.springframework.security.web.server.authentication.logout.DelegatingS
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
 import org.springframework.security.web.server.authentication.logout.WebSessionServerLogoutHandler;
 
+import com.arcticcuyes.gestion_proyectos.utils.SecretKeyUtils;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -34,11 +40,14 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import lombok.AllArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig{
-    @Value("${jwt.secret}")
-    SecretKey secret;
+
+    private final AppJwtProperties appJwtProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,13 +55,13 @@ public class SecurityConfig{
             .csrf(t -> t.disable())
             .authorizeHttpRequests(request -> 
                 request
+                    .requestMatchers("/login").permitAll()
                     .requestMatchers( "/usuarios/**", "rols/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2-> oauth2.jwt(t-> t.decoder(jwtDecoder())))
-            .logout(t-> t.logoutSuccessUrl("/").clearAuthentication(true).permitAll())
-            .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .httpBasic(Customizer.withDefaults());
+            .oauth2ResourceServer(oauth2-> oauth2.jwt(Customizer.withDefaults()))
+            .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            
         return http.build();
     }
 
@@ -67,17 +76,30 @@ public class SecurityConfig{
 
     @Bean
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withSecretKey(secret).build();
+        // try {
+        //     SecretKey secretKey = SecretKeyUtils.getKeyFromPassword(secretString, saltString);    
+        //     return NimbusJwtDecoder.withSecretKey(secretKey).build();
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
+        return NimbusJwtDecoder.withSecretKey(appJwtProperties.getKey()).build();
     }
 
-    @Bean
-    JwtEncoder jwtEncoder() {
-        JWK jwk = new OctetSequenceKey.Builder(secret)
-            .keyID(UUID.randomUUID().toString())
-            .algorithm(JWSAlgorithm.HS256)
-            .issueTime(new Date()).build();
+    // @Bean
+    // JwtEncoder jwtEncoder() {
+    //     try {
+    //         SecretKey secretKey = SecretKeyUtils.getKeyFromPassword(secretString, saltString);    
+    //         JWK jwk = new OctetSequenceKey.Builder(secretKey.getEncoded())
+    //             .keyID(UUID.randomUUID().toString())
+    //             .algorithm(JWSAlgorithm.HS256)
+    //             .issueTime(new Date()).build();
         
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwks);
-    }
+    //         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+    //         return new NimbusJwtEncoder(jwks);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    //     return null;
+        
+    // }
 }
