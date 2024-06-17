@@ -11,9 +11,7 @@ import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 public class IndexController {
     @GetMapping({"/index"})
     public String index(@AuthenticationPrincipal UsuarioAuth auth) {
-        System.out.println("Usuario: " + auth.getUsuario().getName());
-        System.out.println("Usuario: " + auth.getUsername());
-        return "index";
+        return "Hello " + auth.getUsuario().getName();
     }
     
 }
