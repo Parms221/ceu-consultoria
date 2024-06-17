@@ -16,17 +16,20 @@ export default function Page() {
       <div className="flex-1 rounded-sm bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden h-dvh w-full xl:block xl:w-1/2">
-            <img
+            <Image
               src={"/images/auth/auth-panel.jpg"}
               alt="CEU login"
+              width={1000}
+              height={840}
               className={" h-dvh object-cover"}
+              priority
             />
           </div>
 
           <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <div className={"flex justify-center"}>
-                <CEULogo className={"w-[200px]"} />
+                <CEULogo className={"w-[200px] text-ceu-celeste"} />
               </div>
 
               <h2 className="mb-9 text-4xl font-bold text-black dark:text-white sm:text-title-xl2">

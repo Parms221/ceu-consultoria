@@ -18,11 +18,10 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
-  email: z.string().email("Correo no válido"),
+  email: z.string().email("Correo no válido").min(0, "Ingrese su dirección de correo"),
   password: z
     .string()
-    .min(8, "La contraseña debe tener al menos 8 caracteres")
-    .max(100, "La contraseña debe tener menos de 100 caracteres"),
+    .min(0, "Ingrese una contraseña"),
 });
 
 export default function LoginForm() {
