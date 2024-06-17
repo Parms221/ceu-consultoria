@@ -14,15 +14,13 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
   email: z.string().email("Correo no válido"),
   password: z
     .string()
-    .min(8, "La contraseña debe tener al menos 8 caracteres")
-    .max(100, "La contraseña debe tener menos de 100 caracteres"),
+    .min(1, "Ingrese una contraseña"),
 });
 
 export default function LoginForm() {
