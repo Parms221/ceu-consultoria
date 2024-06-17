@@ -1,6 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -45,5 +46,5 @@ public class Participante {
     private Consultor consultorParticipante;
 
     @ManyToMany(mappedBy = "participantesAsignados")
-    private Set<Tarea> tareas;
+    private Set<Tarea> tareas = new HashSet<>();
 }

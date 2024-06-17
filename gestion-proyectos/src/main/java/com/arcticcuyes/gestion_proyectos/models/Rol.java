@@ -1,5 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -19,11 +20,11 @@ public class Rol {
     @Id
     @Column(name="id_rol")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idRole;
+    private Long idRol;
     
     @Column(nullable = false)
     private String rol;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    private Set<Usuario> usuarios;
+    // @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+    // private Set<Usuario> usuarios = new HashSet<>();
 }

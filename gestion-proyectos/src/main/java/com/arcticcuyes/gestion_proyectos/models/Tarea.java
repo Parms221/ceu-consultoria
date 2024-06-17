@@ -1,6 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -77,7 +78,7 @@ public class Tarea {
         joinColumns = @JoinColumn(name="id_tarea"), 
         inverseJoinColumns = @JoinColumn(name="id_participante")
     )
-    private Set<Participante> participantesAsignados;
+    private Set<Participante> participantesAsignados = new HashSet<>();
 
     @OneToMany(mappedBy = "tarea")
     private List<SubTarea> subTareas;
