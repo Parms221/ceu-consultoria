@@ -1,13 +1,8 @@
-package com.arcticcuyes.gestion_proyectos.services;
+package com.arcticcuyes.gestion_proyectos.services.auth;
 
-import org.apache.catalina.authenticator.SpnegoAuthenticator.AuthenticateAction;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.arcticcuyes.gestion_proyectos.controllers.dao.AuthResponse;
