@@ -16,7 +16,7 @@ public class ClienteJuridico extends Cliente {
     @Column(nullable = false, unique = true, length = 11)
     private char ruc;
 
-    @Column(nullable = false)
+    @Column()
     private String direccion;
 
     @OneToOne(mappedBy = "clienteJuridico", cascade = CascadeType.ALL)

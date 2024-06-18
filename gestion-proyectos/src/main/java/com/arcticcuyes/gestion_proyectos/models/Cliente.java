@@ -33,7 +33,7 @@ public abstract class Cliente {
     private String email;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_usuario", unique = true, nullable = false)
+    @JoinColumn(name="id_usuario", unique = true)
     private Usuario usuarioCliente;
 
     @CreationTimestamp(source = SourceType.DB)
