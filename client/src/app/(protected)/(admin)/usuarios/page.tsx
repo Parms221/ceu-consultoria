@@ -1,11 +1,11 @@
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import React from "react";
 
-import { DataTable } from "./partials/data-table";
-import { columns } from "./partials/columns"; 
+import { DataTable } from "./partials/DataTable/data-table";
+import { columns } from "./partials/DataTable/columns"; 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Usuario } from "@/types/usuario";
+import NewUserDialog from "./partials/dialogs/NewUser/dialog";
 
 
 async function getUsuarios(): Promise<Usuario[]> {
@@ -40,11 +40,8 @@ export default async function Usuarios() {
               <h2 className="text-title-md2 font-semibold text-black dark:text-white">
                 Usuarios
               </h2>
-
-              <Button variant={"default"} size={"sm"} className="flex items-center gap-2">
-                <Plus size={16}/>
-                Añadir usuario
-              </Button>
+     
+              <NewUserDialog />
             </div>
 
             <section className="flex flex-col gap-8">
