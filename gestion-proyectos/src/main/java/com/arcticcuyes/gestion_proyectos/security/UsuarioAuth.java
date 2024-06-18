@@ -3,7 +3,9 @@ package com.arcticcuyes.gestion_proyectos.security;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class UsuarioAuth implements UserDetails {
+    
     private Usuario usuario; 
 
     @Bean
