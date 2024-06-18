@@ -22,44 +22,33 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.server.authentication.logout.DelegatingServerLogoutHandler;
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
 import org.springframework.security.web.server.authentication.logout.WebSessionServerLogoutHandler;
 
 import com.arcticcuyes.gestion_proyectos.utils.SecretKeyUtils;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.OctetSequenceKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig{
 
-    private final AppJwtProperties appJwtProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(t -> t.disable())
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(request -> 
                 request
-                    .requestMatchers("/login").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
                     .requestMatchers( "/usuarios/**", "rols/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2-> oauth2.jwt(Customizer.withDefaults()))
+            .httpBasic(Customizer.withDefaults())
             .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
             
         return http.build();
@@ -71,35 +60,4 @@ public class SecurityConfig{
         // return new BCryptPasswordEncoder();
         return new StandardPasswordEncoder();
     }
-
-    
-
-    @Bean
-    JwtDecoder jwtDecoder() {
-        // try {
-        //     SecretKey secretKey = SecretKeyUtils.getKeyFromPassword(secretString, saltString);    
-        //     return NimbusJwtDecoder.withSecretKey(secretKey).build();
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
-        return NimbusJwtDecoder.withSecretKey(appJwtProperties.getKey()).build();
-    }
-
-    // @Bean
-    // JwtEncoder jwtEncoder() {
-    //     try {
-    //         SecretKey secretKey = SecretKeyUtils.getKeyFromPassword(secretString, saltString);    
-    //         JWK jwk = new OctetSequenceKey.Builder(secretKey.getEncoded())
-    //             .keyID(UUID.randomUUID().toString())
-    //             .algorithm(JWSAlgorithm.HS256)
-    //             .issueTime(new Date()).build();
-        
-    //         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-    //         return new NimbusJwtEncoder(jwks);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    //     return null;
-        
-    // }
 }
