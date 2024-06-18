@@ -50,6 +50,16 @@ public class UsuarioAuth implements UserDetails {
         return usuario.isEnabled();
     }
 
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
