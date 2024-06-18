@@ -74,7 +74,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, links }: SidebarProps) => {
       }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
-      <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 border-b border-b-white">
+      <div className="flex items-center justify-between gap-2 px-6 py-2">
         <Link href="/" className="mx-auto">
           <CEULogo className="w-[200px] h-32 text-white" />
         </Link>
@@ -90,6 +90,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, links }: SidebarProps) => {
         </button>
       </div>
       {/* <!-- SIDEBAR HEADER --> */}
+      <hr className="text-white"/>  
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
