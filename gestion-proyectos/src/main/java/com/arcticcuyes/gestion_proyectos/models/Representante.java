@@ -1,16 +1,27 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.sql.Timestamp;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @Entity
-@DiscriminatorValue("NATURAL")
-public class Representante extends Cliente {
+@Table(name = "REPRESENTANTE")
+public class Representante {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id_representante;
 
     @Column(nullable = false)
     private String nombre;
@@ -18,6 +29,16 @@ public class Representante extends Cliente {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = false, unique = true)
     private String dni;
+
+    @OneToOne
+    @JoinColumn(name = "cliente_juridico_id", nullable = false)
+    private ClienteJuridico clienteJuridico;
+
+    @CreationTimestamp
+    private Timestamp createdAt;
+
+    @UpdateTimestamp
+    private Timestamp updatedAt;
 }

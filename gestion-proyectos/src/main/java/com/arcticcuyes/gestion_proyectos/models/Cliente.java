@@ -2,20 +2,12 @@ package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,24 +18,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name="CLIENTE")
-public class Cliente {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Cliente {
     @Id
     @Column(name="id_cliente")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idCliente;
 
-    @Column(nullable = false, length = 50)
-    private String nombres;
-    @Column(nullable = false, length = 50)
-    private String apellidos;
-    @Column(nullable = false)
-    private char genero;
-    @Column(length = 50)
-    private String cargo;
+    @Column(nullable = false, length = 12)
+    private String telefono;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_empresa")
-    private Empresa empresa;
+    @Column(nullable = false)
+    @Email()
+    private String email;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_usuario", unique = true, nullable = false)
