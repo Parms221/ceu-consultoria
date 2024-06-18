@@ -1,6 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,14 +21,14 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity
 @Table(name="USUARIO")
 public class Usuario {
     @Id
@@ -53,7 +54,7 @@ public class Usuario {
         joinColumns = @JoinColumn(name="id_usuario"),
         inverseJoinColumns = @JoinColumn(name="id_rol")
     )
-    private Set<Rol> roles;
+    private Set<Rol> roles = new HashSet<>();
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
