@@ -1,29 +1,37 @@
-interface Representante {
-  id_representante: number;
+type Representante = {
+  representante_id: number;
   nombre: string;
   apellido: string;
   dni: string;
-  createdAt: string;
-  updatedAt: string;
-}
+  created_at?: string;
+  updated_at?: string;
+};
 
-export interface ClienteJuridico extends Cliente {
+type ClienteNatural = {
+  tipo: "NATURAL";
+  cliente_id: number;
+  nombre: string;
+  apellido: string;
+  dni: string;
+  telefono: string;
+  email?: string;
+  created_at?: string;
+  updated_at?: string;
+  tipo_documento?: string;
+};
+
+type ClienteJuridico = {
+  tipo: "JURIDICO";
+  cliente_id: number;
   razonSocial: string;
   ruc: string;
-  direccion: string;
-  representante: Representante;
-}
+  direccion?: string;
+  telefono?: string;
+  email?: string;
+  created_at?: string;
+  updated_at?: string;
+  representante?: Representante; // Representante es opcional
+  tipo_documento?: string;
+};
 
-export interface ClienteNatural extends Cliente {
-  nombre: string;
-  apellido: string;
-  dni: string;
-}
-
-
-export interface Cliente {
-  id_cliente: number;
-  createdAt: string;
-  updatedAt: string;
-  tipoCliente: "NATURAL" | "JURIDICO";
-}
+export type Cliente = ClienteNatural | ClienteJuridico;
