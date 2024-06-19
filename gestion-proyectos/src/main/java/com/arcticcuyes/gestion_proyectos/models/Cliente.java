@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,6 +25,10 @@ public abstract class Cliente {
     @Column(name="id_cliente")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idCliente;
+
+    @Column(nullable = false)
+    @Pattern(regexp = "RUC|DNI")
+    private String tipo_documento;
 
     @Column(nullable = false, length = 12)
     private String telefono;
