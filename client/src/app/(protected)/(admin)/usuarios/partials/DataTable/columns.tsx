@@ -7,6 +7,20 @@ import { Edit, Trash2Icon } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import DeleteUserDialog from "../dialogs/delete"
+
+function getBadgeByRol(rol: string){
+    switch(rol){
+      case "ROLE_ADMIN":
+        return <Badge variant="success">Administrador</Badge>
+      case "ROLE_CLIENTE":
+        return <Badge variant="ghost">Cliente</Badge>
+      case "ROLE_CONSULTOR":
+        return <Badge variant="default">Consultor</Badge>
+      default:
+        return <Badge variant="outline">Cliente</Badge>
+    }
+}
+
 export const columns: ColumnDef<Usuario>[] = [
   {
     accessorKey: "name",
@@ -18,11 +32,24 @@ export const columns: ColumnDef<Usuario>[] = [
     header: "Correo electrónico",
   },
   {
-    accessorKey: "rol",
-    id: "rol",
+    accessorKey: "roles",
+    id: "roles",
     header: ({column}) => (
       <DataTableColumnHeader column={column} title="Rol" />
-    )
+    ),
+    cell: ({row}) => {
+      const roles =  row.original.roles
+      return getBadgeByRol(roles[0].rol ?? "")
+    },
+    filterFn: (rows, id, value) => {
+      const original = rows.original.roles
+      return original.some((rol) => rol.rol.toLowerCase() === value) 
+    },
+    sortingFn: (rowA, rowB) => {
+      const roleA = rowA.original.roles[0].rol.toLowerCase();
+      const roleB = rowB.original.roles[0].rol.toLowerCase();
+      return roleA > roleB ? 1 : roleA < roleB ? -1 : 0;
+    },
   },
   {
     accessorKey: "enabled",
