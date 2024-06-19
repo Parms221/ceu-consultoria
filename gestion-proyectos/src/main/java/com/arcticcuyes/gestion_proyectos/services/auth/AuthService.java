@@ -1,6 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.services.auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -22,12 +24,23 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
+        String token = null;
+        String mensaje;
         UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
-        Authentication auth = authenticationManager.authenticate(authReq);
-        UsuarioAuth aber = (UsuarioAuth) auth.getPrincipal();
-        System.out.println("Uusario Auth: "+aber.getUsername() + " " + aber.getUsuario().getId());
-        String token = jwtService.getToken((UsuarioAuth) auth.getPrincipal());
-        return new AuthResponse(token);
+
+        try{
+            Authentication auth = authenticationManager.authenticate(authReq);
+            token = jwtService.getToken((UsuarioAuth) auth.getPrincipal());
+            mensaje = "Autorizado";
+        }catch(BadCredentialsException e){
+            mensaje = "Correo o contraseña incorrectos";
+        }catch(DisabledException e){
+            mensaje = "Usuario deshabilitado";
+        }catch(Exception e){
+            mensaje = "Error inesperado";
+        }
+        
+        return new AuthResponse(token, mensaje);
     }
 
     public Usuario register(Usuario usuario){
