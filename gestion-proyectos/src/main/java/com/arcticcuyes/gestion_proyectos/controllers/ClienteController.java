@@ -1,8 +1,11 @@
 package com.arcticcuyes.gestion_proyectos.controllers;
 
+import com.arcticcuyes.gestion_proyectos.dto.ClienteJuridicoDto;
+import com.arcticcuyes.gestion_proyectos.dto.ClienteNaturalDto;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.services.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,9 +32,10 @@ public class ClienteController {
         return ResponseEntity.ok(page);
     }
 
-    @PostMapping("/naturales")
-    public ResponseEntity<ClienteNatural> createClienteNatural(@RequestBody ClienteNatural clienteNatural) {
-        ClienteNatural createdCliente = clienteService.saveClienteNatural(clienteNatural);
+    @PostMapping("/naturales/create")
+    public ResponseEntity<ClienteNatural> createClienteNatural(@RequestBody @Valid ClienteNaturalDto clienteNaturalDto) {
+        System.out.println(clienteNaturalDto);
+        ClienteNatural createdCliente = clienteService.saveClienteNatural(clienteNaturalDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCliente);
     }
 
@@ -47,9 +51,9 @@ public class ClienteController {
         return ResponseEntity.ok(page);
     }
 
-    @PostMapping("/juridicos")
-    public ResponseEntity<ClienteJuridico> createClienteJuridico(@RequestBody ClienteJuridico clienteJuridico) {
-        ClienteJuridico createdCliente = clienteService.saveClienteJuridico(clienteJuridico);
+    @PostMapping("/juridicos/create")
+    public ResponseEntity<ClienteJuridico> createClienteJuridico(@RequestBody @Valid ClienteJuridicoDto clienteJuridicoDto) {
+        ClienteJuridico createdCliente = clienteService.saveClienteJuridico(clienteJuridicoDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCliente);
     }
 

@@ -12,12 +12,12 @@ import lombok.EqualsAndHashCode;
 @DiscriminatorValue("NATURAL")
 public class ClienteNatural extends Cliente {
 
-    @Column(nullable = false)
+    @Column()
     private String nombre;
 
-    @Column(nullable = false)
+    @Column()
     private String apellido;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column()
     private String dni;
 }

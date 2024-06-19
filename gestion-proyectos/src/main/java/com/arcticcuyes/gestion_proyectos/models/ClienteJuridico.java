@@ -10,10 +10,10 @@ import lombok.EqualsAndHashCode;
 @DiscriminatorValue("JURIDICO")
 public class ClienteJuridico extends Cliente {
 
-    @Column(nullable = false)
+    @Column()
     private String razonSocial;
 
-    @Column(nullable = false, unique = true, length = 11)
+    @Column(unique = true, length = 11)
     private char ruc;
 
     @Column()

@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
+import { createClienteJuridico, createClienteNatural } from "@/actions/Cliente";
 
 export default function NewClienteForm() {
   const formSchema = z
@@ -128,9 +130,38 @@ export default function NewClienteForm() {
     }
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // TODO Validación de datos con zod (formSchema.parse(values))
+    try {
+      const tipo_documento = values["tipo_documento"];
+      if (tipo_documento === "RUC") {
+        const rawDataClienteJuridico = {
+          tipo_documento: values["tipo_documento"],
+          ruc: values["ruc"],
+          razonSocial: values["razonSocial"],
+          direccion: values["direccion"],
+          email: values["email"],
+          telefono: values["telefono"],
+        };
+        console.log(rawDataClienteJuridico);
+        await createClienteJuridico(rawDataClienteJuridico);
+      } else {
+        const rawDataClienteNatural = {
+          tipo_documento: values["tipo_documento"],
+          dni: values["dni"],
+          nombre: values["nombre"],
+          apellido: values["apellido"],
+          email: values["email"],
+          telefono: values["telefono"],
+        };
+        console.log(rawDataClienteNatural);
+        await createClienteNatural(rawDataClienteNatural);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
+
   return (
     <Form {...form}>
       <form
@@ -271,7 +302,7 @@ export default function NewClienteForm() {
             <FormItem>
               <FormLabel>Telefono</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input maxLength={9} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
