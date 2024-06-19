@@ -6,8 +6,8 @@ import org.springframework.context.annotation.PropertySources;
 
 @Configuration
 @PropertySources({
-    @PropertySource("classpath:custom.properties")
+    @PropertySource("classpath:jwt.properties")
 })
-public class CustomConfigProperties {
+public class JwtProperties {
 
 }

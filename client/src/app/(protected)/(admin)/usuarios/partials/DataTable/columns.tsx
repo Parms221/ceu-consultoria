@@ -5,6 +5,8 @@ import { Usuario } from "@/types/usuario"
 import { ColumnDef } from "@tanstack/react-table"
 import { Edit, Trash2Icon } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
+import DeleteUserDialog from "../dialogs/delete"
 export const columns: ColumnDef<Usuario>[] = [
   {
     accessorKey: "name",
@@ -41,16 +43,18 @@ export const columns: ColumnDef<Usuario>[] = [
     id: "actions",
     header: "Acciones",
     cell: ({ row }) => {
-      const payment = row.original
+      const user = row.original
  
       return (
         <div className="flex gap-2">
-          <Button className="py-1.5 h-fit" variant="default" size={"sm"}>
-            <Edit size={16}/>
-          </Button>
-          <Button className="py-1.5 h-fit" variant="default" size={"sm"} >
-            <Trash2Icon size={16} />
-          </Button>
+          <Link
+            href={`/usuarios/${user.id}`}
+          >
+            <Button className="py-1.5 h-fit" variant="link" size={"sm"}>
+              <Edit size={16}/>
+            </Button>
+          </Link>
+          <DeleteUserDialog user={user} />
         </div>
       )
     },
