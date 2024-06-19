@@ -39,12 +39,17 @@ export const columns: ColumnDef<Usuario>[] = [
     ),
     cell: ({row}) => {
       const roles =  row.original.roles
-      return getBadgeByRol(roles[0].rol)
+      return getBadgeByRol(roles[0].rol ?? "")
     },
     filterFn: (rows, id, value) => {
       const original = rows.original.roles
       return original.some((rol) => rol.rol.toLowerCase() === value) 
-    }
+    },
+    sortingFn: (rowA, rowB) => {
+      const roleA = rowA.original.roles[0].rol.toLowerCase();
+      const roleB = rowB.original.roles[0].rol.toLowerCase();
+      return roleA > roleB ? 1 : roleA < roleB ? -1 : 0;
+    },
   },
   {
     accessorKey: "enabled",

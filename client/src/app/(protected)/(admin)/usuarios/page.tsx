@@ -2,8 +2,6 @@ import React from "react";
 
 import { DataTable } from "./partials/DataTable/data-table";
 import { columns } from "./partials/DataTable/columns"; 
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { Usuario } from "@/types/usuario";
 import NewUserDialog from "./partials/dialogs/NewUser/dialog";
 

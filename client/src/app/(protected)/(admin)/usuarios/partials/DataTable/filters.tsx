@@ -11,6 +11,24 @@ export default function Filters<TData>(
         table
     } : DataTableFiltersProps<TData>
 ) {
+    const ROL_OPTIONS = [
+        {
+          id: 3,
+          label: "Administrador",
+          value: "role_admin",
+        },
+        {
+          id: 1,
+          label: "Consultor",
+          value: "role_consultor",
+        },
+        {
+          id: 2,
+          label: "Cliente",
+          value: "role_cliente",
+        },
+    ]
+
     return (
         <div className="flex flex-wrap items-center py-4 [&>div]:space-y-1 gap-4">
             <div className="max-w-sm">
@@ -30,18 +48,7 @@ export default function Filters<TData>(
             <div>
                 <Label>Rol</Label>
                 <Combobox
-                    options={[
-                      {
-                        id: 1,
-                        label: "Consultor",
-                        value: "role_consultor",
-                      },
-                      {
-                        id: 2,
-                        label: "Cliente",
-                        value: "role_cliente",
-                      },
-                    ]}
+                    options={ROL_OPTIONS}
                     onSelect={(value) => {
                         table.getColumn("roles")?.setFilterValue(value)
                     }

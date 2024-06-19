@@ -8,9 +8,13 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DialogClose, DialogFooter } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { revalidatePath } from "next/cache"
+import { createUsuario } from "@/actions/Usuario"
+import { toast } from "sonner"
 
-export default function NewUserForm() {
+export default function NewUserForm(
+    {setDialogOpen}
+    : {setDialogOpen: (open: boolean) => void}
+) {
     const formSchema = z.object({
         name: z.string().min(2).max(50),
         roles: z.enum(["ROLE_CONSULTOR", "ROLE_CLIENTE"]),
@@ -28,31 +32,33 @@ export default function NewUserForm() {
         },
       })
 
-      async function onSubmit(values: z.infer<typeof formSchema>) {
-        const formData = { ...values, roles: [values.roles]}
+      async function onSubmit(formData: FormData) {
+        // TODO Validación de datos con zod (formSchema.parse(formData))
+       try{
         console.log(formData)
-
-        try {
-          const response = await fetch("http://localhost:8800/usuarios/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwibm9tYnJlIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUub3JnIiwiaWF0IjoxNzE4NzQ5MTQ2LCJleHAiOjE3NTAyODUxNDYsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCJ9.fjJS1_uNgH-t0l9cdP5l03bW_4Q750_7eqTnSSU8Xvl-7vtSb49WZfnJsoaJd-mz"
-            },
-            body: JSON.stringify(formData)
-          }, 
-        )
-        if(response.ok){
-          revalidatePath("/usuarios")
+        // const usuario = formSchema.parse(formData)
+        const rawData = {
+          name: formData.get("name"), 
+          email: formData.get("email"), 
+          password: formData.get("password"),
+          roles: [formData.get("roles")]
         }
-        }catch(e){
-          console.log(e)
+        
+        const response = await createUsuario(rawData) 
+        if(response.status === "success"){
+          toast.success(response.message)
+          setDialogOpen(false)
+        }else {
+          toast.error(response.message)
         }
+       } catch(error){
+        console.error(error)
+       }
       }
-  
+    
     return (
        <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <form action={onSubmit} className="flex flex-col gap-2">
             <FormField 
                 control={form.control}
                 name="name"
@@ -115,7 +121,12 @@ export default function NewUserForm() {
             />
             <DialogFooter>
               <Button type="submit">Guardar</Button>
-              <DialogClose className="h-full border rounded-md px-4 py-2.5 hover:bg-neutral-300">Cancelar</DialogClose>
+              <Button type="button"
+                variant={"outline"} 
+                onClick={() => setDialogOpen(false)} 
+                >
+                  Cancelar
+              </Button>
             </DialogFooter>
         </form>
        </Form>
