@@ -1,7 +1,9 @@
 package com.arcticcuyes.gestion_proyectos.filters;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import jakarta.servlet.http.Cookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +32,12 @@ public class JwtAuthFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        final String token = getTokenFromRequest(request);
+        String token = getTokenFromRequest(request);
+
+        if (token == null) {
+            token = getTokenFromCookies(request);
+        }
+
         if(token == null){
             filterChain.doFilter(request, response);
             return;
@@ -58,6 +65,20 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 
         if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")){
             return authHeader.substring(7);
+        }
+
+        return null;
+    }
+
+    private String getTokenFromCookies(HttpServletRequest request){
+        final Cookie[] cookies = request.getCookies();
+
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("ceu_token")){
+                    return cookie.getValue();
+                }
+            }
         }
 
         return null;

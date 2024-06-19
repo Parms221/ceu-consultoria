@@ -8,11 +8,16 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DialogClose, DialogFooter } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { createUsuario } from "@/actions/Usuario"
+import { toast } from "sonner"
 
-export default function NewUserForm() {
+export default function NewUserForm(
+    {setDialogOpen}
+    : {setDialogOpen: (open: boolean) => void}
+) {
     const formSchema = z.object({
         name: z.string().min(2).max(50),
-        rol: z.enum(["consultor", "cliente"]),
+        roles: z.enum(["ROLE_CONSULTOR", "ROLE_CLIENTE"]),
         email: z.string().email(),
         password: z.string().min(6).max(20),
       })
@@ -21,19 +26,39 @@ export default function NewUserForm() {
         resolver: zodResolver(formSchema),
         defaultValues: {
           name: "",
-          rol: "consultor",
+          roles: "ROLE_CONSULTOR",
           email: "",
           password: "",
         },
       })
 
-      function onSubmit(values: z.infer<typeof formSchema>) {
-    
-        console.log(values)
+      async function onSubmit(formData: FormData) {
+        // TODO Validación de datos con zod (formSchema.parse(formData))
+       try{
+        console.log(formData)
+        // const usuario = formSchema.parse(formData)
+        const rawData = {
+          name: formData.get("name"), 
+          email: formData.get("email"), 
+          password: formData.get("password"),
+          roles: [formData.get("roles")]
+        }
+        
+        const response = await createUsuario(rawData) 
+        if(response.status === "success"){
+          toast.success(response.message)
+          setDialogOpen(false)
+        }else {
+          toast.error(response.message)
+        }
+       } catch(error){
+        console.error(error)
+       }
       }
+    
     return (
        <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <form action={onSubmit} className="flex flex-col gap-2">
             <FormField 
                 control={form.control}
                 name="name"
@@ -49,19 +74,19 @@ export default function NewUserForm() {
             />
              <FormField 
                 control={form.control}
-                name="rol"
+                name="roles"
                 render = {({field}) => (
                     <FormItem>
                         <FormLabel>Rol</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select name="roles" onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Seleccione un rol" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="consultor">Consultor</SelectItem>
-                            <SelectItem value="cliente">Cliente</SelectItem>
+                            <SelectItem value="ROLE_CONSULTOR">Consultor</SelectItem>
+                            <SelectItem value="ROLE_CLIENTE">Cliente</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -96,7 +121,12 @@ export default function NewUserForm() {
             />
             <DialogFooter>
               <Button type="submit">Guardar</Button>
-              <DialogClose className="h-full border rounded-md px-4 py-2.5 hover:bg-neutral-300">Cancelar</DialogClose>
+              <Button type="button"
+                variant={"outline"} 
+                onClick={() => setDialogOpen(false)} 
+                >
+                  Cancelar
+              </Button>
             </DialogFooter>
         </form>
        </Form>
