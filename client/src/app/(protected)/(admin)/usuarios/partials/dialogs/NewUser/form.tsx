@@ -89,7 +89,7 @@ export default function NewUserForm() {
                 name="name"
                 render = {({field}) => (
                     <FormItem>
-                        <FormLabel>Nombre completo</FormLabel>
+                        <FormLabel>Nombre de usuario</FormLabel>
                         <FormControl>
                             <Input  {...field} />
                         </FormControl>
