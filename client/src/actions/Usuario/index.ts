@@ -1,30 +1,34 @@
 "use server"
 
-import { Usuario } from "@/types/usuario";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { fetcher } from "@/server/fetch/server-side";
+import { CreateUsuarioDto, Usuario } from "@/types/usuario";
+import { revalidateTag } from "next/cache";
 
-export async function createUsuario(data: any): Promise<{status: string, message: string}>{
+export async function getUsuarios(): Promise<Usuario[] | undefined> {
+  try {
+    const response = await fetcher ("/usuarios", {
+      method: "GET",
+    }) 
+    let data
+    if (response.ok){
+      data = await response.json()
+      return data as Usuario[]
+    }else {
+      console.error("Error: ", response)
+    }
+  }catch(error) {
+      console.error(error);
+  }
+}
+
+export async function createUsuario(data: CreateUsuarioDto): Promise<{status: string, message: string}>{
     try {
-        const response = await fetch("http://localhost:8800/usuarios/create", {
+        const response = await fetcher("/usuarios/create", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwibm9tYnJlIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUub3JnIiwiaWF0IjoxNzE4NzQ5MTQ2LCJleHAiOjE3NTAyODUxNDYsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCJ9.fjJS1_uNgH-t0l9cdP5l03bW_4Q750_7eqTnSSU8Xvl-7vtSb49WZfnJsoaJd-mz"
-          },
           body: JSON.stringify(data)
-        }, 
-      )
-      if(response.ok){
-        revalidateTag("usuarios")
-        return {
-            status: "success",
-            message: "Usuario creado exitosamente"
-        }
-      }
-          return {
-                status: "error",
-                message: "Error al crear usuario"
-        }
+        },)
+        return returnResponse(response, "Usuario creado exitosamente", "Error al crear usuario")
+      
       }catch(e){
         console.log(e)
         return {
@@ -32,4 +36,33 @@ export async function createUsuario(data: any): Promise<{status: string, message
             message: "Error al crear usuario"
         }
       }
+}
+
+export async function deleteUsuario(id: number): Promise<{status: string, message: string}>{
+  try {
+      const response = await fetcher(`/usuarios/delete/${id}`, {
+        method: "DELETE"
+      })
+      return returnResponse(response, "Usuario eliminado exitosamente", "Error al eliminar usuario")
+  } catch (error) {
+    console.error(error)
+    return {
+        status: "error",
+        message: "Error al eliminar usuario"
+    }
+  }
+}
+
+function returnResponse(response : Response, successMessage: string, errorMessage: string){
+  if(response.ok){
+    revalidateTag("usuarios")
+    return {
+        status: "success",
+        message: successMessage
+    }
+  }
+      return {
+            status: "error",
+            message: errorMessage
+    }
 }
