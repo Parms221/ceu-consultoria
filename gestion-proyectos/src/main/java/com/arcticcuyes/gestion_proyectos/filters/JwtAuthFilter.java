@@ -1,7 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.filters;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import jakarta.servlet.http.Cookie;
 import org.springframework.http.HttpHeaders;
