@@ -32,15 +32,18 @@ export default function Filters<TData>(
                 <Combobox
                     options={[
                       {
+                        id: 1,
                         label: "Consultor",
-                        value: "consultor",
-                      },{
+                        value: "role_consultor",
+                      },
+                      {
+                        id: 2,
                         label: "Cliente",
-                        value: "cliente",
-                      }
+                        value: "role_cliente",
+                      },
                     ]}
                     onSelect={(value) => {
-                        table.getColumn("rol")?.setFilterValue(value)
+                        table.getColumn("roles")?.setFilterValue(value)
                     }
                     }
                 />

@@ -19,9 +19,7 @@ export default function NewUserDialog() {
         </DialogTrigger>
         <DialogContent>
             <DialogTitle className="text-ceu-celeste">Nuevo usuario</DialogTitle>
-            <DialogDescription>
-                <NewUserForm  />
-            </DialogDescription>
+            <NewUserForm  />
         </DialogContent>
     </Dialog>
   );

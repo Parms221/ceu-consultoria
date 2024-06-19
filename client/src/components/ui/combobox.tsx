@@ -47,7 +47,7 @@ export function Combobox(
                     className="w-full justify-between"
                 >
                     {value
-                        ? options.find((option) => option.value === value)?.label
+                        ? options.find((option) => option.value.toLowerCase() === value.toLowerCase())?.label
                         : "Seleccione una opción"}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>

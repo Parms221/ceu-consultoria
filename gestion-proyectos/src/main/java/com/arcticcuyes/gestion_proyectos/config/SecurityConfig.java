@@ -36,7 +36,6 @@ public class SecurityConfig{
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-            
         return http.build();
     }
 
