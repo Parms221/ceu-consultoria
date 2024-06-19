@@ -1,5 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -12,12 +13,12 @@ import lombok.EqualsAndHashCode;
 @DiscriminatorValue("NATURAL")
 public class ClienteNatural extends Cliente {
 
-    @Column(nullable = false)
+    @Basic
     private String nombre;
 
-    @Column(nullable = false)
+    @Basic
     private String apellido;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = true, unique = true, length = 8)
     private String dni;
 }

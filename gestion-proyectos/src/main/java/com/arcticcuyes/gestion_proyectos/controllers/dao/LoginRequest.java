@@ -1,6 +1,5 @@
 package com.arcticcuyes.gestion_proyectos.controllers.dao;
 
-import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
