@@ -5,5 +5,8 @@ export type Usuario = {
     enabled: boolean
     createdAt: string
     updatedAt: string
-    rol: string
+    roles: {
+        idRol: number
+        rol: string
+    }[]
 }
