@@ -1,3 +1,5 @@
+export * from './UsuarioDto'
+
 export type Usuario = {
     id: number
     name: string
