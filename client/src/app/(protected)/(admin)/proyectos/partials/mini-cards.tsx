@@ -20,7 +20,7 @@ export function ProyectosTerminados() {
       title="Proyectos Terminados"
       TitleIcons={CircleCheckIcon}
       description={`En los últimos ${data.time / 30} meses`}
-      main={data.total}
+      main={String(data.total)}
     />
   );
 }
