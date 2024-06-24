@@ -45,10 +45,7 @@ export default async function Clientes() {
 
       <section className="flex flex-col gap-8">
         <article className="rounded-md border-stroke bg-white px-2 pb-4 dark:border-strokedark dark:bg-boxdark">
-          <DataTable
-            columns={columns}
-            data={data._embedded["clienteNaturals"]}
-          />
+          <DataTable columns={columns} data={data._embedded["clientes"]} />
         </article>
       </section>
     </React.Fragment>

@@ -1,7 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.controllers;
 
-import com.arcticcuyes.gestion_proyectos.dto.ClienteJuridicoDto;
-import com.arcticcuyes.gestion_proyectos.dto.ClienteNaturalDto;
+import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
+import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.services.ClienteService;

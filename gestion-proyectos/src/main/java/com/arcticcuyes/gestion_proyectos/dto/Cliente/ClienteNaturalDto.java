@@ -1,4 +1,4 @@
-package com.arcticcuyes.gestion_proyectos.dto;
+package com.arcticcuyes.gestion_proyectos.dto.Cliente;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
