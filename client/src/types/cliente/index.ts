@@ -8,8 +8,7 @@ type Representante = {
 };
 
 type ClienteNatural = {
-  tipo: "NATURAL";
-  cliente_id: number;
+  idCliente: number;
   nombre: string;
   apellido: string;
   dni: string;
@@ -17,12 +16,11 @@ type ClienteNatural = {
   email?: string;
   created_at?: string;
   updated_at?: string;
-  tipo_documento?: string;
+  tipo_documento: "DNI";
 };
 
 type ClienteJuridico = {
-  tipo: "JURIDICO";
-  cliente_id: number;
+  idCliente: number;
   razonSocial: string;
   ruc: string;
   direccion?: string;
@@ -31,7 +29,7 @@ type ClienteJuridico = {
   created_at?: string;
   updated_at?: string;
   representante?: Representante; // Representante es opcional
-  tipo_documento?: string;
+  tipo_documento: "RUC";
 };
 
 export type Cliente = ClienteNatural | ClienteJuridico;
