@@ -1,37 +1,45 @@
 "use server";
-
-import config from "@/config";
+import { fetcher } from "@/server/fetch/server-side";
 import { Cliente } from "@/types/cliente";
-import { revalidatePath, revalidateTag } from "next/cache";
+import {
+  CreateClienteJuridicoDto,
+  CreateClienteNaturalDto,
+} from "@/types/cliente/ClienteDto";
+import { revalidateTag } from "next/cache";
+
+export async function getClientes(): Promise<Cliente[]> {
+  try {
+    const response = await fetcher("/clientes", {
+      method: "GET",
+    });
+    let data;
+    if (response.ok) {
+      data = await response.json();
+      return data as Cliente[];
+    } else {
+      console.error("Error: ", response);
+      return [];
+    }
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 
 export async function createClienteJuridico(
-  data: any,
+  data: CreateClienteJuridicoDto,
 ): Promise<{ status: string; message: string }> {
   try {
-    const response = await fetch(
-      config.back_uri + "/clientes/juridico/create",
-      {
-        method: "POST",
-        headers: {
-          // "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwibm9tYnJlIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUub3JnIiwiaWF0IjoxNzE4ODA5NzM0LCJleHAiOjIwMjk4NDk3MzQsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCJ9._Xm5xkAaxggMsRp21B9gQk370juWgSyeff6axlM9yG-CD1llQFO7usXgwdVbRbGz",
-        },
-        body: JSON.stringify(data),
-      },
+    const response = await fetcher("/clientes/juridicos/create", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return returnResponse(
+      response,
+      "clientes",
+      "Cliente creado exitosamente",
+      "Error al crear cliente jurídico",
     );
-    if (response.ok) {
-      revalidateTag("clientes");
-      console.log(response.json());
-      return {
-        status: "success",
-        message: "Cliente creado exitosamente",
-      };
-    }
-    return {
-      status: "error",
-      message: "Error al crear cliente",
-    };
   } catch (e) {
     console.log(e);
     return {
@@ -40,34 +48,21 @@ export async function createClienteJuridico(
     };
   }
 }
+
 export async function createClienteNatural(
-  data: any,
+  data: CreateClienteNaturalDto,
 ): Promise<{ status: string; message: string }> {
   try {
-    const response = await fetch(
-      config.back_uri + "/clientes/naturales/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwibm9tYnJlIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUub3JnIiwiaWF0IjoxNzE4ODA5NzM0LCJleHAiOjIwMjk4NDk3MzQsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCJ9._Xm5xkAaxggMsRp21B9gQk370juWgSyeff6axlM9yG-CD1llQFO7usXgwdVbRbGz",
-        },
-        body: JSON.stringify(data),
-      },
+    const response = await fetcher("/clientes/naturales/create", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return returnResponse(
+      response,
+      "clientes",
+      "Cliente creado exitosamente",
+      "Error al crear cliente",
     );
-    if (response.ok) {
-      revalidateTag("clientes");
-      console.log(response.json());
-      return {
-        status: "success",
-        message: "Cliente creado exitosamente",
-      };
-    }
-    return {
-      status: "error",
-      message: "Error al crear cliente",
-    };
   } catch (e) {
     console.log(e);
     return {
@@ -75,4 +70,44 @@ export async function createClienteNatural(
       message: "Error al crear cliente",
     };
   }
+}
+export async function deleteCliente(
+  id: number,
+): Promise<{ status: string; message: string }> {
+  try {
+    const response = await fetcher(`/clientes/delete/${id}`, {
+      method: "DELETE",
+    });
+    return returnResponse(
+      response,
+      "clientes",
+      "Cliente eliminado exitosamente",
+      "Error al eliminar cliente",
+    );
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "Error al eliminar cliente",
+    };
+  }
+}
+
+function returnResponse(
+  response: Response,
+  tag: string,
+  successMessage: string,
+  errorMessage: string,
+) {
+  if (response.ok) {
+    revalidateTag(tag);
+    return {
+      status: "success",
+      message: successMessage,
+    };
+  }
+  return {
+    status: "error",
+    message: errorMessage,
+  };
 }

@@ -129,36 +129,41 @@ export default function NewClienteForm() {
       form.setValue("dni", "");
     }
   };
-
+  const dialogClose = () => {
+    document.getElementById("closeDialog")?.click();
+  };
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO Validación de datos con zod (formSchema.parse(values))
     try {
-      const tipo_documento = values["tipo_documento"];
+      const tipo_documento = values.tipo_documento;
+      let res = undefined;
       if (tipo_documento === "RUC") {
-        const rawDataClienteJuridico = {
-          tipo_documento: values["tipo_documento"],
-          ruc: values["ruc"],
-          razonSocial: values["razonSocial"],
-          direccion: values["direccion"],
-          email: values["email"],
-          telefono: values["telefono"],
-        };
-        console.log(rawDataClienteJuridico);
-        await createClienteJuridico(rawDataClienteJuridico);
+        res = await createClienteJuridico({
+          tipo_documento: values.tipo_documento,
+          ruc: values.ruc!,
+          razonSocial: values.razonSocial!,
+          direccion: values.direccion!,
+          email: values.email!,
+          telefono: values.telefono!,
+        });
       } else {
-        const rawDataClienteNatural = {
-          tipo_documento: values["tipo_documento"],
-          dni: values["dni"],
-          nombre: values["nombre"],
-          apellido: values["apellido"],
-          email: values["email"],
-          telefono: values["telefono"],
-        };
-        console.log(rawDataClienteNatural);
-        await createClienteNatural(rawDataClienteNatural);
+        res = await createClienteNatural({
+          tipo_documento: values.tipo_documento,
+          dni: values.dni!,
+          nombre: values.nombre!,
+          apellido: values.apellido!,
+          email: values.email!,
+          telefono: values.telefono!,
+        });
+      }
+      if (res.status === "success") {
+        toast.success(res.message);
+        dialogClose();
+      } else {
+        toast.error(res.message);
       }
     } catch (error) {
       console.error(error);
+      toast.error("Error al crear cliente");
     }
   }
 
@@ -175,6 +180,7 @@ export default function NewClienteForm() {
             <FormItem>
               <FormLabel>Tipo De Documento</FormLabel>
               <Select
+                name="tipo_documento"
                 onValueChange={(e) => {
                   field.onChange(e);
                   resetearAlCambiarDocumento(e);
@@ -310,7 +316,10 @@ export default function NewClienteForm() {
         />
         <DialogFooter className="col-span-full mt-4 flex justify-end gap-4">
           <Button type="submit">Guardar</Button>
-          <DialogClose className="h-full rounded-md border px-4 py-2.5 hover:bg-neutral-300">
+          <DialogClose
+            id="closeDialog"
+            className="h-full rounded-md border px-4 py-2.5 hover:bg-neutral-300"
+          >
             Cancelar
           </DialogClose>
         </DialogFooter>

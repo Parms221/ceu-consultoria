@@ -11,13 +11,13 @@ export const columns: ColumnDef<Cliente>[] = [
     accessorKey: "nombre",
     header: "Nombre",
     accessorFn: (cliente) => {
-      return cliente.tipo === "NATURAL"
+      return cliente.tipo_documento === "DNI"
         ? `${cliente.nombre} ${cliente.apellido}`
         : cliente.razonSocial;
     },
 
     filterFn: (rows, id, filterValue) => {
-      if (rows.original.tipo === "NATURAL") {
+      if (rows.original.tipo_documento === "DNI") {
         return `${rows.original.nombre} ${rows.original.apellido} ${rows.original.dni}`
           .toLowerCase()
           .includes(filterValue.toLowerCase());
@@ -37,7 +37,7 @@ export const columns: ColumnDef<Cliente>[] = [
     header: "Documento",
     accessorKey: "documento",
     accessorFn: (cliente) => {
-      return cliente.tipo === "NATURAL" ? cliente.dni : cliente.ruc;
+      return cliente.tipo_documento == "DNI" ? cliente.dni : cliente.ruc;
     },
   },
   {
