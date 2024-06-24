@@ -1,6 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.services;
-import com.arcticcuyes.gestion_proyectos.dto.EntregableServicioDTO;
-import com.arcticcuyes.gestion_proyectos.dto.ServicioDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Servicio.EntregableServicioDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Servicio.ServicioDTO;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.models.EntregableServicio;
@@ -31,8 +31,8 @@ public class ServicioService {
     @Autowired
     private EntregableServicioRepository entregableServicioRepository;
 
-    public Page<Servicio> findAll(Pageable pageable) {
-        return servicioRepository.findAll(pageable);
+    public List<Servicio> findAll() {
+        return (List<Servicio>) servicioRepository.findAll();
     }
 
     public Servicio findServicioById(Long id) {

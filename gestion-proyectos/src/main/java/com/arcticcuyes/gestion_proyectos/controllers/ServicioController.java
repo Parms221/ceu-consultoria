@@ -1,16 +1,13 @@
 package com.arcticcuyes.gestion_proyectos.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,20 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.arcticcuyes.gestion_proyectos.dto.EntregableServicioDTO;
-import com.arcticcuyes.gestion_proyectos.dto.ServicioDTO;
-import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
-import com.arcticcuyes.gestion_proyectos.models.EntregableServicio;
+import com.arcticcuyes.gestion_proyectos.dto.Servicio.ServicioDTO;
 import com.arcticcuyes.gestion_proyectos.models.Servicio;
-import com.arcticcuyes.gestion_proyectos.repositories.EntregableServicioRepository;
-import com.arcticcuyes.gestion_proyectos.repositories.ServicioRepository;
 import com.arcticcuyes.gestion_proyectos.services.ServicioService;
-
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/servicios")
@@ -42,14 +31,15 @@ public class ServicioController {
     @Autowired
     ServicioService servicioService;
 
-    @GetMapping("/")
-    public ResponseEntity<Page<Servicio>> getAllServicios(Pageable pageable) {
-        Page<Servicio> page = servicioService.findAll(pageable);
-        return ResponseEntity.ok(page);
+    @GetMapping
+    public ResponseEntity<List<Servicio>> getAllServicios() {
+        List<Servicio> servicios = servicioService.findAll();
+        return ResponseEntity.ok(servicios);
     }
 
-    @PostMapping("/addServicio")
+    @PostMapping("/create")
     public ResponseEntity<?> createServicio(@Valid @RequestBody ServicioDTO servicioDTO, BindingResult bindingResult) {
+        System.out.println(servicioDTO);
         if (bindingResult.hasErrors()) {
             // Recopila todos los errores de validación en un mapa
             Map<String, String> errors = bindingResult.getFieldErrors().stream().collect(Collectors.toMap(
@@ -68,19 +58,25 @@ public class ServicioController {
         }
     }
     
-    @GetMapping("/getServicio/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Servicio> getServicioById(@PathVariable Long id) {
         Servicio servicio = servicioService.findServicioById(id);
         return ResponseEntity.ok(servicio);
     }
 
-    @PutMapping("/updateServicio/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Servicio> updateServicio(
             @PathVariable Long id,
             @RequestBody ServicioDTO servicioDTO) {
         
         Servicio updatedServicio = servicioService.updateServicio(id, servicioDTO);
         return ResponseEntity.ok(updatedServicio);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleeteServicio (@PathVariable Long id){
+        servicioService.deleteServicio(id);
+        return new ResponseEntity<>("Servicio eliminado", HttpStatus.OK);
     }
 
 }

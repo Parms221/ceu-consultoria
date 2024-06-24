@@ -19,4 +19,6 @@ public class UpdateUsuarioDto {
 
     @Size(min = 1, message = "Debe tener al menos un rol")
     private List<String> roles;
+
+    private boolean enabled;
 }

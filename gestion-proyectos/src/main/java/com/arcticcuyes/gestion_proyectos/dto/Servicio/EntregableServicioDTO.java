@@ -1,4 +1,4 @@
-package com.arcticcuyes.gestion_proyectos.dto;
+package com.arcticcuyes.gestion_proyectos.dto.Servicio;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

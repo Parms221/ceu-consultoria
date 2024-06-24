@@ -1,4 +1,4 @@
-package com.arcticcuyes.gestion_proyectos.dto;
+package com.arcticcuyes.gestion_proyectos.dto.Servicio;
 
 import java.util.List;
 
@@ -25,6 +25,6 @@ public class ServicioDTO {
 
     @NotEmpty(message = "La lista de entregables del Servicio no puede estar vacía")
     @Valid
-    private List<@Valid EntregableServicioDTO> entregablesServicio;
+    private List<EntregableServicioDTO> entregablesServicio;
 
 }
