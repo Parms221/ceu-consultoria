@@ -1,10 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Cliente } from "@/types/cliente";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit } from "lucide-react";
-import Link from "next/link";
-import DeleteClientDialog from "../dialogs/delete";
+import DeleteClienteDialog from "../Dialogs/DeleteClienteDialog";
+import AddEditClienteDialog from "../Dialogs/AddEditClienteDialog";
 export const columns: ColumnDef<Cliente>[] = [
   {
     id: "nombre",
@@ -48,12 +46,8 @@ export const columns: ColumnDef<Cliente>[] = [
 
       return (
         <div className="flex gap-2">
-          <Link href={`/clientes/${cliente.cliente_id}`}>
-            <Button className="h-fit py-1.5" variant="link" size={"sm"}>
-              <Edit size={16} />
-            </Button>
-          </Link>
-          <DeleteClientDialog cliente={cliente} />
+          <AddEditClienteDialog cliente={cliente} />
+          <DeleteClienteDialog cliente={cliente} />
         </div>
       );
     },

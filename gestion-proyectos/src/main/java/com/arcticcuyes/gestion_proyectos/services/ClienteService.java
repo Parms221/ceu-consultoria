@@ -66,4 +66,31 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
+    public ClienteJuridico findClienteJuridicoById(Long id) {
+        return clienteJuridicoRepository.findById(id).orElse(null);
+    }
+
+    public ClienteNatural findClienteNaturalById(Long id) {
+        return clienteNaturalRepository.findById(id).orElse(null);
+    }
+
+    public void updateClienteJuridico(ClienteJuridico cliente, ClienteJuridicoDto clienteJuridicoDto) {
+        cliente.setRazonSocial(clienteJuridicoDto.getRazonSocial());
+        cliente.setRuc(clienteJuridicoDto.getRuc());
+        cliente.setEmail(clienteJuridicoDto.getEmail());
+        cliente.setDireccion(clienteJuridicoDto.getDireccion());
+        cliente.setTelefono(clienteJuridicoDto.getTelefono());
+        cliente.setTipo_documento(clienteJuridicoDto.getTipo_documento());
+        clienteJuridicoRepository.save(cliente);
+    }
+
+    public void updateClienteNatural(ClienteNatural cliente, ClienteNaturalDto clienteNaturalDto) {
+        cliente.setNombre(clienteNaturalDto.getNombre());
+        cliente.setApellido(clienteNaturalDto.getApellido());
+        cliente.setDni(clienteNaturalDto.getDni());
+        cliente.setEmail(clienteNaturalDto.getEmail());
+        cliente.setTelefono(clienteNaturalDto.getTelefono());
+        cliente.setTipo_documento(clienteNaturalDto.getTipo_documento());
+        clienteNaturalRepository.save(cliente);
+    }
 }

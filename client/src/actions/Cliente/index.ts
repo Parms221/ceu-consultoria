@@ -4,6 +4,8 @@ import { Cliente } from "@/types/cliente";
 import {
   CreateClienteJuridicoDto,
   CreateClienteNaturalDto,
+  UpdateClienteJuridicoDto,
+  UpdateClienteNaturalDto,
 } from "@/types/cliente/ClienteDto";
 import { revalidateTag } from "next/cache";
 
@@ -15,6 +17,7 @@ export async function getClientes(): Promise<Cliente[]> {
     let data;
     if (response.ok) {
       data = await response.json();
+      console.log(data);
       return data as Cliente[];
     } else {
       console.error("Error: ", response);
@@ -45,6 +48,63 @@ export async function createClienteJuridico(
     return {
       status: "error",
       message: "Error al crear cliente",
+    };
+  }
+}
+
+export async function udpateClienteJuridico(
+  data: UpdateClienteJuridicoDto,
+): Promise<{ status: string; message: string }> {
+  try {
+    const response = await fetcher(
+      "/clientes/juridicos/update/" + data.idCliente,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          ...data,
+          idCliente: undefined,
+        }),
+      },
+    );
+    return returnResponse(
+      response,
+      "clientes",
+      "Cliente actualizado exitosamente",
+      "Error al actualizar el cliente",
+    );
+  } catch (e) {
+    console.log(e);
+    return {
+      status: "error",
+      message: "Error al actualizar cliente",
+    };
+  }
+}
+export async function udpateClienteNatural(
+  data: UpdateClienteNaturalDto,
+): Promise<{ status: string; message: string }> {
+  try {
+    const response = await fetcher(
+      "/clientes/naturales/update/" + data.idCliente,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          ...data,
+          idCliente: undefined,
+        }),
+      },
+    );
+    return returnResponse(
+      response,
+      "clientes",
+      "Cliente actualizado exitosamente",
+      "Error al actualizar el cliente",
+    );
+  } catch (e) {
+    console.log(e);
+    return {
+      status: "error",
+      message: "Error al actualizar cliente",
     };
   }
 }

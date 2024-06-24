@@ -2,7 +2,7 @@ import React from "react";
 
 import { DataTable } from "./partials/DataTable/data-table";
 import { columns } from "./partials/DataTable/columns";
-import NewClienteDialog from "./partials/dialogs/NewClient/dialog";
+import AddEditClienteDialog from "./partials/Dialogs/AddEditClienteDialog";
 import { getClientes } from "@/actions/Cliente";
 
 export default async function Clientes() {
@@ -14,7 +14,7 @@ export default async function Clientes() {
           Clientes
         </h2>
 
-        <NewClienteDialog />
+        <AddEditClienteDialog />
       </div>
 
       <section className="flex flex-col gap-8">

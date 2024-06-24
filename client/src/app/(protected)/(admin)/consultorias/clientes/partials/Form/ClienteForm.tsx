@@ -22,9 +22,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { createClienteJuridico, createClienteNatural } from "@/actions/Cliente";
+import {
+  createClienteJuridico,
+  createClienteNatural,
+  udpateClienteJuridico,
+  udpateClienteNatural,
+} from "@/actions/Cliente";
+import { Cliente } from "@/types/cliente";
 
-export default function NewClienteForm() {
+type Props = {
+  cliente?: Cliente;
+};
+export default function ClienteForm({ cliente = undefined }: Props) {
   const formSchema = z
     .object({
       tipo_documento: z.string().regex(/DNI|RUC/),
@@ -105,15 +114,18 @@ export default function NewClienteForm() {
     resolver: zodResolver(formSchema),
     mode: "onSubmit",
     defaultValues: {
-      tipo_documento: "DNI",
-      nombre: "",
-      apellido: "",
-      dni: "",
-      telefono: "",
-      email: "",
-      direccion: "",
-      razonSocial: "",
-      ruc: "",
+      tipo_documento: cliente ? cliente.tipo_documento : "DNI",
+      nombre: cliente && cliente.tipo_documento == "DNI" ? cliente.nombre : "",
+      apellido:
+        cliente && cliente.tipo_documento == "DNI" ? cliente.apellido : "",
+      dni: cliente && cliente.tipo_documento == "DNI" ? cliente.dni : "",
+      telefono: cliente ? cliente.telefono : "",
+      email: cliente ? cliente.email : "",
+      direccion:
+        cliente && cliente.tipo_documento == "RUC" ? cliente.direccion : "",
+      razonSocial:
+        cliente && cliente.tipo_documento == "RUC" ? cliente.razonSocial : "",
+      ruc: cliente && cliente.tipo_documento == "RUC" ? cliente.ruc : "",
     },
   });
   const watch = form.watch();
@@ -137,23 +149,47 @@ export default function NewClienteForm() {
       const tipo_documento = values.tipo_documento;
       let res = undefined;
       if (tipo_documento === "RUC") {
-        res = await createClienteJuridico({
-          tipo_documento: values.tipo_documento,
-          ruc: values.ruc!,
-          razonSocial: values.razonSocial!,
-          direccion: values.direccion!,
-          email: values.email!,
-          telefono: values.telefono!,
-        });
+        if (cliente) {
+          res = await udpateClienteJuridico({
+            idCliente: cliente.idCliente,
+            tipo_documento: values.tipo_documento,
+            ruc: values.ruc!,
+            razonSocial: values.razonSocial!,
+            direccion: values.direccion!,
+            email: values.email!,
+            telefono: values.telefono!,
+          });
+        } else {
+          res = await createClienteJuridico({
+            tipo_documento: values.tipo_documento,
+            ruc: values.ruc!,
+            razonSocial: values.razonSocial!,
+            direccion: values.direccion!,
+            email: values.email!,
+            telefono: values.telefono!,
+          });
+        }
       } else {
-        res = await createClienteNatural({
-          tipo_documento: values.tipo_documento,
-          dni: values.dni!,
-          nombre: values.nombre!,
-          apellido: values.apellido!,
-          email: values.email!,
-          telefono: values.telefono!,
-        });
+        if (cliente) {
+          res = await udpateClienteNatural({
+            idCliente: cliente.idCliente,
+            tipo_documento: values.tipo_documento,
+            dni: values.dni!,
+            nombre: values.nombre!,
+            apellido: values.apellido!,
+            email: values.email!,
+            telefono: values.telefono!,
+          });
+        } else {
+          res = await createClienteNatural({
+            tipo_documento: values.tipo_documento,
+            dni: values.dni!,
+            nombre: values.nombre!,
+            apellido: values.apellido!,
+            email: values.email!,
+            telefono: values.telefono!,
+          });
+        }
       }
       if (res.status === "success") {
         toast.success(res.message);
@@ -180,6 +216,7 @@ export default function NewClienteForm() {
             <FormItem>
               <FormLabel>Tipo De Documento</FormLabel>
               <Select
+                disabled={cliente ? true : false}
                 name="tipo_documento"
                 onValueChange={(e) => {
                   field.onChange(e);

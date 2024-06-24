@@ -2,9 +2,11 @@ package com.arcticcuyes.gestion_proyectos.controllers;
 
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
+import com.arcticcuyes.gestion_proyectos.dto.Usuario.UpdateUsuarioDto;
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
+import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.services.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,28 @@ public class ClienteController {
     public ResponseEntity<ClienteJuridico> createClienteJuridico(@RequestBody @Valid ClienteJuridicoDto clienteJuridicoDto) {
         ClienteJuridico createdCliente = clienteService.saveClienteJuridico(clienteJuridicoDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCliente);
+    }
+
+    @PutMapping("/juridicos/update/{id}")
+    public ResponseEntity<String> updateJuridicos(@PathVariable long id, @RequestBody @Valid ClienteJuridicoDto clienteJuridicoDto) {
+        ClienteJuridico found = clienteService.findClienteJuridicoById(id);
+        if (found != null) {
+            clienteService.updateClienteJuridico(found, clienteJuridicoDto);
+            return new ResponseEntity<>("Cliente actualizado", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Cliente no encontrado", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/naturales/update/{id}")
+    public ResponseEntity<String> updateNaturales(@PathVariable long id, @RequestBody @Valid ClienteNaturalDto clienteNaturalDto) {
+        ClienteNatural found = clienteService.findClienteNaturalById(id);
+        if (found != null) {
+            clienteService.updateClienteNatural(found, clienteNaturalDto);
+            return new ResponseEntity<>("Cliente actualizado", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Cliente no encontrado", HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/delete/{id}")

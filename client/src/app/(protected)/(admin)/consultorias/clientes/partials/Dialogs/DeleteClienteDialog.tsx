@@ -15,7 +15,7 @@ import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function DeleteClientDialog({ cliente }: { cliente: Cliente }) {
+export default function DeleteClienteDialog({ cliente }: { cliente: Cliente }) {
   const [openDialog, setOpenDialog] = useState(false);
 
   async function dropCliente(id: number, name: string) {
