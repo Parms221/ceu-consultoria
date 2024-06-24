@@ -14,7 +14,7 @@ public class ClienteJuridico extends Cliente {
     private String razonSocial;
 
     @Column(nullable = true, unique = true, length = 11)
-    private char ruc;
+    private String ruc;
 
     @Basic
     private String direccion;
