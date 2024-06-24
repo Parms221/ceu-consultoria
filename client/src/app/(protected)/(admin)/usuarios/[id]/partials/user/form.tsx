@@ -3,27 +3,38 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createUsuario, updateUsuarioDetails } from "@/actions/Usuario"
+import { updateUsuarioDetails } from "@/actions/Usuario"
 import { toast } from "sonner"
 import { UpdateUsuarioDetailsDto, Usuario } from "@/types/usuario"
+import { Rol } from "@/types/rol"
+import { useAppContext } from "@/app/(protected)/app.context"
+import { getReadableRole } from "@/lib/rol"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
+    const { roles } = useAppContext()
+
     const formSchema = z.object({
         name: z.string().min(2).max(50),
-        roles: z.enum(["ROLE_CONSULTOR", "ROLE_CLIENTE"]),
+        roles: z.enum(
+            roles.map((rol) => rol.rol as Rol["rol"]) as [string, ...string[]],
+            { message: "El rol seleccionado no es válido"}
+        ),
         email: z.string().email(),
+        enabled: z.boolean(),
       })
 
       const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
           name: usuario.name,
-          roles: usuario.roles[0].rol as "ROLE_CONSULTOR" | "ROLE_CLIENTE",
+          roles: usuario.roles[0].rol as Rol["rol"],
           email: usuario.email,
+          enabled: usuario.enabled,
         },
       })
 
@@ -31,7 +42,10 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
         // TODO Validación de datos con zod (formSchema.parse(formData))
         try{
             const rawData = Object.fromEntries(formData.entries())
-            const newUser = {...rawData, roles: [rawData.roles]} as UpdateUsuarioDetailsDto
+            const newUser = {...rawData,
+                roles: [rawData.roles],
+                enabled: rawData.enabled ? true : false
+            } as UpdateUsuarioDetailsDto
             const response = await updateUsuarioDetails(usuario.id, newUser) 
             
             if(response.status === "success"){
@@ -47,7 +61,7 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
     return (
        <Form {...form}>
         <form action={onSubmit} className="flex flex-col gap-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 items-end">
                 <FormField 
                     control={form.control}
                     name="name"
@@ -74,8 +88,11 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="ROLE_CONSULTOR">Consultor</SelectItem>
-                                <SelectItem value="ROLE_CLIENTE">Cliente</SelectItem>
+                                {roles.map((rol) => (
+                                    <SelectItem key={rol.idRol} value={rol.rol}>
+                                        {getReadableRole(rol.rol)}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                             </Select>
                             <FormMessage />
@@ -91,6 +108,28 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
                             <FormControl>
                                 <Input  placeholder="email@example.com" {...field} />
                             </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField 
+                    control={form.control}
+                    name="enabled"
+                    render = {({field}) => (
+                        <FormItem>
+                            <div className="mt-4 flex items-center gap-2">
+                                <FormLabel>Activo</FormLabel>
+                                <FormControl>
+                                    <Checkbox
+                                        name="enabled"
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                            </div>
+                            <FormDescription>
+                                Si la casilla está marcada, el usuario podrá acceder al sistema.
+                            </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}

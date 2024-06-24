@@ -119,7 +119,8 @@ function returnResponse(response : Response, tag : string, successMessage: strin
         message: successMessage
     }
   }
-      return {
+  console.error(response)
+  return {
             status: "error",
             message: errorMessage
     }

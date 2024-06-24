@@ -51,6 +51,7 @@ public class UsuarioController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable long id, @RequestBody @Valid UpdateUsuarioDto newUsuarioDto){
+        System.out.println("ID: " + newUsuarioDto);
         Usuario found = usuarioService.findById(id);
         if (found != null){
             usuarioService.updateUsuario(found, newUsuarioDto);

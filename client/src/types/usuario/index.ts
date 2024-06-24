@@ -1,3 +1,5 @@
+import { Rol } from '@/types/rol'
+
 export * from './UsuarioDto'
 
 export type Usuario = {
@@ -7,8 +9,5 @@ export type Usuario = {
     enabled: boolean
     createdAt: string
     updatedAt: string
-    roles: {
-        idRol: number
-        rol: string
-    }[]
+    roles: Rol[]
 }

@@ -7,6 +7,7 @@ import { Edit, Trash2Icon } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import DeleteUserDialog from "../dialogs/delete"
+import '@github/relative-time-element';
 
 function getBadgeByRol(rol: string){
     switch(rol){
@@ -65,6 +66,42 @@ export const columns: ColumnDef<Usuario>[] = [
           </Badge>
       )
     } 
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({column}) => (
+      <DataTableColumnHeader column={column} title="Última actualización" />
+    ),
+    cell: ({row}) => {
+      const date = new Date(row.original.updatedAt)
+      return (
+        <relative-time 
+          datetime={date.toISOString()}
+          lang="es"
+        >
+          <div className="w-full h-4 bg-accent animate-pulse"></div>
+        </relative-time>
+      )
+    }
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({column}) => (
+      <DataTableColumnHeader column={column} 
+        title="Fecha de creación" 
+      />
+    ),
+    cell: ({row}) => {
+      const date = new Date(row.original.createdAt)
+      return(
+        <relative-time
+          datetime={date.toISOString()}
+          lang="es"
+        >
+          <div className="w-full h-4 bg-accent animate-pulse"></div>
+        </relative-time>
+      )
+    }
   },
   {
     id: "actions",

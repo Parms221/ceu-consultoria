@@ -53,8 +53,8 @@ export function SidebarSubLink({
   return (
     <Link
       href={href}
-      className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-        pathname === href && "text-white"
+      className={`group relative flex items-center gap-2.5 rounded-md px-4 py-1.5 font-medium text-neutral-300 duration-300 ease-in-out hover:text-white ${
+        pathname === href && "text-whiter bg-ceu-azul"
       } ${className}`}
     >
       {children}

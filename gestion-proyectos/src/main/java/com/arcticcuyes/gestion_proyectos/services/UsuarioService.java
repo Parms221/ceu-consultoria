@@ -59,15 +59,15 @@ public class UsuarioService {
     }
 
     public void updateUsuario(Usuario current, UpdateUsuarioDto newUsuarioDto){
-        // TODO : actualizar rol
+        // TODO : CORREGIR ERROR AL ACTUALIZAR EL ROL 
         current.setEmail(newUsuarioDto.getEmail());
         current.setName(newUsuarioDto.getName());
+        current.setEnabled(newUsuarioDto.isEnabled());
         Set<Rol> roles = new HashSet<>();
         for (String rol : newUsuarioDto.getRoles()){
             Rol objRol = roleRepository.findByRol(rol);
             roles.add(objRol);
         }
-        current.getRoles().clear();
         current.setRoles(roles);
         uRepository.save(current);
     }

@@ -10,6 +10,7 @@ export type UpdateUsuarioDetailsDto = {
     name: string,
     email: string,
     roles: string[]  
+    enabled: boolean
 }
 
 export type UpdatePasswordDto = {

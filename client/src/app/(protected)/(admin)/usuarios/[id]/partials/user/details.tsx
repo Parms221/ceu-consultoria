@@ -28,7 +28,7 @@ export default function UserDetails({ usuario } : { usuario : Usuario}) {
             </div>
             {/* User name and rol */}
             <div className="mt-2">
-              <h3 className="mb-1.5 text-2xl font-semibold text-black dark:text-white">
+              <h3 className="text-2xl font-semibold text-black dark:text-white">
                 {usuario.name}
               </h3>
               <p className="font-medium">
@@ -36,13 +36,17 @@ export default function UserDetails({ usuario } : { usuario : Usuario}) {
               </p>     
             </div>
         </header>
-        <div className="space-y-4 mt-4 [&>article>h4]:text-ceu-celeste">
+        <div className="space-y-4 mt-4
+        [&>article>h4]:text-ceu-celeste 
+          [&>article>h4]:font-bold
+          [&>article>h4]:text-lg
+          ">
           <article>
-              <h4 className="text-xl">Datos de usuario</h4>
+              <h4>Datos de usuario</h4>
               <UserDetailsForm  usuario={usuario}/>
             </article>
             <article>
-              <h4 className="text-xl">Contraseña</h4>
+              <h4>Contraseña</h4>
               <UserPasswordReset  usuario={usuario}/>
             </article>  
         </div> 

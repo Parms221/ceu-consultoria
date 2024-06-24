@@ -2,11 +2,9 @@ package com.arcticcuyes.gestion_proyectos.controllers;
 
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
-import com.arcticcuyes.gestion_proyectos.dto.Usuario.UpdateUsuarioDto;
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
-import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.services.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
