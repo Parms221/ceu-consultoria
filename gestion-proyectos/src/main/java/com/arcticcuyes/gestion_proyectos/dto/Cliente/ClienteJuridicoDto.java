@@ -16,7 +16,7 @@ public class ClienteJuridicoDto {
 
     @NotEmpty(message = "El RUC es obligatorio")
     @Size(min = 11, max = 11, message = "El RUC debe tener 11 digitos")
-    private char ruc;
+    private String ruc;
 
     @Email(message = "El email no es válido")
     private String email;

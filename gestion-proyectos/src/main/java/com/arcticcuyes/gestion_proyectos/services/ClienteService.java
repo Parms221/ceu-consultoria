@@ -2,16 +2,18 @@ package com.arcticcuyes.gestion_proyectos.services;
 
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
+import com.arcticcuyes.gestion_proyectos.models.Cliente;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.repositories.ClienteJuridicoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ClienteNaturalRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -26,16 +28,16 @@ public class ClienteService {
     private ClienteJuridicoRepository clienteJuridicoRepository;
 
 
-    public Page<ClienteNatural> findAll(Pageable pageable) {
-        return clienteNaturalRepository.findAll(pageable);
+    public List<Cliente> findAll() {
+        return (List<Cliente>) clienteRepository.findAll();
     }
 
-    public Page<ClienteNatural> findAllClientesNaturales(Pageable pageable) {
-        return clienteNaturalRepository.findAll(pageable);
+    public List<ClienteNatural> findAllClientesNaturales() {
+        return (List<ClienteNatural>) clienteNaturalRepository.findAll();
     }
 
-    public Page<ClienteJuridico> findAllClientesJuridicos(Pageable pageable) {
-        return clienteJuridicoRepository.findAll(pageable);
+    public List<ClienteJuridico> findAllClientesJuridicos() {
+        return (List<ClienteJuridico>) clienteJuridicoRepository.findAll();
     }
 
     public ClienteNatural saveClienteNatural(ClienteNaturalDto clienteNaturalDto) {
@@ -60,11 +62,8 @@ public class ClienteService {
         return clienteJuridicoRepository.save(clienteJuridico);
     }
 
-    public void deleteClienteNatural(Long id) {
-        clienteNaturalRepository.deleteById(id);
+    public void deleteCliente(Long id) {
+        clienteRepository.deleteById(id);
     }
 
-    public void deleteClienteJuridico(Long id) {
-        clienteJuridicoRepository.deleteById(id);
-    }
 }
