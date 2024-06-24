@@ -13,13 +13,20 @@ import { toast } from "sonner"
 import { CreateUsuarioDto } from "@/types/usuario"
 import { useEffect, useState } from "react"
 import { Copy } from "lucide-react"
+import { useAppContext } from "@/app/(protected)/app.context"
+import { Rol } from "@/types/rol"
+import { getReadableRole } from "@/lib/rol"
 
 export default function NewUserForm() {
     const [generatingPassword, setGeneratingPassword] = useState(false)
+    const context = useAppContext()
 
     const formSchema = z.object({
         name: z.string().min(2).max(50),
-        roles: z.enum(["ROLE_CONSULTOR", "ROLE_CLIENTE"]),
+        roles: z.enum(
+          context.roles.map((rol) => rol.rol as Rol["rol"]) as [string, ...string[]],
+          { message: "El rol seleccionado no es válido"}
+        ),
         email: z.string().email(),
         password: z.string().min(6).max(20),
       })
@@ -110,8 +117,15 @@ export default function NewUserForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="ROLE_CONSULTOR">Consultor</SelectItem>
-                            <SelectItem value="ROLE_CLIENTE">Cliente</SelectItem>
+                            {
+                              context.roles.map((rol) => {
+                                return (
+                                  <SelectItem key={rol.idRol} value={rol.rol}>
+                                    {getReadableRole(rol.rol)}
+                                  </SelectItem>
+                                )
+                              })
+                            }
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -145,8 +159,12 @@ export default function NewUserForm() {
                                 variant={"link"}
                                 type="button"
                                 onClick={() => {
-                                  navigator.clipboard.writeText(field.value)
-                                  toast.success("Contraseña copiada al portapapeles")
+                                  if(field.value){
+                                    navigator.clipboard.writeText(field.value)
+                                    toast.success("Contraseña copiada al portapapeles")
+                                  }else{
+                                    toast.info("Debe generar una contraseña primero")
+                                  }
                                 }}
                               >
                                 <Copy />
