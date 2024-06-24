@@ -17,7 +17,7 @@ function getBadgeByRol(rol: string){
       case "ROLE_CONSULTOR":
         return <Badge variant="default">Consultor</Badge>
       default:
-        return <Badge variant="outline">Cliente</Badge>
+        return <Badge variant="outline">Sin rol</Badge>
     }
 }
 
@@ -46,8 +46,8 @@ export const columns: ColumnDef<Usuario>[] = [
       return original.some((rol) => rol.rol.toLowerCase() === value) 
     },
     sortingFn: (rowA, rowB) => {
-      const roleA = rowA.original.roles[0].rol.toLowerCase();
-      const roleB = rowB.original.roles[0].rol.toLowerCase();
+      const roleA = rowA.original.roles && rowA.original.roles[0].rol.toLowerCase();
+      const roleB = rowB.original.roles && rowB.original.roles[0].rol.toLowerCase();
       return roleA > roleB ? 1 : roleA < roleB ? -1 : 0;
     },
   },
@@ -81,7 +81,7 @@ export const columns: ColumnDef<Usuario>[] = [
               <Edit size={16}/>
             </Button>
           </Link>
-          <DeleteUserDialog user={user} />
+          { user.roles[0].rol !== "ROLE_ADMIN" && <DeleteUserDialog user={user} /> }
         </div>
       )
     },

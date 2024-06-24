@@ -24,6 +24,9 @@ public class AuthController {
     @PostMapping(path="/login", consumes = "application/json", produces = "application/json")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         AuthResponse authRes = authService.login(request);
+        if(authRes.getToken() == null){
+            return ResponseEntity.status(401).body(authRes);
+        }
         return ResponseEntity.ok(authRes);
     }
     

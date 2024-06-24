@@ -10,13 +10,13 @@ import lombok.EqualsAndHashCode;
 @DiscriminatorValue("JURIDICO")
 public class ClienteJuridico extends Cliente {
 
-    @Column()
+    @Basic
     private String razonSocial;
 
-    @Column(unique = true, length = 11)
+    @Column(nullable = true, unique = true, length = 11)
     private char ruc;
 
-    @Column()
+    @Basic
     private String direccion;
 
     @OneToOne(mappedBy = "clienteJuridico", cascade = CascadeType.ALL)

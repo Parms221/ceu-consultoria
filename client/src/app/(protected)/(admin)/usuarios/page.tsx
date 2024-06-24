@@ -2,30 +2,8 @@ import React from "react";
 
 import { DataTable } from "./partials/DataTable/data-table";
 import { columns } from "./partials/DataTable/columns"; 
-import { Usuario } from "@/types/usuario";
 import NewUserDialog from "./partials/dialogs/NewUser/dialog";
-
-
-async function getUsuarios(): Promise<Usuario[] | undefined> {
-    // Mocks usuarios
-    try {
-      const response = await fetch ("http://localhost:8800/usuarios/", {
-        method: "GET",
-        headers: {
-          "Authorization": "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwibm9tYnJlIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUub3JnIiwiaWF0IjoxNzE4NzQ5MTQ2LCJleHAiOjE3NTAyODUxNDYsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCJ9.fjJS1_uNgH-t0l9cdP5l03bW_4Q750_7eqTnSSU8Xvl-7vtSb49WZfnJsoaJd-mz"
-        }
-      }) 
-      let data
-      if (response.ok){
-        data = await response.json()
-        return data as Usuario[]
-      }else {
-        console.error("Error: ", response.statusText)
-      }
-    }catch(error) {
-        console.error(error);
-    }
-  }
+import { getUsuarios } from "@/actions/Usuario";
 
 export default async function Usuarios() {
     const usuarios = await getUsuarios();

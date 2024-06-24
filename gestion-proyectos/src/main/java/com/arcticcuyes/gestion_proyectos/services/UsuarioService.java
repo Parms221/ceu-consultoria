@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.arcticcuyes.gestion_proyectos.dto.Usuario.UpdatePasswordDto;
+import com.arcticcuyes.gestion_proyectos.dto.Usuario.UpdateUsuarioDto;
 import com.arcticcuyes.gestion_proyectos.dto.Usuario.UsuarioDto;
 import com.arcticcuyes.gestion_proyectos.models.Rol;
 import com.arcticcuyes.gestion_proyectos.models.Usuario;
@@ -39,11 +41,42 @@ public class UsuarioService {
         newUser.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
         Set<Rol> roles = new HashSet<>();
         for (String rol : usuarioDto.getRoles()){
-            System.out.println("ROL ++++ : " + rol);
             roles.add(roleRepository.findByRol(rol));
         }
         newUser.setRoles(roles);
         uRepository.save(newUser);
         return newUser;
+    }
+
+    public void updatePassword(Usuario current, UpdatePasswordDto passwordDto) throws Exception{
+        System.out.println("CURRENT PASSWORD **** " + current.getPassword());
+        if (!passwordEncoder.matches(passwordDto.getCurrentPassword(), current.getPassword())){
+            throw new Exception("Contraseña actual incorrecta");
+        }else {
+            current.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+            uRepository.save(current);
+        }
+    }
+
+    public void updateUsuario(Usuario current, UpdateUsuarioDto newUsuarioDto){
+        // TODO : actualizar rol
+        current.setEmail(newUsuarioDto.getEmail());
+        current.setName(newUsuarioDto.getName());
+        Set<Rol> roles = new HashSet<>();
+        for (String rol : newUsuarioDto.getRoles()){
+            Rol objRol = roleRepository.findByRol(rol);
+            roles.add(objRol);
+        }
+        current.getRoles().clear();
+        current.setRoles(roles);
+        uRepository.save(current);
+    }
+
+    public void delete(long id){
+        uRepository.deleteById(id);
+    }
+
+    public Usuario findById(long id){
+        return uRepository.findById(id).orElse(null);
     }
 }
