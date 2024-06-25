@@ -1,3 +1,4 @@
+"use client";
 export async function fetcherLocal(urlAPI: string, init?: RequestInit) {
   return fetch(`${process.env.BACK_URI}${urlAPI}`, {
     ...init,

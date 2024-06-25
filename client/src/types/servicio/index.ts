@@ -1,5 +1,5 @@
 type Entregable = {
-  titulo: string;
+  descripcion: string;
 };
 
 export type Servicio = {

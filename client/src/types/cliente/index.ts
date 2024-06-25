@@ -33,3 +33,11 @@ type ClienteJuridico = {
 };
 
 export type Cliente = ClienteNatural | ClienteJuridico;
+
+export function GetClienteName(client: Cliente) {
+  if (client.tipo_documento == "DNI") {
+    return `${client.nombre} ${client.apellido}`;
+  } else {
+    return client.razonSocial;
+  }
+}

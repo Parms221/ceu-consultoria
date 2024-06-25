@@ -7,22 +7,21 @@
  */
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
+
 import {
   $getSelection,
   $isRangeSelection,
-  CAN_REDO_COMMAND,
-  CAN_UNDO_COMMAND,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
-  REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND,
 } from "lexical";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, ButtonProps, buttonVariants } from "@/components/ui/button";
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import {
   FontBoldIcon,
   FontItalicIcon,
+  Link1Icon,
   StrikethroughIcon,
   TextAlignCenterIcon,
   TextAlignJustifyIcon,
@@ -34,8 +33,9 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 import type { VariantProps } from "class-variance-authority";
-
-const LowPriority = 1;
+import { getSelectedNode, LowPriority } from "@/components/ui/editor/lib";
+import { FloatingLinkEditor } from "@/components/ui/editor/floating-link-editor";
+import { createPortal } from "react-dom";
 
 function Divider() {
   return <div className="w-[1px] bg-boxdark/10" />;
@@ -69,6 +69,10 @@ export default function ToolbarPlugin() {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [blockType, setBlockType] = useState("paragraph");
+  const [isLink, setIsLink] = useState(false);
+  const [selectedEventTypes, setSelectedEventTypes] = useState([]);
+  let allSelectedEvents = [...selectedEventTypes];
 
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -78,8 +82,17 @@ export default function ToolbarPlugin() {
       setIsItalic(selection.hasFormat("italic"));
       setIsUnderline(selection.hasFormat("underline"));
       setIsStrikethrough(selection.hasFormat("strikethrough"));
+
+      // Update links
+      const node = getSelectedNode(selection);
+      const parent = node.getParent();
+      if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsLink(true);
+      } else {
+        setIsLink(false);
+      }
     }
-  }, []);
+  }, [editor]);
 
   useEffect(() => {
     return mergeRegister(
@@ -98,6 +111,15 @@ export default function ToolbarPlugin() {
       ),
     );
   }, [editor, $updateToolbar]);
+
+  const insertLink = useCallback(() => {
+    console.log("aaaaasdasdasa");
+    if (!isLink) {
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, "https://");
+    } else {
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    }
+  }, [editor, isLink]);
 
   return (
     <div className="flex" ref={toolbarRef}>
@@ -137,6 +159,15 @@ export default function ToolbarPlugin() {
       >
         <StrikethroughIcon />
       </ToolBarButton>
+      {/*<ToolBarButton*/}
+      {/*  active={isLink}*/}
+      {/*  onClick={insertLink}*/}
+      {/*  aria-label="Insert Link"*/}
+      {/*>*/}
+      {/*  <Link1Icon />*/}
+      {/*</ToolBarButton>*/}
+      {/*{isLink &&*/}
+      {/*  createPortal(<FloatingLinkEditor editor={editor} />, document.body)}*/}
       <Divider />
       <ToolBarButton
         onClick={() => {
