@@ -16,7 +16,7 @@ export default function DescripcionProjectData() {
     <div>
       <FormField
         control={form.control}
-        name="title"
+        name="description"
         render={({ field, formState }) => (
           <FormItem className="mt-3">
             <FormLabel>Descripción del proyecto</FormLabel>
