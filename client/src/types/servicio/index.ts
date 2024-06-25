@@ -1,5 +1,5 @@
-type Entregable = {
-  descripcion: string;
+export type Entregable = {
+  titulo: string;
 };
 
 export type Servicio = {
@@ -7,5 +7,5 @@ export type Servicio = {
   precio: number;
   titulo: string;
   descripcion: string;
-  entregablesServicio: Entregable[];
+  entregablesDelServicio: Entregable[];
 };

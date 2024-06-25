@@ -1,8 +1,7 @@
 export type CreateServicioDto = {
   descripcion: string;
   precio: number;
-  entregablesServicio: {
-    descripcion: string;
+  entregablesDelServicio: {
     titulo: string;
   }[];
 };
@@ -11,8 +10,7 @@ export type UpdateServicioDto = {
   idServicio: number;
   descripcion: string;
   precio: number;
-  entregablesServicio: {
-    descripcion: string;
+  entregablesDelServicio: {
     titulo: string;
   }[];
 };
