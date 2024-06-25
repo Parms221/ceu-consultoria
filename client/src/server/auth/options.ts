@@ -1,3 +1,5 @@
+import { Rol } from "@/types/rol";
+import { Usuario } from "@/types/usuario";
 import { AuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cookies } from "next/headers";
@@ -8,6 +10,7 @@ interface LoginResponse {
 
 export interface PayloadResponse {
   sub: string;
+  roles : Rol[];
   nombre: string;
   email: string;
   iat: number;
@@ -46,7 +49,7 @@ export const authOptions: AuthOptions = {
         }
 
         const data: LoginResponse = await response.json();
-
+        
         const payloadString = atob(data.token.split(".")[1]);
 
         cookies().set(ACCESS_TOKEN_COOKIE, data.token, {
@@ -63,8 +66,9 @@ export const authOptions: AuthOptions = {
           id: payload.sub,
           name: payload.nombre,
           email: payload.email,
+          roles: payload.roles,
           image: "https://cdn-icons-png.flaticon.com/512/3135/3135768.png",
-        } as User;
+        };
       },
     }),
   ],
@@ -72,4 +76,30 @@ export const authOptions: AuthOptions = {
     signIn: "/auth/login",
     newUser: undefined,
   },
+  events: {
+    signIn: async ({user, isNewUser}) => {
+      console.log("User signed in: ", user);
+    }
+  },
+  callbacks: {
+    session: async ({session, token}) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          roles: token.roles,
+        }
+      };
+    },
+    jwt: async ({token, user }) => {
+      if(user){
+        const u = user as User & Usuario //Esto no sé si es correcto xD pero funciona
+        return {
+          ...token,
+          roles : u.roles,
+        }
+      }
+      return token
+    }
+  }
 };
