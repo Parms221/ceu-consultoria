@@ -55,7 +55,7 @@ public class Proyecto {
     private Double precio;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_cliente", nullable = false)
+    @JoinColumn(name="id_cliente", nullable = true)
     private Cliente cliente;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,7 +63,8 @@ public class Proyecto {
     private Servicio servicio;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_estado", nullable = false)
+    //@JoinColumn(name="id_estado", nullable = false)
+    @JoinColumn(name="id_estado", nullable = true)
     private Estado estado;
 
     @CreationTimestamp(source = SourceType.DB)
