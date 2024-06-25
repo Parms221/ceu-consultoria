@@ -25,6 +25,6 @@ public class ServicioDTO {
 
     @NotEmpty(message = "La lista de entregables del Servicio no puede estar vacía")
     @Valid
-    private List<EntregableServicioDTO> entregablesServicio;
+    private List<EntregableServicioDTO> entregablesDelServicio;
 
 }

@@ -42,8 +42,8 @@ public class ServicioService {
 
         // Guardar los EntregableServicio asociados
         List<EntregableServicio> entregables = new ArrayList<>();
-        if (servicioDTO.getEntregablesServicio() != null) {
-            for (EntregableServicioDTO entregableDTO : servicioDTO.getEntregablesServicio()) {
+        if (servicioDTO.getEntregablesDelServicio() != null) {
+            for (EntregableServicioDTO entregableDTO : servicioDTO.getEntregablesDelServicio()) {
 
                 // Crear el objeto EntregableServicio y establecer la relación bidireccional
                 EntregableServicio entregable = new EntregableServicio();
@@ -73,8 +73,8 @@ public class ServicioService {
 
         // Manejar los EntregableServicio asociados
         List<EntregableServicio> updatedEntregables = new ArrayList<>();
-        if (servicioDTO.getEntregablesServicio() != null) {
-            for (EntregableServicioDTO entregableDTO : servicioDTO.getEntregablesServicio()) {
+        if (servicioDTO.getEntregablesDelServicio() != null) {
+            for (EntregableServicioDTO entregableDTO : servicioDTO.getEntregablesDelServicio()) {
                 EntregableServicio entregable;
                 if (entregableDTO.getId() != null) {
                     // Actualizar el entregable existente

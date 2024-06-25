@@ -31,7 +31,7 @@ export async function createServicio(
   data: CreateServicioDto,
 ): Promise<{ status: string; message: string }> {
   try {
-    const response = await fetcher("/servicios/juridicos/create", {
+    const response = await fetcher("/servicios/create", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -39,7 +39,7 @@ export async function createServicio(
       response,
       "servicios",
       "Servicio creado exitosamente",
-      "Error al crear servicio jurídico",
+      "Error al crear un nuevo servicio",
     );
   } catch (e) {
     console.log(e);
@@ -55,7 +55,7 @@ export async function udpateServicio(
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher(
-      "/servicios/juridicos/update/" + data.idServicio,
+      "/servicios/update/" + data.idServicio,
       {
         method: "PUT",
         body: JSON.stringify({

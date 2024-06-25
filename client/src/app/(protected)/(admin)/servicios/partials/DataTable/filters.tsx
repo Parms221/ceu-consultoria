@@ -16,29 +16,11 @@ export default function Filters<TData>({
         <Input
           placeholder="Servicio"
           name="nombre"
-          value={(table.getColumn("nombre")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("titulo")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("nombre")?.setFilterValue(event.target.value)
+            table.getColumn("titulo")?.setFilterValue(event.target.value)
           }
           className="w-full"
-        />
-      </div>
-      <div>
-        <Label>Tipo de Documento</Label>
-        <Combobox
-          options={[
-            {
-              label: "RUC",
-              value: "RUC",
-            },
-            {
-              label: "DNI",
-              value: "DNI",
-            },
-          ]}
-          onSelect={(value) => {
-            table.getColumn("tipo_documento")?.setFilterValue(value);
-          }}
         />
       </div>
     </div>

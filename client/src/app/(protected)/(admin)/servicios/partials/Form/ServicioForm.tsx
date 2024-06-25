@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { createServicio, udpateServicio } from "@/actions/Servicio";
-import { Servicio } from "@/types/servicio";
+import { Entregable, Servicio } from "@/types/servicio";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 
@@ -37,7 +37,7 @@ export default function ServicioForm({ servicio = undefined }: Props) {
       })
       .int()
       .positive(),
-    entregablesServicio: z
+    entregablesDelServicio: z
       .array(
         z.object({
           titulo: z.string({
@@ -55,13 +55,13 @@ export default function ServicioForm({ servicio = undefined }: Props) {
       titulo: servicio ? servicio.titulo : "",
       precio: servicio ? servicio.precio : 0,
       descripcion: servicio ? servicio.descripcion : "",
-      entregablesServicio: servicio ? servicio.entregablesServicio : [],
+      entregablesDelServicio: servicio ? servicio.entregablesDelServicio : [] as Entregable[],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "entregablesServicio",
+    name: "entregablesDelServicio",
   });
   const dialogClose = () => {
     document.getElementById("closeDialog")?.click();
@@ -153,7 +153,7 @@ export default function ServicioForm({ servicio = undefined }: Props) {
           <div key={field.id} className="col-span-full">
             <FormField
               control={form.control}
-              name={`entregablesServicio.${index}.titulo`}
+              name={`entregablesDelServicio.${index}.titulo`}
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
