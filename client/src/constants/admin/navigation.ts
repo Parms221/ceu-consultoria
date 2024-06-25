@@ -3,7 +3,7 @@ import { PieChart, Blocks, SquareStack, Users2Icon, List, SquareUser, Folder, Us
 
 export const MENU : Navigation[] = [
     {  
-        href: "/dashboard",
+        href: "/",
         icon: PieChart,
         label: "Dashboard",
     },

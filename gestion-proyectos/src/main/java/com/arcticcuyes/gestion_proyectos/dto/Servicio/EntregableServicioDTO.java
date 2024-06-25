@@ -15,8 +15,6 @@ public class EntregableServicioDTO {
     @NotEmpty(message = "El título del entregable es obligatorio")
     private String titulo;
 
-    @NotEmpty(message = "La descripción del entregable es obligatoria")
-    private String descripcion;
-
-
+    // @NotEmpty(message = "La descripción del entregable es obligatoria")
+    // private String descripcion;
 }
