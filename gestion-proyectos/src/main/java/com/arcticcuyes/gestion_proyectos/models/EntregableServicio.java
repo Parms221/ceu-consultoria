@@ -30,8 +30,8 @@ public class EntregableServicio {
     @Column(nullable = false, length = 50)
     private String titulo;
 
-    @Basic
-    private String descripcion;
+    // @Basic
+    // private String descripcion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_servicio", nullable = false)
