@@ -3,22 +3,22 @@ import { Blocks, CalendarDaysIcon, FolderOpen, Users2 } from "lucide-react"
 
 export const MENU : Navigation[] = [
     {  
-        href: "/mis-proyectos",
+        href: "/my/proyectos",
         icon: Blocks,
         label: "Mis proyectos",
     },
     {
-        href: "/calendario",
+        href: "/my/calendario",
         icon: CalendarDaysIcon,
         label: "Calendario"
     },
     {  
-        href: "/clientes",
+        href: "/my/clientes",
         icon: Users2,
         label: "Mis clientes",
     },
     {  
-        href: "/archivos",
+        href: "/my/archivos",
         icon: FolderOpen,
         label: "Archivos",
     },

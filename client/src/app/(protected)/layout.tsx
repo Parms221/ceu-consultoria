@@ -1,5 +1,7 @@
+import { getServerSession } from "next-auth";
 import Providers from "./providers";
 import { Metadata } from "next";
+import { authOptions } from "@/server/auth/options";
 
 export const metadata: Metadata = {
   title: "Gestión de proyectos | CEU",
