@@ -56,7 +56,7 @@ public class ProyectoController {
             Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el servicio: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el proyecto: " + e.getMessage());
         }
     }
 
@@ -83,7 +83,7 @@ public class ProyectoController {
             Proyecto updatedProyecto = proyectoService.updateProyecto(id,proyectoDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedProyecto);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el servicio: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el proyecto: " + e.getMessage());
         }
     }
 

@@ -75,12 +75,32 @@ public class ServicioController {
     }
 
     @PutMapping("/updateServicio/{id}")
-    public ResponseEntity<Servicio> updateServicio(
+    public ResponseEntity<?> updateServicio(
             @PathVariable Long id,
-            @RequestBody ServicioDTO servicioDTO) {
-        
-        Servicio updatedServicio = servicioService.updateServicio(id, servicioDTO);
-        return ResponseEntity.ok(updatedServicio);
+            @RequestBody ServicioDTO servicioDTO,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // Recopila todos los errores de validación en un mapa
+            Map<String, String> errors = bindingResult.getFieldErrors().stream().collect(Collectors.toMap(
+                            fieldError -> fieldError.getField(),
+                            fieldError -> fieldError.getDefaultMessage()
+                    ));
+
+            // Devuelve la respuesta con los errores en formato JSON y estado 400 Bad Request
+            return ResponseEntity.badRequest().body(errors);
+        }
+        try {
+            Servicio updatedServicio = servicioService.updateServicio(id, servicioDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedServicio);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el servicio: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deleteServicio/{id}")
+    public ResponseEntity<Void> deleteServicioById(@PathVariable Long id) {
+        servicioService.deleteServicio(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
