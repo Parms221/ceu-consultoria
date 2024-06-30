@@ -14,7 +14,7 @@ import com.arcticcuyes.gestion_proyectos.repositories.RolRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.UsuarioRepository;
 
 @Service
-public class RunnerService {
+public class UserRolesRunnerService {
     @Autowired
     private RolRepository roleRepository;
 

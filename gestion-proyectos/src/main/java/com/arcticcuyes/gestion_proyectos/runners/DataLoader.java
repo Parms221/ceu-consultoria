@@ -7,13 +7,17 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class UserRolesDataLoader implements CommandLineRunner{
+public class DataLoader implements CommandLineRunner{
 
     @Autowired
-    RunnerService runnerService;
+    UserRolesRunnerService userRolesRunnerService;
+
+    @Autowired
+    EstadosRunnerService estadosRunnerService;
 
     @Override
     public void run(String... args) throws Exception {
-        runnerService.crearUsuariosYRoles();
+        userRolesRunnerService.crearUsuariosYRoles();
+        estadosRunnerService.crearEstados();
     }
 }

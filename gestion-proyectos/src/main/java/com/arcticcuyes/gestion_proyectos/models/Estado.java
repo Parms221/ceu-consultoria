@@ -6,12 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name="ESTADO")
@@ -26,4 +24,9 @@ public class Estado {
 
     @Column(nullable = false)
     private int tipo;
+
+    public Estado(String descripcion, int tipo) {
+        this.descripcion = descripcion;
+        this.tipo = tipo;
+    }
 }
