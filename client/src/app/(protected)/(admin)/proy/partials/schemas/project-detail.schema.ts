@@ -16,4 +16,5 @@ export const projectDetailSchema = z.object({
         .min(3, { message: "El objetivo debe tener al menos 3 caracteres" }),
     )
     .min(1, { message: "Debe tener al menos un objetivo" }),
+  servicioId: z.coerce.number().min(1, { message: "El servicio es requerido" }),
 });
