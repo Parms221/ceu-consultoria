@@ -1,5 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,12 +28,13 @@ public class SubTarea {
     private long idSubTarea;
 
     @Column(nullable = false, length = 50)
-    private String titulo;
+    private String descripcion;
 
     @Basic
     private boolean completado = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_tarea", referencedColumnName = "id_tarea", nullable = false)
+    @JsonIgnore
     private Tarea tarea;
 }

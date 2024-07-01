@@ -1,5 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.controllers;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -12,8 +13,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.arcticcuyes.gestion_proyectos.dto.ProyectoDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
+import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
+import com.arcticcuyes.gestion_proyectos.models.Cliente;
+import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
+import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
+import com.arcticcuyes.gestion_proyectos.services.ClienteService;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
 import jakarta.validation.Valid;
@@ -34,31 +41,40 @@ public class ProyectoController {
     @Autowired
     ProyectoService proyectoService;
 
-    @GetMapping
-    public ResponseEntity<Page<Proyecto>> getAllProyectos(Pageable pageable) {
-        Page<Proyecto> page = proyectoService.findAll(pageable);
-        return ResponseEntity.ok(page);
+    @Autowired
+    ClienteService clienteService;
+
+    @GetMapping("/")
+    public ResponseEntity<List<Proyecto>> getAllProyectos() {
+        List<Proyecto> proyectos = proyectoService.findProyectos();
+        return ResponseEntity.ok(proyectos);
     }
 
     @PostMapping("/addProyecto")
     public ResponseEntity<?> createProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            // Recopila todos los errores de validación en un mapa
-            Map<String, String> errors = bindingResult.getFieldErrors().stream().collect(Collectors.toMap(
-                            fieldError -> fieldError.getField(),
-                            fieldError -> fieldError.getDefaultMessage()
-                    ));
+        
 
-            // Devuelve la respuesta con los errores en formato JSON y estado 400 Bad Request
-            return ResponseEntity.badRequest().body(errors);
-        }
-        try {
-            Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el proyecto: " + e.getMessage());
-        }
+        Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
+
+        // if (bindingResult.hasErrors()) {
+        //     // Recopila todos los errores de validación en un mapa
+        //     Map<String, String> errors = bindingResult.getFieldErrors().stream().collect(Collectors.toMap(
+        //                     fieldError -> fieldError.getField(),
+        //                     fieldError -> fieldError.getDefaultMessage()
+        //             ));
+
+        //     // Devuelve la respuesta con los errores en formato JSON y estado 400 Bad Request
+        //     return ResponseEntity.badRequest().body(errors);
+        // }
+        // try {
+        //     Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
+        //     return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
+        // } catch (Exception e) {
+        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el proyecto: " + e.getMessage());
+        // }
     }
+
 
     @GetMapping("/getProyecto/{id}")
     public ResponseEntity<Proyecto> getProyectoById(@PathVariable Long id) {
