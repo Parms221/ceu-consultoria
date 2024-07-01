@@ -1,7 +1,14 @@
-package com.arcticcuyes.gestion_proyectos.dto;
+package com.arcticcuyes.gestion_proyectos.dto.Proyecto;
 
 
 import java.sql.Timestamp;
+import java.util.List;
+
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties.RSocket.Client;
+
+import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
+import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
+import com.arcticcuyes.gestion_proyectos.models.Hito;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +21,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProyectoDTO {
 
-    //private long idProyecto;
+    // Part Diagnostico
+    private String tipoCliente;
+
+    private ClienteJuridicoDto clienteJuridicoDto;
+
+    private ClienteNaturalDto clienteNaturalDto;
+
+    // Part Alcance
+
+    @NotEmpty(message = "El titulo del Proyecto es obligatorio")
+    private String titulo;
+
     @NotEmpty(message = "La descripcion del Proyecto es obligatorio")
     private String descripcion;
 
@@ -23,6 +41,8 @@ public class ProyectoDTO {
 
     @NotEmpty(message = "Los requerimientos del Proyecto son obligatorios")
     private String requerimientos;
+
+    private String indicaciones;
 
     @NotNull(message = "Esta informacion es necesaria")
     private Timestamp fechaInicio;
@@ -33,20 +53,16 @@ public class ProyectoDTO {
     @NotNull(message = "El precio del Proyecto es necesario")
     private Double precio;
 
-    // private Timestamp createdAt;
 
-    // private Timestamp updatedAt;
 
-    //private Cliente cliente;
+    private Long servicio;
 
-    // private Servicio servicio;
-
-    // private Estado estado;
+    private Long estado;
     // private List<Participante> participantes;
 
     // private List<Reunion> reuniones;
 
-    // private List<Hito> hito;
+    private List<HitoDTO> hitos;
 
-    // private List<EntregableProyecto> entregables;
+    private List<EntregableProyectoDTO> entregables;
 }

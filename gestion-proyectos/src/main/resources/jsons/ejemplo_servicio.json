@@ -1,0 +1,20 @@
+{
+    "titulo": "Servicio de Consultoría en IT",
+    "precio": 2000.0,
+    "descripcion": "Consultoría para optimización de infraestructura tecnológica",
+    "entregablesDelServicio": [
+      {
+        "titulo": "Evaluación de infraestructura",
+        "descripcion": "Análisis detallado de la infraestructura tecnológica existente"
+      },
+      {
+        "titulo": "Recomendaciones de mejora",
+        "descripcion": "Propuestas de mejoras y actualizaciones tecnológicas"
+      },
+      {
+        "titulo": "Plan de implementación",
+        "descripcion": "Plan detallado para la implementación de las recomendaciones"
+      }
+    ]
+}
+  
