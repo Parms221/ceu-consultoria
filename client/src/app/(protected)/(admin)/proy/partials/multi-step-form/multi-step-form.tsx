@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react";
+import Pag1Ex from "./pag1-ex";
 
 const steps = [
     {id:"step-1", name: "Diagnóstico"},
@@ -26,9 +27,9 @@ export default function MultiStepForm(){
 
     return (
         <>
-            <section className="flex flex-col justify-between p-24">
+            <section className="px-10 pt-10">
                 <nav>
-                    <ol className="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
+                    <ol className="flex items-center align-middle w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base flex-wrap gap-2 md:flex-nowrap md:gap-0">
                         {steps.map((step, index) => {
                             if(currentStep > index)
                                 return (
@@ -45,7 +46,7 @@ export default function MultiStepForm(){
                             if(currentStep === index){
                                 return (
                                     <li key={step.id} className="flex md:w-full items-center text-white dark:text-blue-500 font-bold sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
-                                        <span className="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500 py-0.5 px-3 bg-blue-700 rounded-md">
+                                        <span className="flex items-center after:text-gray-200 dark:after:text-gray-500 py-0.5 px-1 sm:px-3 bg-blue-700 rounded-md">
                                             <span className="me-2 font-extrabold">{index + 1}</span>
                                             {step.name}
                                         </span>
@@ -54,8 +55,8 @@ export default function MultiStepForm(){
                             }
 
                             return (
-                                <li key={step.id} className="flex md:w-full items-center font-bold sm:after:content-[''] after:w-full after:h-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
-                                    <span className="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+                                <li key={step.id} className="flex md:w-full items-center font-bold">
+                                    <span className="flex items-center">
                                         <span className="me-2">{index + 1}</span>
                                         {step.name}
                                     </span>
@@ -69,21 +70,21 @@ export default function MultiStepForm(){
                 </nav>
             </section>
 
-            {/* <section className="flex flex-col justify-between p-24">
-                <form className="mt-12 py-12">
+            <section className="flex flex-col justify-between p-10">
+                <div>
                     {currentStep === 0 && (
-
+                        <Pag1Ex/>
                     )}
-                </form>
-            </section> */}
+                </div>
+            </section>
 
-            <div className="mt-8 pt-5">
+            <div className="mt-5 mb-2 mx-15">
                 <div className="flex justify-between">
                     <button 
                         type="button" 
                         onClick={prev} 
                         disabled={currentStep === 0}
-                        className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50">
+                        className="flex align-middle items-center rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50">
                         
                         <svg
                             xmlns='http://www.w3.org/2000/svg'
@@ -99,13 +100,14 @@ export default function MultiStepForm(){
                             d='M15.75 19.5L8.25 12l7.5-7.5'
                         />
                         </svg>
+                        <span className="me-1">Atrás</span> 
                     </button>
                     <button
                         type='button'
                         onClick={next}
                         disabled={currentStep === steps.length - 1}
-                        className='rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50'>
-                        
+                        className='rounded flex align-middle items-center px-4 py-2 font-semibold text-white bg-blue-800 shadow-sm ring-1 ring-inset  hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50'>
+                        Guardar y continuar
                         <svg
                             xmlns='http://www.w3.org/2000/svg'
                             fill='none'
@@ -120,14 +122,10 @@ export default function MultiStepForm(){
                                 d='M8.25 4.5l7.5 7.5-7.5 7.5'
                             />
                         </svg>
-
                     </button>
                 </div>
             </div>
-        </>
-        
-        
-                        
+        </>                
     );
 
 }

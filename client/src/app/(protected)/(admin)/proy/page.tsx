@@ -13,22 +13,17 @@ export default async function Usuarios() {
                 {/* <NewUserDialog /> */}
             </div>
 
-            <section className="flex flex-col gap-8 my-5">
+            {/* <section className="flex flex-col gap-8 my-5">
                 <article className="border-stroke bg-white dark:border-strokedark dark:bg-boxdark pb-4 px-2 rounded-md">
-                    {/* <DataTable columns={columns} data={usuarios ?? []} /> */}
                     <div className="p-5">
                         Hola
                     </div>
                 </article>
-            </section>
-
+            </section> */}
+                
             <section className="flex flex-col gap-8">
                 <article className="border-stroke bg-white dark:border-strokedark dark:bg-boxdark pb-4 px-2 rounded-md">
-                    {/* <DataTable columns={columns} data={usuarios ?? []} /> */}
                     <MultiStepForm/>
-                    {/* <div className="p-10">
-                        Hola
-                    </div> */}
                 </article>
             </section>
         </React.Fragment>
