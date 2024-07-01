@@ -35,6 +35,9 @@ public class Proyecto {
     private long idProyecto;
 
     @Column(columnDefinition = "TEXT")
+    private String titulo;
+
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(columnDefinition = "TEXT")
@@ -42,6 +45,9 @@ public class Proyecto {
 
     @Column(columnDefinition = "TEXT")
     private String requerimientos;
+
+    @Column(columnDefinition = "TEXT")
+    private String indicaciones;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="fecha_inicio", nullable = false)
@@ -54,15 +60,15 @@ public class Proyecto {
     @Column(nullable = false)
     private Double precio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_cliente", nullable = true)
     private Cliente cliente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_servicio")
     private Servicio servicio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     //@JoinColumn(name="id_estado", nullable = false)
     @JoinColumn(name="id_estado", nullable = true)
     private Estado estado;
@@ -82,7 +88,7 @@ public class Proyecto {
     private List<Reunion> reuniones;
 
     @OneToMany(mappedBy = "proyecto")
-    private List<Hito> hito;
+    private List<Hito> hitos;
 
     @OneToMany(mappedBy = "proyecto")
     private List<EntregableProyecto> entregables;
