@@ -32,10 +32,6 @@ export default function ProjectFormContext({
     resolver: zodResolver(projectCompleteSchema),
     defaultValues: {
       clienteId: 0,
-      project: {
-        title: "",
-        description: "",
-      },
     },
   });
 

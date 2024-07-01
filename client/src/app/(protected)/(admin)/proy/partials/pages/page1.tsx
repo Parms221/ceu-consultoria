@@ -157,7 +157,7 @@ function SearchById({
   const mutation = useMutation({
     mutationFn: async (type: "RUC" | "DNI") => {
       // Simular busqueda en el backend
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const newClientId = 1;
       form.setValue("clientId", newClientId);
       form.setValue("tipo_documento", "DNI");
