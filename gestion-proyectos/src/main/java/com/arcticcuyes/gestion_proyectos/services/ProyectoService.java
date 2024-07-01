@@ -27,6 +27,9 @@ public class ProyectoService {
     @Autowired
     private ProyectoRepository proyectoRepository;
     @Autowired
+    private EstadoRepository estadoRepository;
+
+    @Autowired
     private ClienteService clienteService;
     @Autowired
     private ServicioService servicioService;
@@ -40,7 +43,7 @@ public class ProyectoService {
     private SubtareaRepository subTareaRepository;
     @Autowired
     private HitoRepository hitoRepository;
-
+    
 
 
     public List<Proyecto> findProyectos() {
@@ -92,6 +95,9 @@ public class ProyectoService {
 
         Servicio servicio = servicioService.findServicioById(proyectoDTO.getServicio());
         if(servicio != null) proyecto.setServicio(servicio);
+
+        Optional<Estado> estado = estadoRepository.findById(proyectoDTO.getEstado());
+        if(estado != null) proyecto.setEstado(estado.get());
 
         proyecto = proyectoRepository.save(proyecto);
         

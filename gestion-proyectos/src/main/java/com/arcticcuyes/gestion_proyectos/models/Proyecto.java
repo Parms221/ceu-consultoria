@@ -69,8 +69,7 @@ public class Proyecto {
     private Servicio servicio;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    //@JoinColumn(name="id_estado", nullable = false)
-    @JoinColumn(name="id_estado", nullable = true)
+    @JoinColumn(name="id_estado", nullable = false)
     private Estado estado;
 
     @CreationTimestamp(source = SourceType.DB)
