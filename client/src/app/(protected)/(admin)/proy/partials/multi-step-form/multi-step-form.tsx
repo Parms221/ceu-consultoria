@@ -105,9 +105,9 @@ export default function MultiStepForm(){
                     <button
                         type='button'
                         onClick={next}
-                        disabled={currentStep === steps.length - 1}
+                        // disabled={currentStep === steps.length - 1}
                         className='rounded flex align-middle items-center px-4 py-2 font-semibold text-white bg-blue-800 shadow-sm ring-1 ring-inset  hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50'>
-                        Guardar y continuar
+                        {currentStep !== steps.length - 1 ? ("Guardar y continuar"): ("Finalizar")}
                         <svg
                             xmlns='http://www.w3.org/2000/svg'
                             fill='none'
