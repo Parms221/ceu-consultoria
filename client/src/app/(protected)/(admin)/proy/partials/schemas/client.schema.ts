@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const clienteSchema = z
   .object({
+    clientId: z.coerce.number().optional(),
     tipo_documento: z.enum(["DNI", "RUC"]),
     nombre: z.string().optional(),
     apellido: z.string().optional(),

@@ -10,6 +10,7 @@ import {
   IStep,
   STEPS_VALUES,
 } from "@/app/(protected)/(admin)/proy/partials/constants/steps";
+import { clienteSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/client.schema";
 
 interface IProjectContext {
   form: UseFormReturn<z.infer<typeof projectCompleteSchema>, any, undefined>;

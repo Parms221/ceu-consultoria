@@ -18,11 +18,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronRightIcon } from "lucide-react";
 import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 export default function ProjectFormPage1() {
+  const { next, form: formProject } = useProjectForm();
+
   const formClient = useForm<z.infer<typeof clienteSchema>>({
     resolver: zodResolver(clienteSchema),
-    defaultValues: {
+    defaultValues: formProject.getValues("cliente") || {
+      clientId: 0,
       tipo_documento: "DNI",
       nombre: "",
       apellido: "",
@@ -35,7 +40,30 @@ export default function ProjectFormPage1() {
     },
   });
 
-  const { next } = useProjectForm();
+  async function handleSubmit(data: z.infer<typeof clienteSchema>) {
+    const clientId = formClient.getValues("clientId");
+
+    if (clientId == undefined || clientId == 0) {
+      const toastId = toast.loading("Guardando cliente...");
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const newClientId = 1;
+      data.clientId = newClientId;
+
+      toast.success("Cliente guardado", { id: toastId });
+    }
+    // TODO: también se debería actualizar la información del cliente en caso haya avanzado a otro página
+    // luego regresado
+
+    formProject.setValue(
+      "clienteId",
+      formClient.getValues("clientId") as number,
+    );
+
+    formProject.setValue("cliente", data);
+
+    next();
+  }
 
   return (
     <Form {...formClient}>
@@ -109,7 +137,8 @@ export default function ProjectFormPage1() {
           type={"button"}
           size={"sm"}
           variant="outline"
-          onClick={() => next()}
+          disabled={formClient.formState.isSubmitting}
+          onClick={() => formClient.handleSubmit(handleSubmit)()}
         >
           Siguiente <ChevronRightIcon className="h-4 w-4" />
         </Button>
@@ -125,6 +154,23 @@ function SearchById({
 }) {
   const tipoDocumento = form.watch("tipo_documento");
 
+  const mutation = useMutation({
+    mutationFn: async (type: "RUC" | "DNI") => {
+      // Simular busqueda en el backend
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const newClientId = 1;
+      form.setValue("clientId", newClientId);
+      form.setValue("tipo_documento", "DNI");
+      form.setValue("nombre", "John");
+      form.setValue("apellido", "Doe");
+      form.setValue("dni", "87654321");
+      form.setValue("email", "john@gmail.com");
+      form.setValue("telefono", "987654321");
+      return "ok";
+    },
+    mutationKey: ["search", "client"],
+  });
+
   if (tipoDocumento == "DNI") {
     return (
       <div className="flex">
@@ -138,7 +184,14 @@ function SearchById({
                 <FormControl>
                   <Input className={"rounded-r-0 flex-1"} {...field} />
                 </FormControl>
-                <Button className={"rounded-l-0"}>Buscar</Button>
+                <Button
+                  className={"rounded-l-0"}
+                  type="button"
+                  disabled={mutation.isPending}
+                  onClick={() => mutation.mutate("DNI")}
+                >
+                  Buscar
+                </Button>
               </div>
               <FormMessage />
             </FormItem>
@@ -160,7 +213,14 @@ function SearchById({
               <FormControl>
                 <Input className={"rounded-r-0 flex-1"} {...field} />
               </FormControl>
-              <Button className={"rounded-l-0"}>Buscar</Button>
+              <Button
+                className={"rounded-l-0"}
+                type="button"
+                disabled={mutation.isPending}
+                onClick={() => mutation.mutate("DNI")}
+              >
+                Buscar
+              </Button>
             </div>
             <FormMessage />
           </FormItem>
