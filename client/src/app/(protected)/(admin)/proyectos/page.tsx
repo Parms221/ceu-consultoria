@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 import {
   ConsultoresAsignados,
-  DefaultMiniCart,
-  ProyectorPorConfirmar,
+  ProyectosPorConfirmar,
   ProyectosTerminados,
 } from "@/app/(protected)/(admin)/proyectos/partials/mini-cards";
 import { CheckIcon, PlusIcon } from "lucide-react";
@@ -12,19 +11,25 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import PageTitle from "@/components/ui/page-title";
+import { DataTable } from "./partials/DataTable/data-table";
+import { columns } from "./partials/DataTable/columns";
+import { Proyecto } from "@/types/proyecto";
+import { getProyectos } from "@/actions/Proyecto";
 
 export const metadata: Metadata = {
-  title: "Proyectos - CEU",
+  title: "Proyectos",
 };
 
+
 export default async function Page() {
+  const proyectos = await getProyectos();
   return (
     <main className="space-y-3">
       <PageTitle>Administración de proyectos</PageTitle>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <ProyectosTerminados />
         <ConsultoresAsignados />
-        <ProyectorPorConfirmar />
+        <ProyectosPorConfirmar />
       </div>
 
       <Card>
@@ -44,10 +49,10 @@ export default async function Page() {
         </CardHeader>
         <CardContent>
           {/*    TODO: add filters and table*/}
-          <div className="flex justify-between">
-            <div></div>
-            <div></div>
-          </div>
+          <DataTable 
+            columns={columns}
+            data={proyectos ?? []}
+          />
         </CardContent>
       </Card>
     </main>
