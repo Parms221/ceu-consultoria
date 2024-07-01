@@ -46,7 +46,7 @@ export const columns: ColumnDef<Servicio>[] = [
                     className="flex gap-2"
                   >
                     <CheckCircle className="shrink-0" />
-                    <span>{titulo} awdawdwdwd</span>
+                    <span>{titulo}</span>
                   </li>  
                 )
               })}
