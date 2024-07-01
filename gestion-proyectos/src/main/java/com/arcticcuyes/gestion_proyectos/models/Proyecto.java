@@ -35,6 +35,9 @@ public class Proyecto {
     private long idProyecto;
 
     @Column(columnDefinition = "TEXT")
+    private String titulo;
+
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(columnDefinition = "TEXT")
