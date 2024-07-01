@@ -24,10 +24,10 @@ public class ProyectoDTO {
     @NotEmpty(message = "Los requerimientos del Proyecto son obligatorios")
     private String requerimientos;
 
-    @NotNull(message = "Esta informacion es necesaria")
+    @NotNull(message = "La fecha de inicio es obligatoria")
     private Timestamp fechaInicio;
 
-    @NotNull(message = "Esta informacion es necesaria")
+    @NotNull(message = "La fecha límite del proyecto es obligatoria")
     private Timestamp fechaLimite;
 
     @NotNull(message = "El precio del Proyecto es necesario")

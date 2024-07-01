@@ -20,6 +20,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { NavigationFooter, Next } from "../multi-step-form/navigation";
 
 export default function ProjectFormPage1() {
   const { next, form: formProject } = useProjectForm();
@@ -132,17 +133,12 @@ export default function ProjectFormPage1() {
           />
         </div>
       </div>
-      <div className="mt-3 flex justify-end border-t border-t-primary pt-3">
-        <Button
-          type={"button"}
-          size={"sm"}
-          variant="outline"
+      <NavigationFooter>
+        <Next
           disabled={formClient.formState.isSubmitting}
           onClick={() => formClient.handleSubmit(handleSubmit)()}
-        >
-          Siguiente <ChevronRightIcon className="h-4 w-4" />
-        </Button>
-      </div>
+        />
+      </NavigationFooter>
     </Form>
   );
 }

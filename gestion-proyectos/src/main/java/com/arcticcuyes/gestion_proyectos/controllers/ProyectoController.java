@@ -34,7 +34,7 @@ public class ProyectoController {
     @Autowired
     ProyectoService proyectoService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Page<Proyecto>> getAllProyectos(Pageable pageable) {
         Page<Proyecto> page = proyectoService.findAll(pageable);
         return ResponseEntity.ok(page);
