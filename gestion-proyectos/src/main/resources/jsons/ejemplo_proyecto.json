@@ -1,0 +1,86 @@
+{
+    "tipoCliente": "natural",
+    "clienteNaturalDto": {
+        "nombre": "Juan Perez",
+        "dni": "71001378",
+        "tipo_documento": "DNI",
+        "direccion": "Av. Siempre Viva 123",
+        "telefono": "987654321",
+        "email": "juan.perez@example.com"
+    },
+    "titulo": "Proyecto de Desarrollo",
+    "descripcion": "Desarrollo de una aplicación web",
+    "objetivos": "Crear una aplicación web funcional",
+    "requerimientos": "Tecnologías web modernas",
+    "indicaciones": "Entrega en fases",
+    "precio": 98000.0,
+    "entregables": [
+        {
+            "entregableServicio": 1
+        },
+        {
+            "entregableServicio": 2
+        }
+    ],
+    "fechaInicio": "2024-01-01T00:00:00",
+    "fechaLimite": "2024-12-31T23:59:59",
+    "servicio": 1,
+    "hitos": [
+        {
+            "titulo": "Hito 1",
+            "fechaInicio": "2024-01-01T00:00:00",
+            "fechaFinalizacion": "2024-01-15T23:59:59",
+            "tareas": [
+                {
+                    "titulo": "Tarea 1.1",
+                    "descripcion": "Descripción de la tarea 1.1",
+                    "fechaInicio": "2024-01-01T00:00:00",
+                    "fechaFin": "2024-01-05T23:59:59",
+                    "subtareas": [
+                        {
+                            "descripcion": "Descripción de la subtarea 1.1.1"
+                        },
+                        {
+                            "descripcion": "Descripción de la subtarea 1.1.2"
+                        }
+                    ]
+                },
+                {
+                    "titulo": "Tarea 1.2",
+                    "descripcion": "Descripción de la tarea 1.2",
+                    "fechaInicio": "2024-01-06T00:00:00",
+                    "fechaFin": "2024-01-10T23:59:59",
+                    "subtareas": [
+                        {
+                            "descripcion": "Descripción de la subtarea 1.2.1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "titulo": "Hito 2",
+            "fechaInicio": "2024-01-16T00:00:00",
+            "fechaFinalizacion": "2024-01-31T23:59:59",
+            "tareas": [
+                {
+                    "titulo": "Tarea 2.1",
+                    "descripcion": "Descripción de la tarea 2.1",
+                    "fechaInicio": "2024-01-16T00:00:00",
+                    "fechaFin": "2024-01-20T23:59:59",
+                    "subtareas": [
+                        {
+                            "descripcion": "Descripción de la subtarea 2.1.1"
+                        },
+                        {
+                            "descripcion": "Descripción de la subtarea 2.1.2"
+                        },
+                        {
+                            "descripcion": "Descripción de la subtarea 2.1.3"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
