@@ -3,8 +3,10 @@ import DefaultLayout from "@/components/Layouts/AdminLayout";
 
 
 export const metadata: Metadata = {
-  title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
+  title: {
+    template: '%s | CEU',
+    default: 'CEU',
+  },
   description: "This is Next.js Home for TailAdmin Dashboard Template",
 };
 
