@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -66,11 +68,13 @@ public class Tarea {
     private Tarea tareaAnterior;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_estado", nullable = false)
+    //@JoinColumn(name="id_estado", nullable = false)
+    @JoinColumn(name="id_estado", nullable = true)
     private Estado estado;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_hito", nullable = false)
+    @JsonIgnore
     private Hito hito;
 
     @ManyToMany
