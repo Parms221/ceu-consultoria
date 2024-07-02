@@ -39,7 +39,7 @@ export default async function Page() {
   //         Nuevo Proyecto
   //       </h2>
   //
-  //       {/* <NewUserDialog /> */}
+  //       {/* <AddUserDialog /> */}
   //     </div>
   //
   //     {/* <section className="flex flex-col gap-8 my-5">
