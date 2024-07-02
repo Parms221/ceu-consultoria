@@ -26,6 +26,16 @@ public class ClienteController {
         return clienteService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Cliente> getClienteById(@PathVariable long id) {
+        Cliente cliente = clienteService.findClienteById(id);
+        if (cliente != null) {
+            return ResponseEntity.ok(cliente);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/naturales")
     public ResponseEntity<List<ClienteNatural>> getAllClientesNaturales() {
         List<ClienteNatural> clientes = clienteService.findAllClientesNaturales();

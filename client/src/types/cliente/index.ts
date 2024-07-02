@@ -1,3 +1,5 @@
+import type { Usuario } from "../usuario";
+
 type Representante = {
   representante_id: number;
   nombre: string;
@@ -32,8 +34,9 @@ type ClienteJuridico = {
   tipo_documento: "RUC";
 };
 
-export type Cliente = ClienteNatural | ClienteJuridico;
-
+export type Cliente = (ClienteNatural | ClienteJuridico) & {
+  usuarioCliente: Usuario | null;
+};
 export function GetClienteName(client: Cliente) {
   if (client.tipo_documento == "DNI") {
     return `${client.nombre} ${client.apellido}`;

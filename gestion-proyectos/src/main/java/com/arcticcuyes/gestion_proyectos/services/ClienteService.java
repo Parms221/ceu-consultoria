@@ -31,6 +31,9 @@ public class ClienteService {
     public List<Cliente> findAll() {
         return (List<Cliente>) clienteRepository.findAll();
     }
+    public Cliente findClienteById(Long id) {
+        return clienteRepository.findById(id).orElse(null);
+    }
 
     public List<ClienteNatural> findAllClientesNaturales() {
         return (List<ClienteNatural>) clienteNaturalRepository.findAll();
