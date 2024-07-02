@@ -3,6 +3,9 @@ import { Cliente } from "@/types/cliente";
 import { ColumnDef } from "@tanstack/react-table";
 import DeleteClienteDialog from "../Dialogs/DeleteClienteDialog";
 import AddEditClienteDialog from "../Dialogs/AddEditClienteDialog";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 export const columns: ColumnDef<Cliente>[] = [
   {
     id: "nombre",
@@ -45,9 +48,14 @@ export const columns: ColumnDef<Cliente>[] = [
       const cliente = row.original;
 
       return (
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <AddEditClienteDialog cliente={cliente} />
           <DeleteClienteDialog cliente={cliente} />
+          <Link href={`/consultorias/clientes/${cliente.idCliente}`}>
+            <Button className="h-fit py-1.5" variant="link" size={"sm"}>
+              <Eye size={16} />
+            </Button>
+          </Link>
         </div>
       );
     },
