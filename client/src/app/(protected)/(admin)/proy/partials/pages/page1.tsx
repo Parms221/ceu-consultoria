@@ -177,7 +177,7 @@ export default function ProjectFormPage1() {
             <FormItem className="flex-1">
               <h3 className="text-xl font-bold text-primary">Contacto Teléfono</h3>
               <FormControl>
-                <Input {...field} value="Telefono" />
+                <Input {...field} placeholder="Telefono" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -191,7 +191,7 @@ export default function ProjectFormPage1() {
             <FormItem className="flex-1">
               <h3 className="text-xl font-bold text-primary">Correo Electrónico</h3>
               <FormControl>
-                <Input {...field} type={"email"} value="Correo" />
+                <Input {...field} type={"email"} placeholder="Correo" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -251,7 +251,7 @@ function SearchById({
               <h3 className="text-xl font-bold text-primary">DNI</h3>
               <div className="flex">
                 <FormControl>
-                  <Input className={"rounded-r-0 flex-1"} {...field} value="DNI del Representate"/>
+                  <Input className={"rounded-r-0 flex-1"} {...field} placeholder="DNI del Representate"/>
                 </FormControl>
                 <Button
                   className={"rounded-l-0"}
@@ -280,7 +280,7 @@ function SearchById({
             <h3 className="text-xl font-bold text-primary">RUC</h3>
             <div className="flex">
               <FormControl>
-                <Input className={"rounded-r-0 flex-1"} {...field} value="RUC de la Empresa"/>
+                <Input className={"rounded-r-0 flex-1"} {...field} placeholder="RUC de la Empresa"/>
               </FormControl>
               <Button
                 className={"rounded-l-0"}
@@ -316,7 +316,7 @@ function PrimaryDetailsByID({
             <FormItem className="flex-1">
               <h3 className="text-xl font-bold text-primary">Nombres</h3>
               <FormControl>
-                <Input {...field} value="Nombre del Representante"/>
+                <Input {...field} placeholder="Nombre del Representante"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -329,7 +329,7 @@ function PrimaryDetailsByID({
             <FormItem className="flex-1">
               <h3 className="text-xl font-bold text-primary">Apellidos</h3>
               <FormControl>
-                <Input {...field} value="Apellido del Representate"/>
+                <Input {...field} placeholder="Apellido del Representate"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -348,7 +348,7 @@ function PrimaryDetailsByID({
           <FormItem className="flex-1">
             <h3 className="text-xl font-bold text-primary">Razón Social</h3>
             <FormControl>
-              <Input {...field} value="Nombre de la Empresa" />
+              <Input {...field} placeholder="Nombre de la Empresa" />
             </FormControl>
             <FormMessage />
           </FormItem>
