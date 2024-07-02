@@ -64,6 +64,7 @@ export default function ProjectFormContext({
 
 export function useProjectForm() {
   const context = useContext(ContextForm);
+  let titleClass = "text-xl font-bold text-primary";
 
   if (!context) {
     throw new Error(
