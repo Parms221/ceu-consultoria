@@ -1,10 +1,14 @@
+import PendingDot from "@/components/ui/pending-dot";
+import { cn } from "@/lib/utils";
 import {
-  CheckIcon,
+  Inbox,
   CircleCheckIcon,
   FolderOpenDotIcon,
   LucideIcon,
   SquareUserIcon,
 } from "lucide-react";
+import Link from "next/link";
+import { HTMLAttributes } from "react";
 
 function GetProyectoTerminados() {
   return {
@@ -16,8 +20,8 @@ function GetProyectoTerminados() {
 export function ProyectosTerminados() {
   const data = GetProyectoTerminados();
   return (
-    <DefaultMiniCart
-      title="Proyectos Terminados"
+    <DefaultMiniCard
+      title="Proyectos terminados"
       TitleIcons={CircleCheckIcon}
       description={`En los últimos ${data.time / 30} meses`}
       main={String(data.total)}
@@ -34,10 +38,10 @@ function GetConsultoresAsignados() {
 export function ConsultoresAsignados() {
   const data = GetConsultoresAsignados();
   return (
-    <DefaultMiniCart
-      title="Consultores Asignados"
+    <DefaultMiniCard
+      title="Consultores asignados"
       TitleIcons={SquareUserIcon}
-      description={`Consultores asignados según grupo`}
+      description={`Consultores asignados en algún proyecto`}
       main={`${data.curr} / ${data.max}`}
     />
   );
@@ -48,38 +52,93 @@ function GetProyectosPorConfirmar() {
     total: 1,
   };
 }
-export function ProyectorPorConfirmar() {
+export function ProyectosPorConfirmar() {
   const data = GetProyectosPorConfirmar();
   return (
-    <DefaultMiniCart
-      title="Proyector por confirmar"
-      TitleIcons={FolderOpenDotIcon}
-      description={`Proyectos pendientes por confirmación`}
-      main={`${data.total}`}
-    />
+    <Link href={"/proyectos/pendientes"}
+      className="hover:scale-[1.02] transition-transform duration-200 ease-in-out transform" 
+    >
+      <MiniCard>
+        <MiniCardTitle className="flex justify-between"
+          Icon={Inbox}
+          title="Proyectos por confirmar"
+        >
+          {
+            data.total > 0 && (
+              // Punto rojo pulsante
+              <PendingDot/>
+            )
+          }
+        </MiniCardTitle>
+        <MiniCardValue>{data.total}</MiniCardValue>
+        <MiniCardDescription>
+          Proyectos que están en espera de confirmación
+        </MiniCardDescription>
+      </MiniCard>
+    </Link>
   );
 }
 
-interface DefaultMIniCartProps {
+interface DefaultMiniCardProps {
   title: string;
   TitleIcons: LucideIcon;
   description: string;
   main: string;
 }
 
-export function DefaultMiniCart(props: DefaultMIniCartProps) {
+export function DefaultMiniCard(props: DefaultMiniCardProps) {
   return (
     <div className="space-y-2 border border-bodydark2 bg-white px-5 py-3 dark:bg-boxdark">
-      <h3 className="flex items-center gap-1">
-        <props.TitleIcons className={"h-5 w-5 text-primary"} />
-        <span className="font-semibold text-black dark:text-white">
-          {props.title}
-        </span>
-      </h3>
-      <p className="text-2xl font-bold text-black dark:text-white">
-        {props.main}
-      </p>
-      <p className="text-sm text-bodydark">{props.description}</p>
+      <MiniCardTitle Icon={props.TitleIcons} title={props.title}/>
+      <MiniCardValue>{props.main}</MiniCardValue>
+      <MiniCardDescription>{props.description}</MiniCardDescription>
     </div>
   );
+}
+
+interface MiniCardProps {
+  children: React.ReactNode;
+}
+export function MiniCard(props : MiniCardProps){
+  return (
+    <div className="space-y-2 border border-bodydark2 bg-white px-5 py-3 dark:bg-boxdark">
+      {props.children}
+    </div>
+  )
+}
+
+interface TitleProps  {
+  title : string;
+  children?: React.ReactNode;
+  Icon?: LucideIcon;
+  className?: string;
+}
+export function MiniCardTitle(props : TitleProps){
+  return (
+    <header className={props.className}>
+        <div className="flex items-center gap-1">
+          {props.Icon && <props.Icon className={"h-5 w-5 text-primary"} />}
+          <h3 className="font-semibold text-black dark:text-white">
+            {props.title}
+          </h3>
+        </div>
+        {props.children}
+    </header>
+  )
+}
+
+export function MiniCardValue (props: {children: React.ReactNode}){
+  return (
+    <p className="text-2xl font-bold text-black dark:text-white">
+      {props.children}
+    </p>
+  )
+}
+
+export function MiniCardDescription (props: {children: React.ReactNode}){
+  return (
+    <p className="text-sm text-bodydark">
+      {props.children}
+    </p>
+  )
 }

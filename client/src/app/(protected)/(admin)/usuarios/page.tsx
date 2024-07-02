@@ -4,6 +4,11 @@ import { DataTable } from "./partials/DataTable/data-table";
 import { columns } from "./partials/DataTable/columns"; 
 import NewUserDialog from "./partials/dialogs/NewUser/dialog";
 import { getUsuarios } from "@/actions/Usuario";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Usuarios",
+};
 
 export default async function Usuarios() {
     const usuarios = await getUsuarios();

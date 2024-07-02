@@ -5,8 +5,12 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -25,10 +29,12 @@ import lombok.NoArgsConstructor;
 public class EntregableProyecto {
     @Id
     @Column(name="id_entregable_proyecto")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idEntregableProyecto;
 
     @ManyToOne
     @JoinColumn(name="id_proyecto", nullable = false)
+    @JsonIgnore
     private Proyecto proyecto;
 
     @ManyToOne

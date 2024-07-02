@@ -94,12 +94,7 @@ export const columns: ColumnDef<Usuario>[] = [
     cell: ({row}) => {
       const date = new Date(row.original.createdAt)
       return(
-        <relative-time
-          datetime={date.toISOString()}
-          lang="es"
-        >
-          <div className="w-full h-4 bg-accent animate-pulse"></div>
-        </relative-time>
+        <div>{date.toLocaleString()}</div> 
       )
     }
   },

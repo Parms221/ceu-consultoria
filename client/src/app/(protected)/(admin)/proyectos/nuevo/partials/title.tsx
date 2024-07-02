@@ -14,6 +14,7 @@ import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import ToolbarPlugin from "@/components/ui/editor/toolbar.plugin";
+import { defaultEditorTheme } from "@/components/ui/editor/theme";
 
 export default function BasicProjectData() {
   const { form } = useProjectForm();
@@ -30,7 +31,7 @@ export default function BasicProjectData() {
                 type="text"
                 placeholder="Título del proyecto"
                 autoComplete="off"
-                className="w-full text-3xl font-semibold text-black focus-visible:outline-none"
+                className="w-full rounded-md p-1 text-3xl font-semibold text-black hover:bg-bodydark/20 focus-visible:outline-none"
                 {...field}
               />
             </FormControl>
@@ -38,49 +39,9 @@ export default function BasicProjectData() {
           </FormItem>
         )}
       />
-      <RichText />
+      {/*<RichText />*/}
     </div>
   );
-}
-
-const theme = {
-  code: "editor-code",
-  heading: {
-    h1: "editor-heading-h1",
-    h2: "editor-heading-h2",
-    h3: "editor-heading-h3",
-    h4: "editor-heading-h4",
-    h5: "editor-heading-h5",
-  },
-  image: "editor-image",
-  link: "editor-link",
-  list: {
-    listitem: "editor-listitem",
-    nested: {
-      listitem: "editor-nested-listitem",
-    },
-    ol: "editor-list-ol",
-    ul: "editor-list-ul",
-  },
-  ltr: "ltr",
-  paragraph: "editor-paragraph",
-  placeholder: "editor-placeholder",
-  quote: "editor-quote",
-  rtl: "rtl",
-  text: {
-    bold: "font-bold",
-    code: "editor-text-code",
-    hashtag: "editor-text-hashtag",
-    italic: "italic",
-    overflowed: "editor-text-overflowed",
-    strikethrough: "line-through",
-    underline: "underline",
-    underlineStrikethrough: "line-through underline",
-  },
-};
-
-function onError(error: any) {
-  console.error(error);
 }
 
 const editorConfig = {
@@ -91,7 +52,7 @@ const editorConfig = {
     throw error;
   },
   // The editor theme
-  theme: theme,
+  theme: defaultEditorTheme,
 };
 
 function Placeholder() {
@@ -105,7 +66,7 @@ function Placeholder() {
 function RichText() {
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className="">
+      <div className="mt-3 border p-1">
         <ToolbarPlugin />
         <div className="relative">
           <RichTextPlugin

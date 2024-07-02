@@ -15,6 +15,10 @@ const formSchema = z.object({
     .min(3, { message: "La descripción debe tener al menos 3 caracteres" })
     .optional()
     .or(z.literal("")),
+  idCliente: z.coerce.number().positive({ message: "El cliente es requerido" }),
+  idServicio: z.coerce
+    .number()
+    .positive({ message: "El servicio es requerido" }),
 });
 
 interface IContextProjectForm {
@@ -35,6 +39,8 @@ export default function ProjectFormContext({ children }: ProjectFormProps) {
     defaultValues: {
       title: "",
       description: "",
+      idCliente: 0,
+      idServicio: 0,
     },
   });
 
