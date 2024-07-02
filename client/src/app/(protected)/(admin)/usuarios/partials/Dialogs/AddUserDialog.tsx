@@ -7,8 +7,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import CreateUserForm from "../Form/CreateUserForm";
+import { Cliente } from "@/types/cliente";
 
-export default function AddUserDialog() {
+type Props = {
+  cliente?: Cliente;
+};
+export default function AddUserDialog({ cliente }: Props) {
   return (
     <Dialog>
       <DialogTrigger
@@ -20,7 +24,7 @@ export default function AddUserDialog() {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle className="text-ceu-celeste">Nuevo usuario</DialogTitle>
-        <CreateUserForm />
+        <CreateUserForm cliente={cliente} />
       </DialogContent>
     </Dialog>
   );

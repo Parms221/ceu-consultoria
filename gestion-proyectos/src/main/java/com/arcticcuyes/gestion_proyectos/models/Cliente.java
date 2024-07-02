@@ -37,7 +37,7 @@ public abstract class Cliente {
     @Email()
     private String email;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_usuario", unique = true)
     private Usuario usuarioCliente;
 

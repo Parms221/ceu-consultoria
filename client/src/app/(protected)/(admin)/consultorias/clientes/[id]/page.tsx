@@ -1,6 +1,8 @@
 import { getCliente } from "@/actions/Cliente";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { Button, buttonVariants } from "@/components/ui/button";
+import AddUserDialog from "../../../usuarios/partials/Dialogs/AddUserDialog";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 interface ClienteDetailProps {
   params: {
@@ -63,30 +65,44 @@ export default async function ClienteDetail({ params }: ClienteDetailProps) {
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {cliente.usuarioCliente ? (
-              <div className="">
-                <label className="text-gray-800 text-sm font-semibold">
-                  Usuario
-                </label>
-                <p className="text-gray-600 text-sm">
-                  {cliente.usuarioCliente.email} -{" "}
-                  {cliente.usuarioCliente.roles.join(", ")}
-                </p>
-              </div>
-            ) : (
-              <div>No tiene acceso al sistema. </div>
-            )}
-            {cliente.usuarioCliente ? (
-              <div>
-                <p className="text-gray-600 text-sm">
-                  {cliente.usuarioCliente.email}
-                </p>
-              </div>
-            ) : (
-              <div>
-                <Button variant={"default"}>Crear usuario</Button>
-              </div>
-            )}
+            <div className="flex items-end">
+              {cliente.usuarioCliente ? (
+                <div className="">
+                  <label className="text-gray-800 text-sm font-semibold">
+                    Usuario
+                  </label>
+                  <p className="text-gray-600 text-sm">
+                    {cliente.usuarioCliente.name}
+                  </p>
+                  <label className="text-gray-800 text-sm font-semibold">
+                    Correo
+                  </label>
+                  <p className="text-gray-600 text-sm">
+                    {cliente.usuarioCliente.email}
+                  </p>
+                </div>
+              ) : (
+                <div>No tiene acceso al sistema. </div>
+              )}
+            </div>
+            <div className="flex items-end">
+              {cliente.usuarioCliente ? (
+                <div>
+                  <Link
+                    className={buttonVariants({
+                      variant: "default",
+                    })}
+                    href={`/usuarios/${cliente.usuarioCliente.id}`}
+                  >
+                    Ver usuario
+                  </Link>
+                </div>
+              ) : (
+                <div>
+                  <AddUserDialog cliente={cliente} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

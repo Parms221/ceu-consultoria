@@ -23,14 +23,16 @@ import {
 } from "@/components/ui/select";
 import { createUsuario } from "@/actions/Usuario";
 import { toast } from "sonner";
-import { CreateUsuarioDto } from "@/types/usuario";
 import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { useAppContext } from "@/app/(protected)/app.context";
 import { Rol } from "@/types/rol";
 import { getReadableRole } from "@/lib/rol";
-
-export default function CreateUserForm() {
+import { Cliente } from "@/types/cliente";
+type Props = {
+  cliente?: Cliente;
+};
+export default function CreateUserForm({ cliente }: Props) {
   const [generatingPassword, setGeneratingPassword] = useState(false);
   const context = useAppContext();
 
@@ -50,9 +52,13 @@ export default function CreateUserForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      roles: "ROLE_CONSULTOR",
-      email: "",
+      name: cliente
+        ? cliente.tipo_documento == "DNI"
+          ? cliente.nombre + " " + cliente.apellido
+          : cliente.razonSocial
+        : "",
+      roles: cliente ? "ROLE_CLIENTE" : "ROLE_CONSULTOR",
+      email: cliente ? cliente.email : "",
       password: "",
     },
   });
@@ -69,6 +75,7 @@ export default function CreateUserForm() {
         name: values.name,
         password: values.password,
         roles: [values.roles],
+        idCliente: cliente?.idCliente,
       });
 
       if (response.status === "success") {
@@ -137,6 +144,7 @@ export default function CreateUserForm() {
               <Select
                 name="roles"
                 onValueChange={field.onChange}
+                disabled={cliente !== undefined}
                 defaultValue={field.value}
               >
                 <FormControl>
