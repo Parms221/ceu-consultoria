@@ -33,10 +33,10 @@ export const clienteSchema = z
       .refine((value) => value?.length === 11 || value?.length === 0, {
         message: "El RUC debe tener 11 dígitos",
       }),
+    documentos: z.array(z.string()).default([]), // Añadir esta línea
   })
   .superRefine((data, ctx) => {
     if (data.tipo_documento === "DNI") {
-      console.log("nombre", data.nombre);
       if (!data.nombre) {
         ctx.addIssue({
           message: "El nombre es requerido",

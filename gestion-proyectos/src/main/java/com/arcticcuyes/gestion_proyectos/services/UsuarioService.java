@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.arcticcuyes.gestion_proyectos.models.Cliente;
+import com.arcticcuyes.gestion_proyectos.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,48 +25,58 @@ import lombok.NoArgsConstructor;
 public class UsuarioService {
     @Autowired
     private UsuarioRepository uRepository;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private RolRepository roleRepository;
-    
-    public List<Usuario> getUsuarios(){
-        return (List<Usuario>) uRepository.findAll();
-    }    
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-    public Usuario create(UsuarioDto usuarioDto){
+    public List<Usuario> getUsuarios() {
+        return (List<Usuario>) uRepository.findAll();
+    }
+
+    public Usuario create(UsuarioDto usuarioDto) {
+        Cliente cliente = clienteRepository.findById(usuarioDto.getIdCliente()).orElse(null);
         Usuario newUser = new Usuario();
         newUser.setEmail(usuarioDto.getEmail());
         newUser.setName(usuarioDto.getName());
         newUser.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
+
         Set<Rol> roles = new HashSet<>();
-        for (String rol : usuarioDto.getRoles()){
+        for (String rol : usuarioDto.getRoles()) {
             roles.add(roleRepository.findByRol(rol));
         }
         newUser.setRoles(roles);
-        uRepository.save(newUser);
-        return newUser;
+        Usuario createdUser = uRepository.save(newUser);
+
+        if (cliente != null) {
+            cliente.setUsuarioCliente(createdUser);
+            clienteRepository.save(cliente);
+        }
+
+        return createdUser;
     }
 
-    public void updatePassword(Usuario current, UpdatePasswordDto passwordDto) throws Exception{
+    public void updatePassword(Usuario current, UpdatePasswordDto passwordDto) throws Exception {
         System.out.println("CURRENT PASSWORD **** " + current.getPassword());
-        if (!passwordEncoder.matches(passwordDto.getCurrentPassword(), current.getPassword())){
+        if (!passwordEncoder.matches(passwordDto.getCurrentPassword(), current.getPassword())) {
             throw new Exception("Contraseña actual incorrecta");
-        }else {
+        } else {
             current.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
             uRepository.save(current);
         }
     }
 
-    public void updateUsuario(Usuario current, UpdateUsuarioDto newUsuarioDto){
+    public void updateUsuario(Usuario current, UpdateUsuarioDto newUsuarioDto) {
         // TODO : CORREGIR ERROR AL ACTUALIZAR EL ROL 
         current.setEmail(newUsuarioDto.getEmail());
         current.setName(newUsuarioDto.getName());
         current.setEnabled(newUsuarioDto.isEnabled());
         Set<Rol> roles = new HashSet<>();
-        for (String rol : newUsuarioDto.getRoles()){
+        for (String rol : newUsuarioDto.getRoles()) {
             Rol objRol = roleRepository.findByRol(rol);
             roles.add(objRol);
         }
@@ -72,11 +84,11 @@ public class UsuarioService {
         uRepository.save(current);
     }
 
-    public void delete(long id){
+    public void delete(long id) {
         uRepository.deleteById(id);
     }
 
-    public Usuario findById(long id){
+    public Usuario findById(long id) {
         return uRepository.findById(id).orElse(null);
     }
 }

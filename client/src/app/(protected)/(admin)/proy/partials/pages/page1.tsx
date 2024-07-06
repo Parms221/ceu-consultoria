@@ -16,14 +16,80 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { projectCompleteSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/project.schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { NavigationFooter, Next } from "../multi-step-form/navigation";
 
+// Nueva función Objetivos importada desde tu primer código
+function Documentos({
+  form,
+}: {
+  form: UseFormReturn<z.infer<typeof clienteSchema>, any, undefined>;
+}) {
+  const documentos = form.watch("documentos");
+
+  return (
+    <div className={"space-y-3"}>
+      <div className={"flex items-center gap-2"}>
+        <h3 className="text-xl font-bold text-primary">Documentos Adjuntos</h3>
+        <Button
+          size={"icon"}
+          className={"max-h-7 max-w-7"}
+          onClick={() => {
+            form.setValue("documentos", [...documentos, ""]);
+          }}
+        >
+          <span className={"sr-only"}>Añadir Objetivo</span>
+          <PlusIcon className={"max-h-4 max-w-4"} />
+        </Button>
+      </div>
+      <ul className={"space-y-2"}>
+        {documentos.map((obj, index) => (
+          <div key={index}>
+            <FormField
+              control={form.control}
+              name={`documentos.${index}`}
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <div className={"flex gap-2"}>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className={"flex-1"}
+                        placeholder={`Objetivo del proyecto ${index + 1}`}
+                      />
+                    </FormControl>
+                    {documentos.length > 1 && (
+                      <Button
+                        size={"icon"}
+                        onClick={() => {
+                          form.setValue(
+                            "documentos",
+                            documentos.filter((_, i) => i !== index),
+                          );
+                        }}
+                      >
+                        <span className={"sr-only"}>Eliminar Objetivo</span>
+                        <TrashIcon className={"max-h-4 max-w-4"} />
+                      </Button>
+                    )}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function ProjectFormPage1() {
   const { next, form: formProject } = useProjectForm();
+  
 
   const formClient = useForm<z.infer<typeof clienteSchema>>({
     resolver: zodResolver(clienteSchema),
@@ -38,6 +104,7 @@ export default function ProjectFormPage1() {
       direccion: "",
       razonSocial: "",
       ruc: "",
+      documentos: [""], // Añadir un valor por defecto para objetivos
     },
   });
 
@@ -75,7 +142,7 @@ export default function ProjectFormPage1() {
             name="tipo_documento"
             render={({ field, formState }) => (
               <FormItem className="mt-3">
-                <FormLabel>Tipo</FormLabel>
+                <h3 className="text-xl font-bold text-primary">Tipo</h3>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -103,35 +170,37 @@ export default function ProjectFormPage1() {
         </div>
         <SearchById form={formClient} />
         <PrimaryDetailsByID form={formClient} />
-
         <div className={"flex gap-3"}>
-          <FormField
-            control={formClient.control}
-            name="telefono"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Teléfono</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={formClient.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Correo</FormLabel>
-                <FormControl>
-                  <Input {...field} type={"email"} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={formClient.control}
+          name="telefono"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <h3 className="text-xl font-bold text-primary">Contacto Teléfono</h3>
+              <FormControl>
+                <Input {...field} placeholder="Telefono" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={formClient.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <h3 className="text-xl font-bold text-primary">Correo Electrónico</h3>
+              <FormControl>
+                <Input {...field} type={"email"} placeholder="Correo" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         </div>
+        <Documentos form={formClient} />
       </div>
       <NavigationFooter>
         <Next
@@ -175,10 +244,10 @@ function SearchById({
           name="dni"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel>DNI</FormLabel>
+              <h3 className="text-xl font-bold text-primary">DNI</h3>
               <div className="flex">
                 <FormControl>
-                  <Input className={"rounded-r-0 flex-1"} {...field} />
+                  <Input className={"rounded-r-0 flex-1"} {...field} placeholder="DNI del Representate"/>
                 </FormControl>
                 <Button
                   className={"rounded-l-0"}
@@ -204,16 +273,16 @@ function SearchById({
         name="ruc"
         render={({ field }) => (
           <FormItem className="flex-1">
-            <FormLabel>RUC</FormLabel>
+            <h3 className="text-xl font-bold text-primary">RUC</h3>
             <div className="flex">
               <FormControl>
-                <Input className={"rounded-r-0 flex-1"} {...field} />
+                <Input className={"rounded-r-0 flex-1"} {...field} placeholder="RUC de la Empresa"/>
               </FormControl>
               <Button
                 className={"rounded-l-0"}
                 type="button"
                 disabled={mutation.isPending}
-                onClick={() => mutation.mutate("DNI")}
+                onClick={() => mutation.mutate("RUC")}
               >
                 Buscar
               </Button>
@@ -232,6 +301,7 @@ function PrimaryDetailsByID({
   form: UseFormReturn<z.infer<typeof clienteSchema>, any, undefined>;
 }) {
   const tipoDocumento = form.watch("tipo_documento");
+
   if (tipoDocumento == "DNI") {
     return (
       <div className={"flex gap-3"}>
@@ -240,9 +310,9 @@ function PrimaryDetailsByID({
           name="nombre"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel>Nombre</FormLabel>
+              <h3 className="text-xl font-bold text-primary">Nombres</h3>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder="Nombre del Representante"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -253,9 +323,9 @@ function PrimaryDetailsByID({
           name="apellido"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel>Apellidos</FormLabel>
+              <h3 className="text-xl font-bold text-primary">Apellidos</h3>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder="Apellido del Representate"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -266,28 +336,15 @@ function PrimaryDetailsByID({
   }
 
   return (
-    <div className={"flex gap-3"}>
+    <div className="flex">
       <FormField
         control={form.control}
         name="razonSocial"
         render={({ field }) => (
           <FormItem className="flex-1">
-            <FormLabel>Razón Social</FormLabel>
+            <h3 className="text-xl font-bold text-primary">Razón Social</h3>
             <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="direccion"
-        render={({ field }) => (
-          <FormItem className="flex-1">
-            <FormLabel>Dirección</FormLabel>
-            <FormControl>
-              <Input {...field} />
+              <Input {...field} placeholder="Nombre de la Empresa" />
             </FormControl>
             <FormMessage />
           </FormItem>

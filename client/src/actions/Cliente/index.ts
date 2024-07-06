@@ -28,6 +28,25 @@ export async function getClientes(): Promise<Cliente[]> {
     return [];
   }
 }
+export async function getCliente(id: string): Promise<Cliente> {
+  try {
+    const response = await fetcher("/clientes/" + id, {
+      method: "GET",
+    });
+    let data;
+    if (response.ok) {
+      data = await response.json();
+      console.log(data);
+      return data as Cliente;
+    } else {
+      console.error("Error: ", response);
+      return {} as Cliente;
+    }
+  } catch (error) {
+    console.error(error);
+    return {} as Cliente;
+  }
+}
 
 export async function createClienteJuridico(
   data: CreateClienteJuridicoDto,
