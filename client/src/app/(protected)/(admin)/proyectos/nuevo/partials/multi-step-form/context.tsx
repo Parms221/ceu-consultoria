@@ -2,15 +2,14 @@
 
 import { z } from "zod";
 import { useForm, UseFormReturn } from "react-hook-form";
-import { projectCompleteSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/project.schema";
+import { projectCompleteSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/schemas/project.schema";
 import { createContext, useContext, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import {
   IStep,
   STEPS_VALUES,
-} from "@/app/(protected)/(admin)/proy/partials/constants/steps";
-import { clienteSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/client.schema";
+} from "@/app/(protected)/(admin)/proyectos/nuevo/partials/constants/steps";
 
 interface IProjectContext {
   form: UseFormReturn<z.infer<typeof projectCompleteSchema>, any, undefined>;

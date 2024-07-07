@@ -10,7 +10,7 @@ interface LoginResponse {
 
 export interface PayloadResponse {
   sub: string;
-  roles : Rol[];
+  roles: Rol[];
   nombre: string;
   email: string;
   iat: number;
@@ -49,7 +49,7 @@ export const authOptions: AuthOptions = {
         }
 
         const data: LoginResponse = await response.json();
-        
+
         const payloadString = atob(data.token.split(".")[1]);
 
         cookies().set(ACCESS_TOKEN_COOKIE, data.token, {
@@ -72,23 +72,32 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+  // Estas partes (jwt y session) están para que el token solo dure 6 horas y asi no haya conflictos
+  // Ya que puede ocurrir el caso de que el token de next-auth dure más que el de la api
+  session: {
+    strategy: "jwt",
+    maxAge: 21600, // 6 hours
+  },
+  jwt: {
+    maxAge: 21600, // 6 hours
+  },
   pages: {
     signIn: "/auth/login",
     newUser: undefined,
   },
   events: {
-    signIn: async ({user, isNewUser}) => {
+    signIn: async ({ user, isNewUser }) => {
       console.log("User signed in: ", user);
-    }
+    },
   },
   callbacks: {
-    session: async ({session, token}) => {
+    session: async ({ session, token }) => {
       return {
         ...session,
         user: {
           ...session.user,
           roles: token.roles,
-        }
+        },
       };
     },
     jwt: async ({token, user }) => {
@@ -96,10 +105,10 @@ export const authOptions: AuthOptions = {
         const u = user as unknown as Usuario
         return {
           ...token,
-          roles : u.roles,
-        }
+          roles: u.roles,
+        };
       }
-      return token
-    }
-  }
+      return token;
+    },
+  },
 };

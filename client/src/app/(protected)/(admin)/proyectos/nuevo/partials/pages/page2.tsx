@@ -3,8 +3,8 @@
 import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { projectDetailSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/project-detail.schema";
-import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
+import { projectDetailSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/schemas/project-detail.schema";
+import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
 import {
   Form,
   FormControl,
@@ -16,10 +16,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { BoltIcon, Check, CheckCircle2Icon, PlusIcon, TrashIcon } from "lucide-react";
+import {
+  BoltIcon,
+  Check,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PlusIcon,
+  TrashIcon,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
-import type { Servicio } from "@/types/servicio";
+import { Servicio } from "@/types/servicio";
 import {
   Popover,
   PopoverContent,
@@ -34,8 +41,6 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import CurrentPage from "./current-page";
-import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -46,6 +51,7 @@ export default function ProjectFormPage2() {
       title: "",
       description: "",
       objetivos: [""],
+      servicioId: 0,
     },
   });
 
@@ -80,10 +86,28 @@ export default function ProjectFormPage2() {
         />
         <Objetivos form={formProjectDetail} />
         <Servicio form={formProjectDetail} />
-        <NavigationFooter>
-          <Previous onClick={prev}/>
-          <Next onClick={next}/>
-        </NavigationFooter>
+      </div>
+      <div
+        className={
+          "mt-5 flex items-center justify-end border-t border-t-primary pt-5"
+        }
+      >
+        <Button
+          type={"button"}
+          size={"sm"}
+          variant="outline"
+          onClick={() => prev()}
+        >
+          <ChevronLeftIcon className="h-4 w-4" /> Anterior
+        </Button>
+        <Button
+          type={"button"}
+          size={"sm"}
+          variant="outline"
+          onClick={() => next()}
+        >
+          Siguiente <ChevronRightIcon className="h-4 w-4" />
+        </Button>
       </div>
     </Form>
   );
@@ -160,8 +184,6 @@ function Servicio({
 }: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
 }) {
-  const watchServicio = form.watch("servicioId")
-
   const dataQuery = useQuery<Servicio[]>({
     queryKey: ["servicios"],
     queryFn: async () => {
@@ -227,7 +249,7 @@ function Servicio({
 
                             return "algo";
                           })()
-                        : "Seleccione un servicio ..."}
+                        : "Selecciona un valor ..."}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -250,15 +272,15 @@ function Servicio({
                             form.setValue("servicioId", servicio.idServicio);
                           }}
                         >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                servicio.idServicio === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0",
-                              )}
-                            />
-                            {servicio.titulo}
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              servicio.idServicio === field.value
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          {servicio.titulo}
                         </CommandItem>
                       ))
                     )}
@@ -283,25 +305,6 @@ function Servicio({
           </FormItem>
         )}
       />
-      {
-        watchServicio && (
-          <>
-            <h4 className="text-black">Entregables del proyecto</h4>
-            <ul className="flex flex-col gap-2">
-              {
-                dataQuery.data?.find((servicio) => servicio.idServicio === watchServicio)?.entregablesDelServicio.map(s => {
-                return (
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2Icon className="text-ceu-celeste"/>
-                    {s.titulo}
-                  </li>
-                )
-                })
-              }
-            </ul>
-          </>
-        )
-      }
     </div>
   );
 }

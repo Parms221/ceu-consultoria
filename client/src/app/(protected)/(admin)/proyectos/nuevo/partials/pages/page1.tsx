@@ -1,7 +1,7 @@
 "use client";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { clienteSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/client.schema";
+import { clienteSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/schemas/client.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -13,11 +13,10 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { projectCompleteSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/project.schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronRightIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
+import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { NavigationFooter, Next } from "../multi-step-form/navigation";
@@ -89,7 +88,6 @@ function Documentos({
 
 export default function ProjectFormPage1() {
   const { next, form: formProject } = useProjectForm();
-  
 
   const formClient = useForm<z.infer<typeof clienteSchema>>({
     resolver: zodResolver(clienteSchema),
@@ -171,34 +169,37 @@ export default function ProjectFormPage1() {
         <SearchById form={formClient} />
         <PrimaryDetailsByID form={formClient} />
         <div className={"flex gap-3"}>
-        <FormField
-          control={formClient.control}
-          name="telefono"
-          render={({ field }) => (
-            <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">Contacto Teléfono</h3>
-              <FormControl>
-                <Input {...field} placeholder="Telefono" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={formClient.control}
+            name="telefono"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <h3 className="text-xl font-bold text-primary">
+                  Contacto Teléfono
+                </h3>
+                <FormControl>
+                  <Input {...field} placeholder="Telefono" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={formClient.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">Correo Electrónico</h3>
-              <FormControl>
-                <Input {...field} type={"email"} placeholder="Correo" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+          <FormField
+            control={formClient.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <h3 className="text-xl font-bold text-primary">
+                  Correo Electrónico
+                </h3>
+                <FormControl>
+                  <Input {...field} type={"email"} placeholder="Correo" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <Documentos form={formClient} />
       </div>
@@ -247,7 +248,11 @@ function SearchById({
               <h3 className="text-xl font-bold text-primary">DNI</h3>
               <div className="flex">
                 <FormControl>
-                  <Input className={"rounded-r-0 flex-1"} {...field} placeholder="DNI del Representate"/>
+                  <Input
+                    className={"rounded-r-0 flex-1"}
+                    {...field}
+                    placeholder="DNI del Representate"
+                  />
                 </FormControl>
                 <Button
                   className={"rounded-l-0"}
@@ -276,7 +281,11 @@ function SearchById({
             <h3 className="text-xl font-bold text-primary">RUC</h3>
             <div className="flex">
               <FormControl>
-                <Input className={"rounded-r-0 flex-1"} {...field} placeholder="RUC de la Empresa"/>
+                <Input
+                  className={"rounded-r-0 flex-1"}
+                  {...field}
+                  placeholder="RUC de la Empresa"
+                />
               </FormControl>
               <Button
                 className={"rounded-l-0"}
@@ -312,7 +321,7 @@ function PrimaryDetailsByID({
             <FormItem className="flex-1">
               <h3 className="text-xl font-bold text-primary">Nombres</h3>
               <FormControl>
-                <Input {...field} placeholder="Nombre del Representante"/>
+                <Input {...field} placeholder="Nombre del Representante" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -325,7 +334,7 @@ function PrimaryDetailsByID({
             <FormItem className="flex-1">
               <h3 className="text-xl font-bold text-primary">Apellidos</h3>
               <FormControl>
-                <Input {...field} placeholder="Apellido del Representate"/>
+                <Input {...field} placeholder="Apellido del Representate" />
               </FormControl>
               <FormMessage />
             </FormItem>

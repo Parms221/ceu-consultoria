@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
+import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
 import { cn } from "@/lib/utils";
-import { STEPS_VALUES } from "@/app/(protected)/(admin)/proy/partials/constants/steps";
+import { STEPS_VALUES } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/constants/steps";
 
 export default function StepsNav() {
   const { currentStep } = useProjectForm();
