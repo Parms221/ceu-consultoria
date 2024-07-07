@@ -1,10 +1,10 @@
 "use client";
 
-import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
-import ProjectFormPage1 from "@/app/(protected)/(admin)/proy/partials/pages/page1";
+import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
+import ProjectFormPage1 from "@/app/(protected)/(admin)/proyectos/nuevo/partials/pages/page1";
 import { ChevronLeft, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ProjectFormPage2 from "@/app/(protected)/(admin)/proy/partials/pages/page2";
+import ProjectFormPage2 from "@/app/(protected)/(admin)/proyectos/nuevo/partials/pages/page2";
 
 export default function CurrentPage() {
   const { currentStep, next, prev } = useProjectForm();

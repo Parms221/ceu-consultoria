@@ -3,8 +3,8 @@
 import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { projectDetailSchema } from "@/app/(protected)/(admin)/proy/partials/schemas/project-detail.schema";
-import { useProjectForm } from "@/app/(protected)/(admin)/proy/partials/multi-step-form/context";
+import { projectDetailSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/schemas/project-detail.schema";
+import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
 import {
   Form,
   FormControl,
@@ -16,7 +16,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { BoltIcon, Check, PlusIcon, TrashIcon } from "lucide-react";
+import {
+  BoltIcon,
+  Check,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PlusIcon,
+  TrashIcon,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { Servicio } from "@/types/servicio";
@@ -36,7 +43,7 @@ import {
 import { Cross2Icon } from "@radix-ui/react-icons";
 
 export default function ProjectFormPage2() {
-  const { next, form: formProject } = useProjectForm();
+  const { next, prev, form: formProject } = useProjectForm();
 
   const formProjectDetail = useForm<z.infer<typeof projectDetailSchema>>({
     resolver: zodResolver(projectDetailSchema),
@@ -44,6 +51,7 @@ export default function ProjectFormPage2() {
       title: "",
       description: "",
       objetivos: [""],
+      servicioId: 0,
     },
   });
 
@@ -78,6 +86,28 @@ export default function ProjectFormPage2() {
         />
         <Objetivos form={formProjectDetail} />
         <Servicio form={formProjectDetail} />
+      </div>
+      <div
+        className={
+          "mt-5 flex items-center justify-end border-t border-t-primary pt-5"
+        }
+      >
+        <Button
+          type={"button"}
+          size={"sm"}
+          variant="outline"
+          onClick={() => prev()}
+        >
+          <ChevronLeftIcon className="h-4 w-4" /> Anterior
+        </Button>
+        <Button
+          type={"button"}
+          size={"sm"}
+          variant="outline"
+          onClick={() => next()}
+        >
+          Siguiente <ChevronRightIcon className="h-4 w-4" />
+        </Button>
       </div>
     </Form>
   );

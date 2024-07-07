@@ -1,14 +1,11 @@
 import PendingDot from "@/components/ui/pending-dot";
-import { cn } from "@/lib/utils";
 import {
   Inbox,
   CircleCheckIcon,
-  FolderOpenDotIcon,
   LucideIcon,
   SquareUserIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { HTMLAttributes } from "react";
 
 function GetProyectoTerminados() {
   return {
@@ -55,20 +52,20 @@ function GetProyectosPorConfirmar() {
 export function ProyectosPorConfirmar() {
   const data = GetProyectosPorConfirmar();
   return (
-    <Link href={"/proyectos/pendientes"}
-      className="hover:scale-[1.02] transition-transform duration-200 ease-in-out transform" 
+    <Link
+      href={"/proyectos/pendientes"}
+      className="transform transition-transform duration-200 ease-in-out hover:scale-[1.02]"
     >
       <MiniCard>
-        <MiniCardTitle className="flex justify-between"
+        <MiniCardTitle
+          className="flex justify-between"
           Icon={Inbox}
           title="Proyectos por confirmar"
         >
-          {
-            data.total > 0 && (
-              // Punto rojo pulsante
-              <PendingDot/>
-            )
-          }
+          {data.total > 0 && (
+            // Punto rojo pulsante
+            <PendingDot />
+          )}
         </MiniCardTitle>
         <MiniCardValue>{data.total}</MiniCardValue>
         <MiniCardDescription>
@@ -89,7 +86,7 @@ interface DefaultMiniCardProps {
 export function DefaultMiniCard(props: DefaultMiniCardProps) {
   return (
     <div className="space-y-2 border border-bodydark2 bg-white px-5 py-3 dark:bg-boxdark">
-      <MiniCardTitle Icon={props.TitleIcons} title={props.title}/>
+      <MiniCardTitle Icon={props.TitleIcons} title={props.title} />
       <MiniCardValue>{props.main}</MiniCardValue>
       <MiniCardDescription>{props.description}</MiniCardDescription>
     </div>
@@ -99,46 +96,42 @@ export function DefaultMiniCard(props: DefaultMiniCardProps) {
 interface MiniCardProps {
   children: React.ReactNode;
 }
-export function MiniCard(props : MiniCardProps){
+export function MiniCard(props: MiniCardProps) {
   return (
     <div className="space-y-2 border border-bodydark2 bg-white px-5 py-3 dark:bg-boxdark">
       {props.children}
     </div>
-  )
+  );
 }
 
-interface TitleProps  {
-  title : string;
+interface TitleProps {
+  title: string;
   children?: React.ReactNode;
   Icon?: LucideIcon;
   className?: string;
 }
-export function MiniCardTitle(props : TitleProps){
+export function MiniCardTitle(props: TitleProps) {
   return (
     <header className={props.className}>
-        <div className="flex items-center gap-1">
-          {props.Icon && <props.Icon className={"h-5 w-5 text-primary"} />}
-          <h3 className="font-semibold text-black dark:text-white">
-            {props.title}
-          </h3>
-        </div>
-        {props.children}
+      <div className="flex items-center gap-1">
+        {props.Icon && <props.Icon className={"h-5 w-5 text-primary"} />}
+        <h3 className="font-semibold text-black dark:text-white">
+          {props.title}
+        </h3>
+      </div>
+      {props.children}
     </header>
-  )
+  );
 }
 
-export function MiniCardValue (props: {children: React.ReactNode}){
+export function MiniCardValue(props: { children: React.ReactNode }) {
   return (
     <p className="text-2xl font-bold text-black dark:text-white">
       {props.children}
     </p>
-  )
+  );
 }
 
-export function MiniCardDescription (props: {children: React.ReactNode}){
-  return (
-    <p className="text-sm text-bodydark">
-      {props.children}
-    </p>
-  )
+export function MiniCardDescription(props: { children: React.ReactNode }) {
+  return <p className="text-sm text-bodydark">{props.children}</p>;
 }
