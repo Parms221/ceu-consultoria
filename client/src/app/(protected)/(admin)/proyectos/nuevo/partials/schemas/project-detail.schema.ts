@@ -17,4 +17,18 @@ export const projectDetailSchema = z.object({
     )
     .min(1, { message: "Debe tener al menos un objetivo" }),
   servicioId: z.coerce.number().min(1, { message: "El servicio es requerido" }),
+  fechaInicio: z.date({
+    required_error: "La fecha de inicio es requerida",
+  }),
+  fechaLimite: z.date({
+    required_error: "La fecha límite es requerida",
+  }),
+}).superRefine((data, ctx)=> {
+  if (data.fechaInicio > data.fechaLimite) {
+    ctx.addIssue({
+      message: "La fecha de inicio debe ser menor a la fecha límite",
+      code: z.ZodIssueCode.custom,
+      path: ["fechaInicio"],
+    });
+  }
 });

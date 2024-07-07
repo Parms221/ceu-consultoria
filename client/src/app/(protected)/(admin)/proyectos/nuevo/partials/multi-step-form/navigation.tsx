@@ -1,14 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useProjectForm } from "./context";
+import { STEPS_VALUES } from "../constants/steps";
 
 interface Props {
     onClick?: () => void;
     disabled?: boolean;
+    lastStep?: boolean;
 }
 
 export function Previous({ disabled = false, onClick } : Props) {
     return (
-        <Button
+          <Button
           type={"button"}
           size={"sm"}
           variant="outline"
@@ -21,7 +24,7 @@ export function Previous({ disabled = false, onClick } : Props) {
     );
 }
 
-export function Next({ disabled = false, onClick } : Props) {
+export function Next({ disabled = false, onClick, lastStep } : Props) {
     return (
         <Button
           type={"button"}
@@ -30,14 +33,16 @@ export function Next({ disabled = false, onClick } : Props) {
           disabled={disabled}
           onClick={onClick}
         >
-          Siguiente <ChevronRightIcon className="h-4 w-4" />
+          {
+            lastStep ? "Finalizar" : "Siguiente"
+          } <ChevronRightIcon className="h-4 w-4" />
         </Button>
     );
 }
 
 export function NavigationFooter({ children } : { children : React.ReactNode}){
   return (
-    <footer className="mt-3 flex justify-end border-t border-t-primary pt-3">
+    <footer className="mt-3 flex items-center justify-end border-t gap-2 border-t-primary pt-3">
       {children}
     </footer>
   )

@@ -87,7 +87,7 @@ function Documentos({
 }
 
 export default function ProjectFormPage1() {
-  const { next, form: formProject } = useProjectForm();
+  const { currentStep, next, form: formProject } = useProjectForm();
 
   const formClient = useForm<z.infer<typeof clienteSchema>>({
     resolver: zodResolver(clienteSchema),
@@ -203,11 +203,11 @@ export default function ProjectFormPage1() {
         </div>
         <Documentos form={formClient} />
       </div>
-      <NavigationFooter>
-        <Next
-          disabled={formClient.formState.isSubmitting}
-          onClick={() => formClient.handleSubmit(handleSubmit)()}
-        />
+        <NavigationFooter>
+          <Next
+            disabled={formClient.formState.isSubmitting}
+            onClick={() => formClient.handleSubmit(handleSubmit)()}
+          />
       </NavigationFooter>
     </Form>
   );
