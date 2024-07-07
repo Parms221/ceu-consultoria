@@ -30,7 +30,7 @@ public class EntregableProyecto {
     @Id
     @Column(name="id_entregable_proyecto")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long idEntregableProyecto;
+    private Long idEntregableProyecto;
 
     @ManyToOne
     @JoinColumn(name="id_proyecto", nullable = false)

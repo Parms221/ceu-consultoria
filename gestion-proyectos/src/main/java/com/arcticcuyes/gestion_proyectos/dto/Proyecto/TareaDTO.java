@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TareaDTO {
+    private Long idTarea;
     private String titulo;
     private String descripcion;
     private Timestamp fechaInicio;

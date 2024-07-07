@@ -73,9 +73,18 @@ public class ClienteService {
         return clienteJuridicoRepository.findById(id).orElse(null);
     }
 
+    public ClienteJuridico findClienteJuridicoByRuc(String ruc) {
+        return clienteJuridicoRepository.findByRuc(ruc);
+    }
+
     public ClienteNatural findClienteNaturalById(Long id) {
         return clienteNaturalRepository.findById(id).orElse(null);
     }
+
+    public ClienteNatural findClienteNaturalByDni(String dni) {
+        return clienteNaturalRepository.findByDni(dni);
+    }
+
 
     public void updateClienteJuridico(ClienteJuridico cliente, ClienteJuridicoDto clienteJuridicoDto) {
         cliente.setRazonSocial(clienteJuridicoDto.getRazonSocial());

@@ -25,7 +25,7 @@ public class SubTarea {
     @Id
     @Column(name="id_subtarea")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long idSubTarea;
+    private Long idSubTarea;
 
     @Column(nullable = false, length = 50)
     private String descripcion;

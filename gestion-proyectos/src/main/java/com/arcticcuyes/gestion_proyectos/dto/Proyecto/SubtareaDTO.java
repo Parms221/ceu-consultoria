@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubtareaDTO {
+    private Long idSubTarea;
     private String descripcion;
     private boolean completado;
 }

@@ -39,7 +39,7 @@ public class Tarea {
     @Id
     @Column(name="id_tarea")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long idTarea;
+    private Long idTarea;
 
     @Column(nullable = false, length = 50)
     private String titulo;

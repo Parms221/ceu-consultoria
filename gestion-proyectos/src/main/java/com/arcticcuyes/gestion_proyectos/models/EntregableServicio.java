@@ -1,5 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Basic;
@@ -25,7 +26,7 @@ public class EntregableServicio {
     @Id
     @Column(name="id_entregable_servicio")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long idEntregableServicio;
+    private Long idEntregableServicio;
 
     @Column(nullable = false, length = 50)
     private String titulo;
@@ -35,6 +36,6 @@ public class EntregableServicio {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_servicio", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private Servicio servicio;
 }
