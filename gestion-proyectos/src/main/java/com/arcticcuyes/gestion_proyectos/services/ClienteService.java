@@ -35,6 +35,14 @@ public class ClienteService {
         return clienteRepository.findById(id).orElse(null);
     }
 
+    public ClienteNatural findByDni(String dni) {
+        return clienteNaturalRepository.findByDni(dni);
+    }
+
+    public ClienteJuridico findByRuc(String ruc) {
+        return clienteJuridicoRepository.findByRuc(ruc);
+    }
+
     public List<ClienteNatural> findAllClientesNaturales() {
         return (List<ClienteNatural>) clienteNaturalRepository.findAll();
     }

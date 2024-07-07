@@ -26,6 +26,27 @@ public class ClienteController {
         return clienteService.findAll();
     }
 
+    @GetMapping("/get")
+    public ResponseEntity<Cliente> searchCliente(@RequestParam(name = "type") String type, @RequestParam(name = "value") String value) {
+        if (type.equals("dni")) {
+            ClienteNatural cliente = clienteService.findByDni(value);
+            if (cliente != null) {
+                return ResponseEntity.ok(cliente);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } else if (type.equals("ruc")) {
+            ClienteJuridico cliente = clienteService.findByRuc(value);
+            if (cliente != null) {
+                return ResponseEntity.ok(cliente);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> getClienteById(@PathVariable long id) {
         Cliente cliente = clienteService.findClienteById(id);

@@ -11,7 +11,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,8 @@ import { ChevronRightIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { fetcherLocal } from "@/server/fetch/client-side";
+import { Cliente } from "@/types/cliente";
 
 // Nueva función Objetivos importada desde tu primer código
 function Documentos({
@@ -31,7 +32,9 @@ function Documentos({
   return (
     <div className={"space-y-3"}>
       <div className={"flex items-center gap-2"}>
-        <h3 className="text-xl font-bold text-primary">Documentos Adjuntos</h3>
+        <FormLabel className="text-xl font-bold text-primary">
+          Documentos Adjuntos
+        </FormLabel>
         <Button
           size={"icon"}
           className={"max-h-7 max-w-7"}
@@ -139,7 +142,9 @@ export default function ProjectFormPage1() {
             name="tipo_documento"
             render={({ field, formState }) => (
               <FormItem className="mt-3">
-                <h3 className="text-xl font-bold text-primary">Tipo</h3>
+                <FormLabel className="text-xl font-bold text-primary">
+                  Tipo
+                </FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -173,11 +178,11 @@ export default function ProjectFormPage1() {
             name="telefono"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <h3 className="text-xl font-bold text-primary">
+                <FormLabel className="text-xl font-bold text-primary">
                   Contacto Teléfono
-                </h3>
+                </FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Telefono" />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -189,11 +194,11 @@ export default function ProjectFormPage1() {
             name="email"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <h3 className="text-xl font-bold text-primary">
+                <FormLabel className="text-xl font-bold text-primary">
                   Correo Electrónico
-                </h3>
+                </FormLabel>
                 <FormControl>
-                  <Input {...field} type={"email"} placeholder="Correo" />
+                  <Input {...field} type={"email"} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -225,17 +230,42 @@ function SearchById({
   const tipoDocumento = form.watch("tipo_documento");
 
   const mutation = useMutation({
-    mutationFn: async (type: "RUC" | "DNI") => {
-      // Simular busqueda en el backend
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const newClientId = 1;
+    mutationFn: async ({
+      type,
+      value,
+    }: {
+      type: "RUC" | "DNI";
+      value: string;
+    }) => {
+      const toastId = toast.loading("Buscando cliente...");
+      const response = await fetcherLocal(
+        `/clientes/get?type=${type.toLowerCase()}&value=${value}`,
+      );
+
+      if (!response.ok) {
+        toast.error("Cliente no encontrado", { id: toastId });
+        form.setError(type.toLowerCase() as "dni" | "ruc", {
+          message: "Cliente no encontrado",
+        });
+      }
+
+      const cliente: Cliente = await response.json();
+
+      const newClientId = cliente.idCliente;
       form.setValue("clientId", newClientId);
-      form.setValue("tipo_documento", "DNI");
-      form.setValue("nombre", "John");
-      form.setValue("apellido", "Doe");
-      form.setValue("dni", "87654321");
-      form.setValue("email", "john@gmail.com");
-      form.setValue("telefono", "987654321");
+      form.setValue("tipo_documento", type);
+      if (cliente.tipo_documento == "DNI") {
+        form.setValue("nombre", cliente.nombre);
+        form.setValue("apellido", cliente.apellido);
+      } else {
+        form.setValue("razonSocial", cliente.razonSocial);
+        form.setValue("direccion", cliente.direccion);
+      }
+
+      form.setValue("email", cliente.email);
+      form.setValue("telefono", cliente.telefono);
+      toast.success("Cliente encontrado", { id: toastId });
+      form.clearErrors(type.toLowerCase() as "dni" | "ruc");
       return "ok";
     },
     mutationKey: ["search", "client"],
@@ -249,20 +279,23 @@ function SearchById({
           name="dni"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">DNI</h3>
+              <FormLabel className="text-xl font-bold text-primary">
+                DNI
+              </FormLabel>
               <div className="flex">
                 <FormControl>
-                  <Input
-                    className={"rounded-r-0 flex-1"}
-                    {...field}
-                    placeholder="DNI del Representate"
-                  />
+                  <Input className={"rounded-r-0 flex-1"} {...field} />
                 </FormControl>
                 <Button
                   className={"rounded-l-0"}
                   type="button"
                   disabled={mutation.isPending}
-                  onClick={() => mutation.mutate("DNI")}
+                  onClick={() =>
+                    mutation.mutate({
+                      type: "DNI",
+                      value: field.value as string,
+                    })
+                  }
                 >
                   Buscar
                 </Button>
@@ -282,20 +315,20 @@ function SearchById({
         name="ruc"
         render={({ field }) => (
           <FormItem className="flex-1">
-            <h3 className="text-xl font-bold text-primary">RUC</h3>
+            <FormLabel className="text-xl font-bold text-primary">
+              RUC
+            </FormLabel>
             <div className="flex">
               <FormControl>
-                <Input
-                  className={"rounded-r-0 flex-1"}
-                  {...field}
-                  placeholder="RUC de la Empresa"
-                />
+                <Input className={"rounded-r-0 flex-1"} {...field} />
               </FormControl>
               <Button
                 className={"rounded-l-0"}
                 type="button"
                 disabled={mutation.isPending}
-                onClick={() => mutation.mutate("RUC")}
+                onClick={() =>
+                  mutation.mutate({ type: "RUC", value: field.value as string })
+                }
               >
                 Buscar
               </Button>
@@ -323,9 +356,11 @@ function PrimaryDetailsByID({
           name="nombre"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">Nombres</h3>
+              <FormLabel className="text-xl font-bold text-primary">
+                Nombres
+              </FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Nombre del Representante" />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -336,9 +371,11 @@ function PrimaryDetailsByID({
           name="apellido"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">Apellidos</h3>
+              <FormLabel className="text-xl font-bold text-primary">
+                Apellidos
+              </FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Apellido del Representate" />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -349,15 +386,32 @@ function PrimaryDetailsByID({
   }
 
   return (
-    <div className="flex">
+    <div className="flex gap-3">
       <FormField
         control={form.control}
         name="razonSocial"
         render={({ field }) => (
           <FormItem className="flex-1">
-            <h3 className="text-xl font-bold text-primary">Razón Social</h3>
+            <FormLabel className="text-xl font-bold text-primary">
+              Razón Social
+            </FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Nombre de la Empresa" />
+              <Input {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="direccion"
+        render={({ field }) => (
+          <FormItem className="flex-1">
+            <FormLabel className="text-xl font-bold text-primary">
+              Razón Social
+            </FormLabel>
+            <FormControl>
+              <Input {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
