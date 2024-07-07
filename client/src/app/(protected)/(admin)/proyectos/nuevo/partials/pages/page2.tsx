@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
-import { Servicio } from "@/types/servicio";
+import type { Servicio } from "@/types/servicio";
 import {
   Popover,
   PopoverContent,
@@ -85,7 +85,7 @@ export default function ProjectFormPage2() {
           )}
         />
         <Objetivos form={formProjectDetail} />
-        <Servicio form={formProjectDetail} />
+        <SelectServicio form={formProjectDetail} />
       </div>
       <div
         className={
@@ -179,7 +179,7 @@ function Objetivos({
   );
 }
 
-function Servicio({
+function SelectServicio ({
   form,
 }: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
@@ -249,7 +249,7 @@ function Servicio({
 
                             return "algo";
                           })()
-                        : "Selecciona un valor ..."}
+                        : "Selecciona un servicio"}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
