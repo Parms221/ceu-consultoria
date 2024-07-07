@@ -1,14 +1,14 @@
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import { Usuario } from "./types/usuario";
+import { SessionToken } from "./types/shared/session";
 
-function checkIsAdmin(session: Usuario){
+function checkIsAdmin(session: SessionToken){
   return session.roles.some(role => role.rol === "ROLE_ADMIN")
 }
 
 export default withAuth(
   function middleware(req : NextRequestWithAuth){
-    const session = req.nextauth.token as Usuario
+    const session = req.nextauth.token as unknown as SessionToken
     if (session && session.roles){
       const url = req.nextUrl.clone()
       const isAdmin = checkIsAdmin(session)

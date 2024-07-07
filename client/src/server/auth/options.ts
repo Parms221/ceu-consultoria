@@ -93,7 +93,7 @@ export const authOptions: AuthOptions = {
     },
     jwt: async ({token, user }) => {
       if(user){
-        const u = user as User & Usuario //Esto no sé si es correcto xD pero funciona
+        const u = user as unknown as Usuario
         return {
           ...token,
           roles : u.roles,
