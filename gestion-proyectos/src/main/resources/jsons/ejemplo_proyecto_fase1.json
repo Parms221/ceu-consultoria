@@ -1,0 +1,12 @@
+{
+    "titulo": "Proyecto de Desarrollo",
+    "descripcion": "Desarrollo de una aplicación web",
+    "objetivos": "Crear una aplicación web funcional",
+    "requerimientos": "Tecnologías web modernas",
+    "indicaciones": "Entrega en fases",
+    "precio": 98000.0,
+    "fechaInicio": "2024-01-01T00:00:00",
+    "fechaLimite": "2024-12-31T23:59:59",
+    "idCliente": 1,
+    "servicio": 1
+}
