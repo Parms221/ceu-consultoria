@@ -1,6 +1,6 @@
 import VistaGantt from "./gantt";
 import VistaResumen from "./resumen";
-import VistaLista from "./lista";
+import VistaLista from "./lista/lista";
 import VistaKanban from "./kanban";
 
 export {

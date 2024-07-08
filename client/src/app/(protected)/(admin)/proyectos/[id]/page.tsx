@@ -2,7 +2,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Proyecto } from "@/types/proyecto";
 import Image from "next/image";
 import { ListChecks, Kanban, GanttChart, InfoIcon } from 'lucide-react'
-import { VistaResumen, VistaGantt, VistaKanban, VistaLista } from "./partials/vistas";
+import { VistaResumen, VistaGantt, VistaKanban, VistaLista } from "./vistas";
+import { Consultor } from "@/types/consultor";
+import { Participante } from "@/types/proyecto/Participante";
 
  
 export const PROJECT_VIEWS = [
@@ -10,29 +12,50 @@ export const PROJECT_VIEWS = [
         id: "resumen",
         label: "Resumen",
         icon: <InfoIcon />,
-        content: <VistaResumen />
+        content: VistaResumen
     },
     {
         id: "lista",
         label: "Lista",
         icon : <ListChecks />,
-        content: <VistaLista />
+        content: VistaLista
     },
     {
         id: "kanban",
         label: "Tablero",
         icon: <Kanban />,
-        content: <VistaKanban />
+        content: VistaKanban
     },
     {
         id: "gantt",
         label: "Diagrama de Gantt",
         icon: <GanttChart />,
-        content: <VistaGantt />
+        content: VistaGantt
     }
 ]
 
 export async function getProyectoById(id : number) {
+    const mockConsultorParticipante : Participante = {
+        idParticipante: 1,
+        consultorParticipante: {
+            apellidos: "Apellido consultor",
+            cargo: "Cargo consultor",
+            genero: "Masculino",
+            idConsultor : 1,
+            nombres: "Nombre consultor",
+            usuarioConsultor: {
+                id: 1,
+                email: "Email consultor",
+                name: "Nombre consultor",
+                enabled: true,
+                roles: [{idRol: 1, rol: "ROLE_CONSULTOR"}],
+                createdAt: (new Date()).toDateString(),
+                updatedAt: (new Date()).toDateString(),
+            },
+
+        },
+        createdAt: (new Date()).toDateString(),
+    }
     const mockProuyecto : Proyecto = {
         idProyecto: 1,
         estado: { idEstado: 1, tipo: 0, descripcion: "En proceso"},
@@ -61,26 +84,29 @@ export async function getProyectoById(id : number) {
         },
         requerimientos: "requerimiento1, requerimiento2, requerimiento3",
         participantes: [
+            mockConsultorParticipante
+        ],
+        hito: [
             {
-                idParticipante: 1,
-                consultorParticipante: {
-                    apellidos: "Apellido consultor",
-                    cargo: "Cargo consultor",
-                    genero: "Masculino",
-                    idConsultor : 1,
-                    nombres: "Nombre consultor",
-                    usuarioConsultor: {
-                        id: 1,
-                        email: "Email consultor",
-                        name: "Nombre consultor",
-                        enabled: true,
-                        roles: [{idRol: 1, rol: "ROLE_CONSULTOR"}],
-                        createdAt: (new Date()).toDateString(),
-                        updatedAt: (new Date()).toDateString(),
-                    },
-
-                },
-                createdAt: (new Date()).toDateString(),
+                idHito: 1,
+                titulo: "Hito 1",
+                fechaFinalizacion: new Date().toDateString(),
+                fechaInicio: new Date().toDateString(),
+                tareasDelHito: [
+                    {
+                        idTarea: 1,
+                        descripcion: "Tarea 1 descripción",
+                        estado: {
+                            idEstado: 1, descripcion: "En progreso", tipo: 0
+                        },
+                        fechaFin: new Date().toDateString(),
+                        fechaInicio: new Date().toDateString(),
+                        titulo: "Tarea 1",
+                        participantesAsignados: [
+                            mockConsultorParticipante
+                        ]
+                     }
+                ]
             }
         ]
     }
@@ -124,9 +150,10 @@ export default async function ProjectDetail({ params } : { params: { id: number 
             <div className="area p-8">
                 {
                     PROJECT_VIEWS.map((view) => {
+                        const View = view.content
                         return (
                             <TabsContent key={view.id} value={view.id}>
-                                {view.content}
+                                <View hitos={proyecto.hito ? proyecto.hito : []}/>
                             </TabsContent> 
                         )
                     })

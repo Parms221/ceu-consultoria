@@ -9,7 +9,7 @@ export type Tarea = {
     fechaFin : string;
     createdAt?: string;
     updatedAt?: string;
-    tareaAnterior : Tarea
+    tareaAnterior? : Tarea
     estado : Estado
     participantesAsignados : Participante[] // Consultores
 
