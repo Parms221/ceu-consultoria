@@ -15,20 +15,21 @@ export default function MemberCard({ member }: IMemberCardProps) {
   const { form } = useProjectForm();
 
   return (
-    <Card className="flex flex-col gap-4 p-2 w-full">
-      <CardHeader className="flex flex-col sm:flex-row justify-between">
+    <Card className="flex flex-col gap-4 px-0 w-full">
+      <CardHeader className="flex flex-col sm:flex-row justify-between p-0">
         <div className="flex gap-4">
             <Avatar>
                 <AvatarImage src="/images/user/user-05.png" />
                 <AvatarFallback>{member.nombres.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
-                <h3 className="text-sm font-medium">{member.nombres} {member.apellidos}</h3>
+                <h3 className="text-sm font-medium shrink-0 text-nowrap">{member.nombres} {member.apellidos}</h3>
                 <span className="text-sm text-muted-foreground">Consultor</span>
             </div>
         </div>
-        <div className="text-primary ">
-            0 proyectos asignados
+        <div className="text-primary text-sm text-center flex flex-col">
+            <span>0</span>
+            <span className="text-xs">Proyectos asignados</span>
         </div>
       </CardHeader>
       <div className="flex items-center gap-2">

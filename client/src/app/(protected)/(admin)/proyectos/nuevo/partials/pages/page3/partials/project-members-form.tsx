@@ -97,16 +97,20 @@ export default function ProjectMembersForm() {
             <div style={
                 {
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
                     gap: "8px"
                 }
             }>
                 {
-                    filtroConsultores.map((consultor) => {
+                    filtroConsultores.length > 0 ? filtroConsultores.map((consultor) => {
                         return (
                             <MemberCard key={consultor.idConsultor} member={consultor} />
                         )
-                    })
+                    }) : (
+                        <div className="text-muted-foreground text-center h-32 grid place-content-center">
+                            No se encontraron consultores disponibles
+                        </div>
+                    )
                 }
             </div>
         </div>
