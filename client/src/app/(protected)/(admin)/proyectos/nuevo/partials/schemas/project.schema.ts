@@ -5,6 +5,7 @@ import { assignationSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/par
 
 export const projectCompleteSchema = z.object({
   clienteId: z.number().positive({ message: "El cliente es requerido" }),
+  proyectoId:z.number().positive({ message: "El proyecto es requerido" }),
   cliente: clienteSchema.optional(),
   project: projectDetailSchema,
   participantes: assignationSchema,

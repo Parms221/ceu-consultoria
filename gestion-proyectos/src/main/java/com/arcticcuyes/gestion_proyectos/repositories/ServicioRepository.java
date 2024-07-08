@@ -7,5 +7,4 @@ import com.arcticcuyes.gestion_proyectos.models.Servicio;
 
 @Repository
 public interface ServicioRepository extends CrudRepository<Servicio, Long> {
-
 }

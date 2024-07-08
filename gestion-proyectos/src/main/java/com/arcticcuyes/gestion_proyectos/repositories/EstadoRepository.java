@@ -13,5 +13,4 @@ import java.util.List;
 @Repository
 public interface EstadoRepository extends CrudRepository<Estado, Long>{
     List<Estado> findByTipo(int tipo);
-    
 }

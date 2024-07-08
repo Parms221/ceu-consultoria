@@ -17,6 +17,65 @@ type ClienteJsonResponse = {
   dni: string,
 }
 
+export type ProyectoIncompletoJsonResponse = {
+  idProyecto: number
+  titulo: string
+  descripcion: string
+  objetivos: string
+  requerimientos: string
+  indicaciones: string
+  fechaInicio: string
+  fechaLimite: string
+  precio: number
+  cliente: {
+    idCliente: number
+    tipo_documento: string
+    telefono: string
+    email: string
+    usuarioCliente: any
+    createdAt: string
+    updatedAt: string
+    nombre: string
+    apellido: string
+    dni: string
+  }
+  servicio: {
+    idServicio: number
+    titulo: string
+    precio: number
+    descripcion: string
+    entregablesDelServicio: Array<{
+      idEntregableServicio: number
+      titulo: string
+    }>
+  }
+  estado: {
+    idEstado: number
+    descripcion: string
+    tipo: number
+  }
+  createdAt: string
+  updatedAt: string
+  participantes: string[]
+  reuniones: string[]
+  hitos: string[]
+  entregables: string[]
+}
+
+
+type ProyectoIncompletoDto = {
+  titulo: string,
+  descripcion?: string,
+  objetivos: string,
+  fechaInicio: Date,
+  fechaLimite: Date,
+  requerimientos: string,
+  indicaciones: string,
+  precio: number,
+  idCliente: number,
+  servicio: number,  
+}
+
 export async function getProyectos(): Promise<Proyecto[] | undefined> {
     try {
       const response = await fetcher ("/proyectos", {
@@ -104,6 +163,43 @@ export async function createClienteNatural(
       status: "error",
       message: "Error al crear cliente",
       idCliente: 0,
+    };
+  }
+}
+
+export async function createProyectoIncompleto(
+  data: ProyectoIncompletoDto,
+): Promise<{ status: string; message: string, idProyecto: number, proyecto?: ProyectoIncompletoJsonResponse}> {
+  try {
+    const response = await fetcher("/proyectos/addProyecto", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    let proyecto = await response.json();
+    console.log("Proyecto json");
+    console.log(proyecto);
+
+    if (response.ok) {
+      return {
+        status: "success",
+        message: "Proyecto creado exitosamente",
+        idProyecto: proyecto.idProyecto,
+        proyecto: proyecto,
+      };
+    } 
+
+    return {
+      status: "error",
+      message: "Error al crear proyecto",
+      idProyecto: 0,
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: "error",
+      message: "Error al crear proyecto",
+      idProyecto: 0,
     };
   }
 }

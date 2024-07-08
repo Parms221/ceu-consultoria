@@ -40,6 +40,8 @@ import {
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation";
 import DatePicker from "@/components/ui/datepicker/date-picker";
+import { toast } from "sonner";
+import { createProyectoIncompleto } from "@/actions/Proyecto";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -60,13 +62,33 @@ export default function ProjectFormPage2() {
   });
 
   async function handleSubmit(data: z.infer<typeof projectDetailSchema>) {
-    // console.log("Hola");
+    const clientId = formProject.getValues("clienteId");
+    let res = undefined
+    const toastId = toast.loading("Guardando proyecto...");
     console.log("Valor de cliente anterior: " + formProject.getValues("clienteId"));
-    formProject.setValue(
-      "project",
-      data,
-    );
-    // next();
+
+    res = await createProyectoIncompleto(
+      {
+        titulo: data.title,
+        descripcion: data.description, 
+        fechaInicio: data.fechaInicio, 
+        fechaLimite: data.fechaLimite, 
+        objetivos: data.objetivos.join('\n'), 
+        servicio: data.servicioId, 
+        indicaciones: "",
+        precio: 100.0,
+        requerimientos:"",
+        idCliente: clientId,
+      });
+
+    if (res.status === "success") {
+      data.proyectoId = res.idProyecto;
+      toast.success(res.message, { id: toastId });
+      formProject.setValue("project", data);
+      next();
+    } else {
+      toast.error(res.message, { id: toastId });
+    }
   }
 
   return (
