@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const projectDetailSchema = z.object({
+  proyectoId: z.number().optional(),
   title: z
     .string()
     .min(3, { message: "El título debe tener al menos 3 caracteres" }),
