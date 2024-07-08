@@ -43,6 +43,7 @@ import DatePicker from "@/components/ui/datepicker/date-picker";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
+  // console.log("Valor de cliente anterior: "+formProject.getValues("clienteId"));
 
   const formProjectDetail = useForm<z.infer<typeof projectDetailSchema>>({
     resolver: zodResolver(projectDetailSchema),
@@ -59,12 +60,13 @@ export default function ProjectFormPage2() {
   });
 
   async function handleSubmit(data: z.infer<typeof projectDetailSchema>) {
-
+    // console.log("Hola");
+    console.log("Valor de cliente anterior: " + formProject.getValues("clienteId"));
     formProject.setValue(
       "project",
       data,
     );
-    next();
+    // next();
   }
 
   return (

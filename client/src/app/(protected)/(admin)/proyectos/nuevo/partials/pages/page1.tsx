@@ -20,6 +20,7 @@ import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partia
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { NavigationFooter, Next } from "../multi-step-form/navigation";
+import { createClienteJuridico, createClienteNatural } from "@/actions/Proyecto";
 
 // Nueva función Objetivos importada desde tu primer código
 function Documentos({
@@ -108,27 +109,44 @@ export default function ProjectFormPage1() {
 
   async function handleSubmit(data: z.infer<typeof clienteSchema>) {
     const clientId = formClient.getValues("clientId");
+    const tipo_documento = data.tipo_documento;
+    let res = undefined;
+    const toastId = toast.loading("Guardando cliente...");
 
-    if (clientId == undefined || clientId == 0) {
-      const toastId = toast.loading("Guardando cliente...");
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const newClientId = 1;
-      data.clientId = newClientId;
-
-      toast.success("Cliente guardado", { id: toastId });
+    if (tipo_documento === "RUC") {
+        res = await createClienteJuridico({
+          tipo_documento: data.tipo_documento,
+          ruc: data.ruc!,
+          razonSocial: data.razonSocial!,
+          direccion: data.direccion!,
+          email: data.email!,
+          telefono: data.telefono!,
+        });
+    } else {
+        res = await createClienteNatural({
+          tipo_documento: data.tipo_documento,
+          dni: data.dni!,
+          nombre: data.nombre!,
+          apellido: data.apellido!,
+          email: data.email!,
+          telefono: data.telefono!,
+        });
     }
-    // TODO: también se debería actualizar la información del cliente en caso haya avanzado a otro página
-    // luego regresado
 
-    formProject.setValue(
-      "clienteId",
-      formClient.getValues("clientId") as number,
-    );
+    if (res.status === "success") {
 
-    formProject.setValue("cliente", data);
-
-    next();
+      data.clientId = res.idCliente;
+      toast.success(res.message, {id: toastId});
+      formProject.setValue(
+        "clienteId",
+        data.clientId as number,
+      );
+      formProject.setValue("cliente", res.cliente!);
+      next();
+    } else {
+      toast.error(res.message, {id: toastId});
+    }
+    
   }
 
   return (
