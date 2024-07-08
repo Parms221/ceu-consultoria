@@ -17,16 +17,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
-  BoltIcon,
   Check,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   PlusIcon,
   TrashIcon,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
-import { Servicio } from "@/types/servicio";
+import type { Servicio } from "@/types/servicio";
 import {
   Popover,
   PopoverContent,
@@ -41,6 +38,8 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation";
+import DatePicker from "@/components/ui/datepicker/date-picker";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -48,12 +47,25 @@ export default function ProjectFormPage2() {
   const formProjectDetail = useForm<z.infer<typeof projectDetailSchema>>({
     resolver: zodResolver(projectDetailSchema),
     defaultValues: formProject.getValues("project") || {
-      title: "",
-      description: "",
-      objetivos: [""],
-      servicioId: 0,
+      title: "Proyecto 1",
+      description: "Descripción de proyecto",
+      fechaInicio: new Date(),
+      fechaLimite: new Date().setDate(
+        new Date().getDate() + 1,
+      ),
+      objetivos: ["Objetivo1"],
+      servicioId: 1,
     },
   });
+
+  async function handleSubmit(data: z.infer<typeof projectDetailSchema>) {
+
+    formProject.setValue(
+      "project",
+      data,
+    );
+    next();
+  }
 
   return (
     <Form {...formProjectDetail}>
@@ -84,31 +96,44 @@ export default function ProjectFormPage2() {
             </FormItem>
           )}
         />
+        <div className="flex flex-wrap gap-4">
+            <FormField
+              control={formProjectDetail.control}
+              name="fechaInicio"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <div className="flex flex-col gap-2">
+                    <FormLabel>Fecha de inicio</FormLabel>
+                    <DatePicker field={field} />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={formProjectDetail.control}
+              name="fechaLimite"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                   <div className="flex flex-col gap-2">
+                    <FormLabel>Fecha Límite</FormLabel>
+                    <DatePicker field={field} />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+        </div>
         <Objetivos form={formProjectDetail} />
-        <Servicio form={formProjectDetail} />
+        <SelectServicio form={formProjectDetail} />
       </div>
-      <div
-        className={
-          "mt-5 flex items-center justify-end border-t border-t-primary pt-5"
-        }
-      >
-        <Button
-          type={"button"}
-          size={"sm"}
-          variant="outline"
-          onClick={() => prev()}
-        >
-          <ChevronLeftIcon className="h-4 w-4" /> Anterior
-        </Button>
-        <Button
-          type={"button"}
-          size={"sm"}
-          variant="outline"
-          onClick={() => next()}
-        >
-          Siguiente <ChevronRightIcon className="h-4 w-4" />
-        </Button>
-      </div>
+      <NavigationFooter>
+          <Previous onClick={prev}/>
+          <Next 
+              disabled={formProjectDetail.formState.isSubmitting}
+              onClick={formProjectDetail.handleSubmit(handleSubmit)}
+          />
+      </NavigationFooter>
     </Form>
   );
 }
@@ -138,7 +163,7 @@ function Objetivos({
       <ul className={"space-y-2"}>
         {objetivos.map((obj, index) => {
           return (
-            <div>
+            <div key={index}>
               <FormField
                 control={form.control}
                 name={`objetivos.${index}`}
@@ -179,7 +204,7 @@ function Objetivos({
   );
 }
 
-function Servicio({
+function SelectServicio ({
   form,
 }: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
@@ -249,7 +274,7 @@ function Servicio({
 
                             return "algo";
                           })()
-                        : "Selecciona un valor ..."}
+                        : "Selecciona un servicio"}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>

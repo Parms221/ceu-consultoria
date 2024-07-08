@@ -44,17 +44,17 @@ public class ProyectoDTO {
 
     private String indicaciones;
 
-    @NotNull(message = "Esta informacion es necesaria")
+    @NotNull(message = "La fecha de inicio del proyecto es obligatoria")
     private Timestamp fechaInicio;
 
-    @NotNull(message = "Esta informacion es necesaria")
+    @NotNull(message = "La fecha límite del proyecto es obligatoria")
     private Timestamp fechaLimite;
 
     @NotNull(message = "El precio del Proyecto es necesario")
     private Double precio;
 
 
-
+    @NotNull(message = "El servicio asociado al proyecto es obligatorio")
     private Long servicio;
 
     private Long estado;

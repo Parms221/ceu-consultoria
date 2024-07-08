@@ -41,10 +41,7 @@ public class ProyectoController {
     @Autowired
     ProyectoService proyectoService;
 
-    @Autowired
-    ClienteService clienteService;
-
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Proyecto>> getAllProyectos() {
         List<Proyecto> proyectos = proyectoService.findProyectos();
         return ResponseEntity.ok(proyectos);
