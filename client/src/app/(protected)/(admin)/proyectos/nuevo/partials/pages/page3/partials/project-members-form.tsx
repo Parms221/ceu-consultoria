@@ -56,14 +56,42 @@ export default function ProjectMembersForm() {
     const { form } = useProjectForm();
     const [filtroConsultores, setFiltroConsultores] = useState<Consultor[]>(consultores);
 
-    const watchConsultores = form.watch("participantes");
+    // Verifica si un consultor está asignado al proyecto que se está creando
+    function isAsigned(consultor: Consultor){
+        const asigned = form.getValues().participantes;
+        if (asigned){
+            return asigned.find((consultant) => consultant.idConsultor == consultor.idConsultor);
+        }
+        return false;
+    }
+
+    // Actualiza la lista de consultores disponibles cada vez que se añade un consultor al proyecto
+    form.watch((value, { name }) => {
+        if (name == "participantes") {
+          const nonAsigedConsultants = consultores.filter((c) => !isAsigned(c)) 
+          setFiltroConsultores(nonAsigedConsultants);
+        }
+      });
+
+    // Función para buscar consultores por nombre completo
+    function searchConsultant(event: React.ChangeEvent<HTMLInputElement>) {
+        const search = event.target.value;
+        const filtered = consultores.filter((consultor) => {
+          const name = consultor.nombres + " " + consultor.apellidos;
+          return name.toLowerCase().includes(search.toLowerCase()) && !isAsigned(consultor);
+        });
+        setFiltroConsultores(filtered);
+      }
 
     return (
         <div className="flex flex-col gap-4">
              <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold">Consultores disponibles</h2>
               <div className="flex items-center gap-2">
-                <Input placeholder="Buscar consultor" className="bg-muted" />
+                <Input 
+                    onChange={searchConsultant}
+                    placeholder="Buscar consultor" className="bg-muted" 
+                />
               </div>
             </div>
             <div style={
