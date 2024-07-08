@@ -19,6 +19,7 @@ import { ChevronRightIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { NavigationFooter, Next } from "../multi-step-form/navigation";
 
 // Nueva función Objetivos importada desde tu primer código
 function Documentos({
@@ -86,7 +87,7 @@ function Documentos({
 }
 
 export default function ProjectFormPage1() {
-  const { next, form: formProject } = useProjectForm();
+  const { currentStep, next, form: formProject } = useProjectForm();
 
   const formClient = useForm<z.infer<typeof clienteSchema>>({
     resolver: zodResolver(clienteSchema),
@@ -202,17 +203,12 @@ export default function ProjectFormPage1() {
         </div>
         <Documentos form={formClient} />
       </div>
-      <div className="mt-3 flex justify-end border-t border-t-primary pt-3">
-        <Button
-          type={"button"}
-          size={"sm"}
-          variant="outline"
-          disabled={formClient.formState.isSubmitting}
-          onClick={() => formClient.handleSubmit(handleSubmit)()}
-        >
-          Siguiente <ChevronRightIcon className="h-4 w-4" />
-        </Button>
-      </div>
+        <NavigationFooter>
+          <Next
+            disabled={formClient.formState.isSubmitting}
+            onClick={() => formClient.handleSubmit(handleSubmit)()}
+          />
+      </NavigationFooter>
     </Form>
   );
 }
