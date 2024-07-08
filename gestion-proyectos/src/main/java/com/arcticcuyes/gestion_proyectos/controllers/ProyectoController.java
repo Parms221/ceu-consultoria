@@ -48,17 +48,24 @@ public class ProyectoController {
         return ResponseEntity.ok(proyectos);
     }
 
-    @GetMapping("/proyectos/propuestos")
-    public ResponseEntity<List<Proyecto>> getAllProyectosPropuestos() {
-        final int estadoPropuestoId = 1;
-        List<Proyecto> proyectos = proyectoService.getProyectosByEstado((long)estadoPropuestoId);
-        if(proyectos.isEmpty()){
-            return ResponseEntity.badRequest().build();
+    @GetMapping("/propuestos")
+    public ResponseEntity<?> getAllProyectosPropuestos() {
+        
+        try {
+            final int estadoPropuestoId = 1;
+            List<Proyecto> proyectos = proyectoService.getProyectosByEstado((long)estadoPropuestoId);
+            if(proyectos.isEmpty()){
+                return ResponseEntity.badRequest().build();
+            }
+
+        return ResponseEntity.ok(proyectos);    
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener los proyectos propuestos: " + e.getMessage());
         }
-        return ResponseEntity.ok(proyectos);
+        
     }
 
-    @PostMapping("/proyectos/propuestos/{id}")
+    @PostMapping("/propuestos/{id}")
     public ResponseEntity<Proyecto> aceptarProyecto(@PathVariable long id) {
         try {
             Proyecto proyectoAceptado;
@@ -68,7 +75,6 @@ public class ProyectoController {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
     }
-    
 
     @PostMapping("/addProyecto")
     public ResponseEntity<?> createProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO, BindingResult bindingResult) {
