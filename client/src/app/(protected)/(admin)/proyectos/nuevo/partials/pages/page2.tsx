@@ -47,12 +47,14 @@ export default function ProjectFormPage2() {
   const formProjectDetail = useForm<z.infer<typeof projectDetailSchema>>({
     resolver: zodResolver(projectDetailSchema),
     defaultValues: formProject.getValues("project") || {
-      title: "",
-      description: "",
-      fechaInicio: undefined,
-      fechaLimite: undefined,
-      objetivos: [""],
-      servicioId: 0,
+      title: "Proyecto 1",
+      description: "Descripción de proyecto",
+      fechaInicio: new Date(),
+      fechaLimite: new Date().setDate(
+        new Date().getDate() + 1,
+      ),
+      objetivos: ["Objetivo1"],
+      servicioId: 1,
     },
   });
 
@@ -161,7 +163,7 @@ function Objetivos({
       <ul className={"space-y-2"}>
         {objetivos.map((obj, index) => {
           return (
-            <div>
+            <div key={index}>
               <FormField
                 control={form.control}
                 name={`objetivos.${index}`}

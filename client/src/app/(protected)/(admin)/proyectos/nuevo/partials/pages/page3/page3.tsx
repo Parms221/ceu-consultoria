@@ -1,15 +1,14 @@
 import { useProjectForm } from "../../multi-step-form/context";
 import { Previous, Next, NavigationFooter } from "../../multi-step-form/navigation";
-import ProjectOverview from "./project-overview";
+import ProjectMembersForm from "./partials/project-members-form";
+import ProjectOverview from "./partials/project-overview";
 
 export default function ProjectFormPage3() {
     const { next, prev } = useProjectForm();
     return (
-        <div>
-            <h1>Page 3</h1>
-            <div>
-                <ProjectOverview />
-            </div>
+        <div className="space-y-2.5">
+            <ProjectOverview />
+            <ProjectMembersForm />
             <NavigationFooter>
                 <Previous onClick={prev}/>
                 <Next 
