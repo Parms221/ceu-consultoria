@@ -10,6 +10,7 @@ import javax.swing.text.html.Option;
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpEntity;
@@ -49,8 +50,8 @@ public class ProyectoService {
     
 
 
-    public List<Proyecto> findProyectos() {
-        return (List<Proyecto>) proyectoRepository.findAll();
+    public Page<Proyecto> findProyectos(PageRequest pageRequest) {
+        return proyectoRepository.findAllBy(pageRequest);
     }
 
     public Proyecto findProyectoById(Long id) {

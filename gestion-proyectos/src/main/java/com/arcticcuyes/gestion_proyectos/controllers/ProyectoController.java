@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
@@ -27,14 +27,6 @@ import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
 import jakarta.validation.Valid;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
 
 @RestController
 @RequestMapping("/proyectos")
@@ -44,8 +36,12 @@ public class ProyectoController {
     ProyectoService proyectoService;
 
     @GetMapping
-    public ResponseEntity<List<Proyecto>> getAllProyectos() {
-        List<Proyecto> proyectos = proyectoService.findProyectos();
+    public ResponseEntity<Page<Proyecto>> getAllProyectos(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize
+    ) {
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        Page<Proyecto> proyectos = proyectoService.findProyectos(pageRequest);
         return ResponseEntity.ok(proyectos);
     }
 
