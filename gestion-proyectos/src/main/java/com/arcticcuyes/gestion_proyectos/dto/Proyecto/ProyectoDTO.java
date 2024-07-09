@@ -24,7 +24,8 @@ public class ProyectoDTO {
     // Part Diagnostico
     private String tipoCliente;
 
-    private long idCliente;
+    @NotNull(message = "El Cliente del Proyecto es obligatorio")
+    private Long idCliente;
 
     // Part Alcance
 

@@ -61,7 +61,7 @@ public class Proyecto {
     private Double precio;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="id_cliente", nullable = true)
+    @JoinColumn(name="id_cliente", nullable = false)
     private Cliente cliente;
 
     @ManyToOne(fetch = FetchType.EAGER)
