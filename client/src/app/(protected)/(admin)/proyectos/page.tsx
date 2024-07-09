@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import {
   ConsultoresAsignados,
   ProyectosPorConfirmar,
-  ProyectosTerminados,
+  ProyectosTerminados
 } from "@/app/(protected)/(admin)/proyectos/partials/mini-cards";
 import { PlusIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,12 +10,13 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import PageTitle from "@/components/ui/page-title";
-import { DataTable } from "./partials/DataTable/data-table";
 import { columns } from "./partials/DataTable/columns";
 import { getProyectos } from "@/actions/Proyecto";
+import ProyectoContext from "@/app/(protected)/(admin)/proyectos/partials/DataTable/table-context";
+import DataTable from "@/components/ui/DataTable/DataTable";
 
 export const metadata: Metadata = {
-  title: "Proyectos",
+  title: "Proyectos"
 };
 
 export default async function Page() {
@@ -45,8 +46,11 @@ export default async function Page() {
           </div>
         </CardHeader>
         <CardContent>
+          <ProyectoContext>
+            <DataTable />
+          </ProyectoContext>
           {/*    TODO: add filters and table*/}
-          <DataTable columns={columns} data={proyectos ?? []} />
+          {/*<DataTable columns={columns} data={proyectos ?? []} />*/}
         </CardContent>
       </Card>
     </main>

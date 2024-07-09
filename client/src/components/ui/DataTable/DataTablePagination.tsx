@@ -1,39 +1,13 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  LucideChevronsLeft,
-  LucideChevronsRight
-} from "lucide-react";
-import { Table } from "@tanstack/react-table";
-
+"use client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
+import { ChevronLeftIcon, ChevronRightIcon, LucideChevronsLeft, LucideChevronsRight } from "lucide-react";
+import { useDataTable } from "@/components/context/table-query";
 
-interface DataTablePaginationProps<TData> {
-  table: Table<TData>;
-  withRowSelection?: boolean;
-}
-
-export function DataTablePagination<TData>({
-                                             table,
-                                             withRowSelection = false
-                                           }: DataTablePaginationProps<TData>) {
+export function DataTablePagination() {
+  const { table } = useDataTable();
   return (
     <div className="flex items-center justify-between px-2">
-      {
-        withRowSelection && (
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-        )
-      }
       <div className="flex items-center space-x-6 lg:space-x-8 ml-auto">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Filas por página</p>
@@ -101,4 +75,3 @@ export function DataTablePagination<TData>({
     </div>
   );
 }
-  
