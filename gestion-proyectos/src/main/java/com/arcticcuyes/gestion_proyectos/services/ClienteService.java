@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -35,6 +36,10 @@ public class ClienteService {
     }
     public Cliente findClienteById(Long id) {
         return clienteRepository.findById(id).orElse(null);
+    }
+
+    public Optional<Cliente> findById(Long id) {
+        return clienteRepository.findById(id);
     }
 
     public ClienteNatural findByDni(String dni) {

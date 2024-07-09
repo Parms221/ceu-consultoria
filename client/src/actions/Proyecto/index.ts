@@ -1,8 +1,8 @@
 "use server";
 
-import { fetcher } from "@/server/fetch/server-side"
-import { CreateClienteJuridicoDto, CreateClienteNaturalDto, UpdateClienteJuridicoDto } from "@/types/cliente/ClienteDto"
-import { Proyecto } from "@/types/proyecto"
+import { fetcher } from "@/server/fetch/server-side";
+import { CreateClienteJuridicoDto, CreateClienteNaturalDto, UpdateClienteJuridicoDto } from "@/types/cliente/ClienteDto";
+import { Proyecto } from "@/types/proyecto";
 
 type ClienteJsonResponse = {
   idCliente: number,
@@ -63,7 +63,7 @@ export type ProyectoIncompletoJsonResponse = {
 }
 
 
-type ProyectoIncompletoDto = {
+export type ProyectoIncompletoDto = {
   titulo: string,
   descripcion?: string,
   objetivos: string,
@@ -73,33 +73,33 @@ type ProyectoIncompletoDto = {
   indicaciones: string,
   precio: number,
   idCliente: number,
-  servicio: number,  
+  servicio: number,
 }
 
 export async function getProyectos(): Promise<Proyecto[] | undefined> {
-    try {
-      const response = await fetcher ("/proyectos", {
-        method: "GET",
-      }) 
-      let data
-      if (response.ok){
-        data = await response.json()
-        return data as Proyecto[]
-      }else {
-        console.error("Error: ", response)
-      }
-    }catch(error) {
-        console.error(error);
+  try {
+    const response = await fetcher("/proyectos", {
+      method: "GET"
+    });
+    let data;
+    if (response.ok) {
+      data = await response.json();
+      return data as Proyecto[];
+    } else {
+      console.error("Error: ", response);
     }
+  } catch (error) {
+    console.error(error);
   }
+}
 
 export async function createClienteJuridico(
-  data: CreateClienteJuridicoDto,
+  data: CreateClienteJuridicoDto
 ): Promise<{ status: string; message: string, idCliente: number, cliente: any }> {
   try {
     const response = await fetcher("/clientes/juridicos/create", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
 
     let cliente = await response.json();
@@ -108,17 +108,17 @@ export async function createClienteJuridico(
         status: "success",
         message: "Cliente creado exitosamente",
         idCliente: cliente.idCliente,
-        cliente: cliente,
+        cliente: cliente
       };
     }
 
     return {
-        status: "error",
-        message: "Error al crear cliente",
-        idCliente: 0,
-        cliente: 0
-      };
-    
+      status: "error",
+      message: "Error al crear cliente",
+      idCliente: 0,
+      cliente: 0
+    };
+
   } catch (e) {
     console.log(e);
     return {
@@ -131,12 +131,12 @@ export async function createClienteJuridico(
 }
 
 export async function createClienteNatural(
-  data: CreateClienteNaturalDto,
-): Promise<{ status: string; message: string, idCliente: number, cliente?: ClienteJsonResponse}> {
+  data: CreateClienteNaturalDto
+): Promise<{ status: string; message: string, idCliente: number, cliente?: ClienteJsonResponse }> {
   try {
     const response = await fetcher("/clientes/naturales/create", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
 
     let cliente = await response.json();
@@ -148,32 +148,32 @@ export async function createClienteNatural(
         status: "success",
         message: "Cliente creado exitosamente",
         idCliente: cliente.idCliente,
-        cliente: cliente,
+        cliente: cliente
       };
-    } 
+    }
 
     return {
       status: "error",
       message: "Error al crear cliente",
-      idCliente: 0,
+      idCliente: 0
     };
   } catch (e) {
     console.log(e);
     return {
       status: "error",
       message: "Error al crear cliente",
-      idCliente: 0,
+      idCliente: 0
     };
   }
 }
 
 export async function createProyectoIncompleto(
-  data: ProyectoIncompletoDto,
-): Promise<{ status: string; message: string, idProyecto: number, proyecto?: ProyectoIncompletoJsonResponse}> {
+  data: ProyectoIncompletoDto
+): Promise<{ status: string; message: string, idProyecto: number, proyecto?: ProyectoIncompletoJsonResponse }> {
   try {
     const response = await fetcher("/proyectos/addProyecto", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
 
     let proyecto = await response.json();
@@ -185,21 +185,21 @@ export async function createProyectoIncompleto(
         status: "success",
         message: "Proyecto creado exitosamente",
         idProyecto: proyecto.idProyecto,
-        proyecto: proyecto,
+        proyecto: proyecto
       };
-    } 
+    }
 
     return {
       status: "error",
       message: "Error al crear proyecto",
-      idProyecto: 0,
+      idProyecto: 0
     };
   } catch (e) {
     console.log(e);
     return {
       status: "error",
       message: "Error al crear proyecto",
-      idProyecto: 0,
+      idProyecto: 0
     };
   }
 }

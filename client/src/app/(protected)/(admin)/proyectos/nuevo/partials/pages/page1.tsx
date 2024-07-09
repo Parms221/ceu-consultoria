@@ -121,11 +121,11 @@ export default function ProjectFormPage1() {
     }
 
     const tipo_documento = data.tipo_documento;
-    let res = false;
+    let cliente = null as Cliente | null;
     const toastId = toast.loading("Guardando cliente...", { position: "top-center" });
 
     if (tipo_documento === "RUC") {
-      res = await createClienteJuridico({
+      cliente = await createClienteJuridico({
         tipo_documento: data.tipo_documento,
         ruc: data.ruc!,
         razonSocial: data.razonSocial!,
@@ -134,7 +134,7 @@ export default function ProjectFormPage1() {
         telefono: data.telefono!
       }, formClient, toastId);
     } else {
-      res = await createClienteNatural({
+      cliente = await createClienteNatural({
         tipo_documento: data.tipo_documento,
         dni: data.dni!,
         nombre: data.nombre!,
@@ -144,7 +144,31 @@ export default function ProjectFormPage1() {
       }, formClient, toastId);
     }
 
-    if (res) {
+    if (cliente) {
+      if (cliente.tipo_documento == "DNI") {
+        formProject.setValue("cliente", {
+          tipo_documento: "DNI",
+          nombre: cliente.nombre,
+          apellido: cliente.apellido,
+          dni: cliente.dni,
+          telefono: cliente.telefono,
+          email: cliente.email,
+          clientId: cliente.idCliente,
+          documentos: []
+        });
+      } else {
+        formProject.setValue("cliente", {
+          tipo_documento: "RUC",
+          razonSocial: cliente.razonSocial,
+          direccion: cliente.direccion,
+          ruc: cliente.ruc,
+          telefono: cliente.telefono,
+          email: cliente.email,
+          clientId: cliente.idCliente,
+          documentos: []
+        });
+      }
+      formProject.setValue("clienteId", cliente.idCliente);
       next();
     }
   }
@@ -252,6 +276,8 @@ function SearchById({
   const clientId = form.watch("clientId");
   const isClientSelected = clientId != 0;
 
+  const { form: formProject } = useProjectForm();
+
   const mutation = useMutation({
     mutationFn: async ({
                          type,
@@ -280,15 +306,36 @@ function SearchById({
       if (cliente.tipo_documento == "DNI") {
         form.setValue("nombre", cliente.nombre);
         form.setValue("apellido", cliente.apellido);
+        formProject.setValue("cliente", {
+          tipo_documento: "DNI",
+          nombre: cliente.nombre,
+          apellido: cliente.apellido,
+          dni: cliente.dni,
+          telefono: cliente.telefono,
+          email: cliente.email,
+          clientId: cliente.idCliente,
+          documentos: []
+        });
       } else {
         form.setValue("razonSocial", cliente.razonSocial);
         form.setValue("direccion", cliente.direccion);
+        formProject.setValue("cliente", {
+          tipo_documento: "RUC",
+          razonSocial: cliente.razonSocial,
+          direccion: cliente.direccion,
+          ruc: cliente.ruc,
+          telefono: cliente.telefono,
+          email: cliente.email,
+          clientId: cliente.idCliente,
+          documentos: []
+        });
       }
 
       form.setValue("email", cliente.email);
       form.setValue("telefono", cliente.telefono);
       toast.success("Cliente encontrado", { id: toastId, position: "top-center" });
       form.clearErrors(type.toLowerCase() as "dni" | "ruc");
+      formProject.setValue("clienteId", cliente.idCliente);
       return "ok";
     },
     mutationKey: ["search", "client"]

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.swing.text.html.Option;
 
+import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,11 +70,26 @@ public class ProyectoService {
     }
 
 
-    public Proyecto saveProyecto(ProyectoDTO proyectoDTO) {
-        // // Diagnostico
+    public Proyecto saveProyecto(ProyectoDTO proyectoDTO) throws ValidationError {
+        Optional<Servicio> servicio = servicioService.findById(proyectoDTO.getServicio());
+        if(servicio.isEmpty()) {
+            throw new ValidationError("Servicio no encontrado", "servicio");
+        }
+
+        Optional<Estado> estado = estadoRepository.findById(proyectoDTO.getEstado());
+        if(estado.isEmpty()) {
+            throw new ValidationError("Estado no encontrado", "estado");
+        }
+
+        Optional<Cliente> cliente = clienteService.findById(proyectoDTO.getIdCliente());
+        if (cliente.isEmpty()){
+            throw new ValidationError("Cliente no encontrado", "idCliente");
+        }
+
+        // Diagnostico
         // Cliente cr = saveClienteProyecto(proyectoDTO);
         // // Alcance
-        Proyecto p = saveAlcanceProyecto(proyectoDTO);    
+        Proyecto p = saveAlcanceProyecto(proyectoDTO, cliente.get(), servicio.get(), estado.get());
         // // Cronograma
         // saveCronogramaProyecto(proyectoDTO, p);
 
@@ -95,9 +111,8 @@ public class ProyectoService {
     // }
 
     @Transactional
-    public Proyecto saveAlcanceProyecto(ProyectoDTO proyectoDTO){
+    public Proyecto saveAlcanceProyecto(ProyectoDTO proyectoDTO, Cliente cliente, Servicio servicio, Estado estado){
         Proyecto proyecto = new Proyecto();
-        Cliente cliente = clienteService.findClienteById(proyectoDTO.getIdCliente());
         proyecto.setCliente(cliente);
         proyecto.setTitulo(proyectoDTO.getTitulo());
         proyecto.setPrecio(proyectoDTO.getPrecio());
@@ -108,12 +123,6 @@ public class ProyectoService {
         proyecto.setFechaInicio(proyectoDTO.getFechaInicio());
         proyecto.setFechaLimite(proyectoDTO.getFechaLimite());
         proyecto.setPrecio(proyectoDTO.getPrecio());
-
-        Servicio servicio = servicioService.findServicioById(proyectoDTO.getServicio());
-        if(servicio != null) proyecto.setServicio(servicio);
-
-        Optional<Estado> estado = estadoRepository.findById(proyectoDTO.getEstado());
-        if(estado != null) proyecto.setEstado(estado.get());
 
         //Guardar proyecto para luego poder con los entregables
         proyecto = proyectoRepository.save(proyecto);

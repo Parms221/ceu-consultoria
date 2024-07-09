@@ -41,7 +41,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation";
 import DatePicker from "@/components/ui/datepicker/date-picker";
 import { toast } from "sonner";
-import { createProyectoIncompleto } from "@/actions/Proyecto";
+import { createProyectoIncompleto } from "@/services/proyecto";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -83,16 +83,16 @@ export default function ProjectFormPage2() {
         precio: 100.0,
         requerimientos: "",
         idCliente: clientId
-      });
-
-    if (res.status === "success") {
-      data.proyectoId = res.idProyecto;
-      toast.success(res.message, { id: toastId });
-      formProject.setValue("project", data);
-      next();
-    } else {
-      toast.error(res.message, { id: toastId });
-    }
+      }, formProjectDetail, toastId);
+    //
+    // if (res.status === "success") {
+    //   data.proyectoId = res.idProyecto;
+    //   toast.success(res.message, { id: toastId });
+    //   formProject.setValue("project", data);
+    //   next();
+    // } else {
+    //   toast.error(res.message, { id: toastId });
+    // }
   }
 
   return (
@@ -132,7 +132,21 @@ export default function ProjectFormPage2() {
               <FormItem className="flex-1">
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha de inicio</FormLabel>
-                  <DatePicker field={field} />
+                  <DatePicker field={field} onChange={(date) => {
+                    if (!date) {
+                      return;
+                    }
+
+                    if (date.getTime() > formProjectDetail.getValues("fechaLimite").getTime()) {
+                      const dateCopy = date;
+                      dateCopy.setDate(
+                        date.getDate() + 1
+                      );
+
+                      formProjectDetail.setValue("fechaLimite", dateCopy);
+                    }
+
+                  }} />
                 </div>
                 <FormMessage />
               </FormItem>
@@ -145,7 +159,9 @@ export default function ProjectFormPage2() {
               <FormItem className="flex-1">
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha Límite</FormLabel>
-                  <DatePicker field={field} />
+                  <DatePicker field={field} disable={(date) => {
+                    return date.getTime() < formProjectDetail.watch("fechaInicio").getTime();
+                  }} />
                 </div>
                 <FormMessage />
               </FormItem>

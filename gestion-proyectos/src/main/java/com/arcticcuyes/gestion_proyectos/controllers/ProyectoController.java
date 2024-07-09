@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,16 +78,12 @@ public class ProyectoController {
     }
 
     @PostMapping("/addProyecto")
-    public ResponseEntity<?> createProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO, BindingResult bindingResult) {
-        
-        try {
-            Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);    
+    public ResponseEntity<?> createProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO, BindingResult bindingResult) throws ValidationError {
+
+            Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el proyecto: " +e.getMessage()+"\n"+ e.getStackTrace());
-        }
-        
-        
+
+
 
         // if (bindingResult.hasErrors()) {
         //     // Recopila todos los errores de validación en un mapa

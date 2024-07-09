@@ -8,6 +8,7 @@ import com.arcticcuyes.gestion_proyectos.repositories.ServicioRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -30,6 +31,10 @@ public class ServicioService {
 
     public Servicio findServicioById(Long id) {
         return servicioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Servicio no encontrado con el id " + id));
+    }
+
+    public Optional<Servicio> findById(Long id) {
+        return servicioRepository.findById(id);
     }
 
     public Servicio saveServicio(ServicioDTO servicioDTO) {
