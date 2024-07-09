@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,12 +48,45 @@ public class ProyectoController {
         return ResponseEntity.ok(proyectos);
     }
 
+    @GetMapping("/propuestos")
+    public ResponseEntity<?> getAllProyectosPropuestos() {
+        
+        try {
+            final int estadoPropuestoId = 1;
+            List<Proyecto> proyectos = proyectoService.getProyectosByEstado((long)estadoPropuestoId);
+            if(proyectos.isEmpty()){
+                return ResponseEntity.badRequest().build();
+            }
+
+        return ResponseEntity.ok(proyectos);    
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener los proyectos propuestos: " + e.getMessage());
+        }
+        
+    }
+
+    @PostMapping("/propuestos/{id}")
+    public ResponseEntity<Proyecto> aceptarProyecto(@PathVariable long id) {
+        try {
+            Proyecto proyectoAceptado;
+            proyectoAceptado = proyectoService.aceptarProyecto(id);    
+            return ResponseEntity.ok(proyectoAceptado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+        }
+    }
+
     @PostMapping("/addProyecto")
     public ResponseEntity<?> createProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO, BindingResult bindingResult) {
         
-
-        Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
+        try {
+            Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);    
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el proyecto: " +e.getMessage()+"\n"+ e.getStackTrace());
+        }
+        
+        
 
         // if (bindingResult.hasErrors()) {
         //     // Recopila todos los errores de validación en un mapa

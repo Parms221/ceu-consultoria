@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,34 +56,48 @@ public class ProyectoService {
         return proyectoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id " + id));
     }
 
+    public List<Proyecto> getProyectosByEstado(Long idEstado) {
+        return proyectoRepository.findAllByEstadoIdEstado(idEstado);
+    }
+
+    public Proyecto aceptarProyecto(Long idProyecto){
+        Proyecto obtenido = proyectoRepository.findById(idProyecto).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto));
+        Estado estadoPropuesto = estadoRepository.findById(2l).get();
+        obtenido.setEstado(estadoPropuesto);
+        Proyecto proyectoAceptado = proyectoRepository.save(obtenido);
+        return proyectoAceptado;
+    }
+
 
     public Proyecto saveProyecto(ProyectoDTO proyectoDTO) {
-        // Diagnostico
-        Cliente cr = saveClienteProyecto(proyectoDTO);
+        // // Diagnostico
+        // Cliente cr = saveClienteProyecto(proyectoDTO);
         // // Alcance
-        Proyecto p = saveAlcanceProyecto(proyectoDTO, cr);    
+        Proyecto p = saveAlcanceProyecto(proyectoDTO);    
         // // Cronograma
-        saveCronogramaProyecto(proyectoDTO, p);
+        // saveCronogramaProyecto(proyectoDTO, p);
 
         return p;
     }
 
-    public Cliente saveClienteProyecto(ProyectoDTO proyectoDTO){
-        Cliente clientRegistred;
-        if(proyectoDTO.getTipoCliente().equals("natural")){
-            String dni = proyectoDTO.getClienteNaturalDto().getDni();
-            // Implementar metodo para recoger cliente Existente
-            // Cliente cExistente = clienteService.findClienteNaturalByDni(dni);
-            clientRegistred = clienteService.saveClienteNatural(proyectoDTO.getClienteNaturalDto());
-        }
-        else{
-            clientRegistred = clienteService.saveClienteJuridico(proyectoDTO.getClienteJuridicoDto());
-        }
-        return clientRegistred;
-    }
+    // public Cliente saveClienteProyecto(ProyectoDTO proyectoDTO){
+    //     Cliente clientRegistred;
+    //     if(proyectoDTO.getTipoCliente().equals("natural")){
+    //         String dni = proyectoDTO.getClienteNaturalDto().getDni();
+    //         // Implementar metodo para recoger cliente Existente
+    //         // Cliente cExistente = clienteService.findClienteNaturalByDni(dni);
+    //         clientRegistred = clienteService.saveClienteNatural(proyectoDTO.getClienteNaturalDto());
+    //     }
+    //     else{
+    //         clientRegistred = clienteService.saveClienteJuridico(proyectoDTO.getClienteJuridicoDto());
+    //     }
+    //     return clientRegistred;
+    // }
 
-    public Proyecto saveAlcanceProyecto(ProyectoDTO proyectoDTO, Cliente cliente){
+    @Transactional
+    public Proyecto saveAlcanceProyecto(ProyectoDTO proyectoDTO){
         Proyecto proyecto = new Proyecto();
+        Cliente cliente = clienteService.findClienteById(proyectoDTO.getIdCliente());
         proyecto.setCliente(cliente);
         proyecto.setTitulo(proyectoDTO.getTitulo());
         proyecto.setPrecio(proyectoDTO.getPrecio());
@@ -99,23 +115,40 @@ public class ProyectoService {
         Optional<Estado> estado = estadoRepository.findById(proyectoDTO.getEstado());
         if(estado != null) proyecto.setEstado(estado.get());
 
+        //Guardar proyecto para luego poder con los entregables
         proyecto = proyectoRepository.save(proyecto);
+
+        List<EntregableServicio> entregableServicios = entregableServicioRepository.findByServicio(servicio);
+
+        for (EntregableServicio entregableServicio : entregableServicios) {
+            // Crear el objeto EntregableProyecto y establecer la relación bidireccional
+            EntregableProyecto entregable = new EntregableProyecto();
+            entregable.setProyecto(proyecto);
+
+            entregable.setEntregableServicio(entregableServicio);
+
+            // Guardar cada entregable
+            entregableProyectoRepository.save(entregable);
+        }
+
+        // proyecto.setEntregables(entregablesProyecto);
+        // System.out.println(proyecto.getEntregables());
         
         //List<EntregableProyecto> entregables = new ArrayList<>();
-        if (proyectoDTO.getEntregables() != null) {
-            for (EntregableProyectoDTO entregableDTO : proyectoDTO.getEntregables()) {
-                // Crear el objeto EntregableProyecto y establecer la relación bidireccional
-                EntregableProyecto entregable = new EntregableProyecto();
-                entregable.setProyecto(proyecto);
+        // if (proyectoDTO.getEntregables() != null) {
+        //     for (EntregableProyectoDTO entregableDTO : proyectoDTO.getEntregables()) {
+        //         // Crear el objeto EntregableProyecto y establecer la relación bidireccional
+        //         EntregableProyecto entregable = new EntregableProyecto();
+        //         entregable.setProyecto(proyecto);
 
-                Optional<EntregableServicio> entregableServicio = entregableServicioRepository.findById(entregableDTO.getEntregableServicio());
-                entregable.setEntregableServicio(entregableServicio.get());
+        //         Optional<EntregableServicio> entregableServicio = entregableServicioRepository.findById(entregableDTO.getEntregableServicio());
+        //         entregable.setEntregableServicio(entregableServicio.get());
 
-                // Guardar cada entregable
-                entregableProyectoRepository.save(entregable);
-            }
-        }
-        return proyectoRepository.save(proyecto);
+        //         // Guardar cada entregable
+        //         entregableProyectoRepository.save(entregable);
+        //     }
+        // }
+        return proyectoRepository.findById(proyecto.getIdProyecto()).get();
     }
 
 

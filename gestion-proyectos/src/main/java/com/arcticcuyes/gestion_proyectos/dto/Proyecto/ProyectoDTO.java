@@ -24,9 +24,7 @@ public class ProyectoDTO {
     // Part Diagnostico
     private String tipoCliente;
 
-    private ClienteJuridicoDto clienteJuridicoDto;
-
-    private ClienteNaturalDto clienteNaturalDto;
+    private long idCliente;
 
     // Part Alcance
 
@@ -57,7 +55,7 @@ public class ProyectoDTO {
     @NotNull(message = "El servicio asociado al proyecto es obligatorio")
     private Long servicio;
 
-    private Long estado;
+    private Long estado = 1l;
     // private List<Participante> participantes;
 
     // private List<Reunion> reuniones;
