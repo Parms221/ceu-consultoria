@@ -9,9 +9,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,13 +18,17 @@ import { ChevronRightIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/context";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { fetcherLocal } from "@/server/fetch/client-side";
+import { Cliente } from "@/types/cliente";
 import { NavigationFooter, Next } from "../multi-step-form/navigation";
-import { createClienteJuridico, createClienteNatural } from "@/actions/Proyecto";
+import { createClienteNatural, createClienteJuridico } from "@/services/cliente";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Cross1Icon } from "@radix-ui/react-icons";
 
 // Nueva función Objetivos importada desde tu primer código
 function Documentos({
-  form,
-}: {
+                      form
+                    }: {
   form: UseFormReturn<z.infer<typeof clienteSchema>, any, undefined>;
 }) {
   const documentos = form.watch("documentos");
@@ -33,7 +36,9 @@ function Documentos({
   return (
     <div className={"space-y-3"}>
       <div className={"flex items-center gap-2"}>
-        <h3 className="text-xl font-bold text-primary">Documentos Adjuntos</h3>
+        <FormLabel className="text-xl font-bold text-primary">
+          Documentos Adjuntos
+        </FormLabel>
         <Button
           size={"icon"}
           className={"max-h-7 max-w-7"}
@@ -67,7 +72,7 @@ function Documentos({
                         onClick={() => {
                           form.setValue(
                             "documentos",
-                            documentos.filter((_, i) => i !== index),
+                            documentos.filter((_, i) => i !== index)
                           );
                         }}
                       >
@@ -103,51 +108,49 @@ export default function ProjectFormPage1() {
       direccion: "",
       razonSocial: "",
       ruc: "",
-      documentos: [""], // Añadir un valor por defecto para objetivos
-    },
+      documentos: [""] // Añadir un valor por defecto para objetivos
+    }
   });
 
   async function handleSubmit(data: z.infer<typeof clienteSchema>) {
     const clientId = formClient.getValues("clientId");
+
+    if (clientId != 0) {
+      next();
+      return;
+    }
+
     const tipo_documento = data.tipo_documento;
-    let res = undefined;
-    const toastId = toast.loading("Guardando cliente...");
+    let res = false;
+    const toastId = toast.loading("Guardando cliente...", { position: "top-center" });
 
     if (tipo_documento === "RUC") {
-        res = await createClienteJuridico({
-          tipo_documento: data.tipo_documento,
-          ruc: data.ruc!,
-          razonSocial: data.razonSocial!,
-          direccion: data.direccion!,
-          email: data.email!,
-          telefono: data.telefono!,
-        });
+      res = await createClienteJuridico({
+        tipo_documento: data.tipo_documento,
+        ruc: data.ruc!,
+        razonSocial: data.razonSocial!,
+        direccion: data.direccion!,
+        email: data.email!,
+        telefono: data.telefono!
+      }, formClient, toastId);
     } else {
-        res = await createClienteNatural({
-          tipo_documento: data.tipo_documento,
-          dni: data.dni!,
-          nombre: data.nombre!,
-          apellido: data.apellido!,
-          email: data.email!,
-          telefono: data.telefono!,
-        });
+      res = await createClienteNatural({
+        tipo_documento: data.tipo_documento,
+        dni: data.dni!,
+        nombre: data.nombre!,
+        apellido: data.apellido!,
+        email: data.email!,
+        telefono: data.telefono!
+      }, formClient, toastId);
     }
 
-    if (res.status === "success") {
-
-      data.clientId = res.idCliente;
-      toast.success(res.message, {id: toastId});
-      formProject.setValue(
-        "clienteId",
-        data.clientId as number,
-      );
-      formProject.setValue("cliente", res.cliente!);
+    if (res) {
       next();
-    } else {
-      toast.error(res.message, {id: toastId});
     }
-    
   }
+
+  const clientId = formClient.watch("clientId");
+  const isClientSelected = clientId != 0;
 
   return (
     <Form {...formClient}>
@@ -158,22 +161,26 @@ export default function ProjectFormPage1() {
             name="tipo_documento"
             render={({ field, formState }) => (
               <FormItem className="mt-3">
-                <h3 className="text-xl font-bold text-primary">Tipo</h3>
+                <FormLabel className="text-xl font-bold text-primary">
+                  Tipo
+                </FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                     className="flex space-x-1"
                   >
-                    <FormItem className="flex w-[200px] items-center space-x-3 space-y-0 rounded-md border border-bodydark px-4 py-3">
+                    <FormItem
+                      className="flex w-[200px] items-center space-x-3 space-y-0 rounded-md border border-bodydark px-4 py-3">
                       <FormControl>
-                        <RadioGroupItem value="DNI" />
+                        <RadioGroupItem value="DNI" disabled={isClientSelected} />
                       </FormControl>
                       <FormLabel className="font-normal">Natural</FormLabel>
                     </FormItem>
-                    <FormItem className="flex w-[200px] items-center space-x-3 space-y-0 rounded-md border border-bodydark px-4 py-3">
+                    <FormItem
+                      className="flex w-[200px] items-center space-x-3 space-y-0 rounded-md border border-bodydark px-4 py-3">
                       <FormControl>
-                        <RadioGroupItem value="RUC" />
+                        <RadioGroupItem value="RUC" disabled={isClientSelected} />
                       </FormControl>
                       <FormLabel className="font-normal">Jurídico</FormLabel>
                     </FormItem>
@@ -184,6 +191,11 @@ export default function ProjectFormPage1() {
             )}
           />
         </div>
+        {
+          formClient.watch("clientId") != 0 && (
+            <SelectedClient form={formClient} />
+          )
+        }
         <SearchById form={formClient} />
         <PrimaryDetailsByID form={formClient} />
         <div className={"flex gap-3"}>
@@ -192,11 +204,11 @@ export default function ProjectFormPage1() {
             name="telefono"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <h3 className="text-xl font-bold text-primary">
+                <FormLabel className="text-xl font-bold text-primary">
                   Contacto Teléfono
-                </h3>
+                </FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Telefono" />
+                  <Input {...field} readOnly={isClientSelected} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -208,11 +220,11 @@ export default function ProjectFormPage1() {
             name="email"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <h3 className="text-xl font-bold text-primary">
+                <FormLabel className="text-xl font-bold text-primary">
                   Correo Electrónico
-                </h3>
+                </FormLabel>
                 <FormControl>
-                  <Input {...field} type={"email"} placeholder="Correo" />
+                  <Input {...field} type={"email"} readOnly={isClientSelected} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -221,38 +233,65 @@ export default function ProjectFormPage1() {
         </div>
         <Documentos form={formClient} />
       </div>
-        <NavigationFooter>
-          <Next
-            disabled={formClient.formState.isSubmitting}
-            onClick={() => formClient.handleSubmit(handleSubmit)()}
-          />
+      <NavigationFooter>
+        <Next
+          disabled={formClient.formState.isSubmitting}
+          onClick={() => formClient.handleSubmit(handleSubmit)()}
+        />
       </NavigationFooter>
     </Form>
   );
 }
 
 function SearchById({
-  form,
-}: {
+                      form
+                    }: {
   form: UseFormReturn<z.infer<typeof clienteSchema>, any, undefined>;
 }) {
   const tipoDocumento = form.watch("tipo_documento");
+  const clientId = form.watch("clientId");
+  const isClientSelected = clientId != 0;
 
   const mutation = useMutation({
-    mutationFn: async (type: "RUC" | "DNI") => {
-      // Simular busqueda en el backend
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const newClientId = 1;
+    mutationFn: async ({
+                         type,
+                         value
+                       }: {
+      type: "RUC" | "DNI";
+      value: string;
+    }) => {
+      const toastId = toast.loading("Buscando cliente...");
+      const response = await fetcherLocal(
+        `/clientes/get?type=${type.toLowerCase()}&value=${value}`
+      );
+
+      if (!response.ok) {
+        toast.error("Cliente no encontrado", { id: toastId, position: "top-center" });
+        form.setError(type.toLowerCase() as "dni" | "ruc", {
+          message: "Cliente no encontrado"
+        });
+      }
+
+      const cliente: Cliente = await response.json();
+
+      const newClientId = cliente.idCliente;
       form.setValue("clientId", newClientId);
-      form.setValue("tipo_documento", "DNI");
-      form.setValue("nombre", "John");
-      form.setValue("apellido", "Doe");
-      form.setValue("dni", "87654321");
-      form.setValue("email", "john@gmail.com");
-      form.setValue("telefono", "987654321");
+      form.setValue("tipo_documento", type);
+      if (cliente.tipo_documento == "DNI") {
+        form.setValue("nombre", cliente.nombre);
+        form.setValue("apellido", cliente.apellido);
+      } else {
+        form.setValue("razonSocial", cliente.razonSocial);
+        form.setValue("direccion", cliente.direccion);
+      }
+
+      form.setValue("email", cliente.email);
+      form.setValue("telefono", cliente.telefono);
+      toast.success("Cliente encontrado", { id: toastId, position: "top-center" });
+      form.clearErrors(type.toLowerCase() as "dni" | "ruc");
       return "ok";
     },
-    mutationKey: ["search", "client"],
+    mutationKey: ["search", "client"]
   });
 
   if (tipoDocumento == "DNI") {
@@ -263,20 +302,23 @@ function SearchById({
           name="dni"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">DNI</h3>
+              <FormLabel className="text-xl font-bold text-primary">
+                DNI
+              </FormLabel>
               <div className="flex">
                 <FormControl>
-                  <Input
-                    className={"rounded-r-0 flex-1"}
-                    {...field}
-                    placeholder="DNI del Representate"
-                  />
+                  <Input className={"rounded-r-0 flex-1"} {...field} readOnly={isClientSelected} />
                 </FormControl>
                 <Button
                   className={"rounded-l-0"}
                   type="button"
-                  disabled={mutation.isPending}
-                  onClick={() => mutation.mutate("DNI")}
+                  disabled={mutation.isPending || isClientSelected}
+                  onClick={() =>
+                    mutation.mutate({
+                      type: "DNI",
+                      value: field.value as string
+                    })
+                  }
                 >
                   Buscar
                 </Button>
@@ -296,20 +338,20 @@ function SearchById({
         name="ruc"
         render={({ field }) => (
           <FormItem className="flex-1">
-            <h3 className="text-xl font-bold text-primary">RUC</h3>
+            <FormLabel className="text-xl font-bold text-primary">
+              RUC
+            </FormLabel>
             <div className="flex">
               <FormControl>
-                <Input
-                  className={"rounded-r-0 flex-1"}
-                  {...field}
-                  placeholder="RUC de la Empresa"
-                />
+                <Input className={"rounded-r-0 flex-1"} {...field} readOnly={isClientSelected} />
               </FormControl>
               <Button
                 className={"rounded-l-0"}
                 type="button"
-                disabled={mutation.isPending}
-                onClick={() => mutation.mutate("RUC")}
+                disabled={mutation.isPending || isClientSelected}
+                onClick={() =>
+                  mutation.mutate({ type: "RUC", value: field.value as string })
+                }
               >
                 Buscar
               </Button>
@@ -323,11 +365,13 @@ function SearchById({
 }
 
 function PrimaryDetailsByID({
-  form,
-}: {
+                              form
+                            }: {
   form: UseFormReturn<z.infer<typeof clienteSchema>, any, undefined>;
 }) {
   const tipoDocumento = form.watch("tipo_documento");
+  const clientId = form.watch("clientId");
+  const isClientSelected = clientId != 0;
 
   if (tipoDocumento == "DNI") {
     return (
@@ -337,9 +381,11 @@ function PrimaryDetailsByID({
           name="nombre"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">Nombres</h3>
+              <FormLabel className="text-xl font-bold text-primary">
+                Nombres
+              </FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Nombre del Representante" />
+                <Input {...field} readOnly={isClientSelected} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -350,9 +396,11 @@ function PrimaryDetailsByID({
           name="apellido"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <h3 className="text-xl font-bold text-primary">Apellidos</h3>
+              <FormLabel className="text-xl font-bold text-primary">
+                Apellidos
+              </FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Apellido del Representate" />
+                <Input {...field} readOnly={isClientSelected} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -363,20 +411,91 @@ function PrimaryDetailsByID({
   }
 
   return (
-    <div className="flex">
+    <div className="flex gap-3">
       <FormField
         control={form.control}
         name="razonSocial"
         render={({ field }) => (
           <FormItem className="flex-1">
-            <h3 className="text-xl font-bold text-primary">Razón Social</h3>
+            <FormLabel className="text-xl font-bold text-primary">
+              Razón Social
+            </FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Nombre de la Empresa" />
+              <Input {...field} readOnly={isClientSelected} />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
+      <FormField
+        control={form.control}
+        name="direccion"
+        render={({ field }) => (
+          <FormItem className="flex-1">
+            <FormLabel className="text-xl font-bold text-primary">
+              Razón Social
+            </FormLabel>
+            <FormControl>
+              <Input {...field} readOnly={isClientSelected} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+}
+
+function SelectedClient({
+                          form
+                        }: {
+  form: UseFormReturn<z.infer<typeof clienteSchema>, any, undefined>;
+}) {
+  function handleClick() {
+    form.reset();
+  }
+
+  return (
+    <div className={"border rounded-md py-3 px-4 flex items-center gap-2"}>
+      <div className="flex-1">
+        <h4 className={"text-primary font-semibold text-sm"}>Cliente seleccionado</h4>
+        {
+          form.watch("tipo_documento") == "DNI" ? (
+            <div>
+              <p>
+                {form.watch("nombre")} {form.watch("apellido")}
+              </p>
+              <p className={"text-xs"}>
+                <b>DNI: </b>{form.watch("dni")}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <p>
+                {form.watch("razonSocial")}
+              </p>
+              <p className={"text-xs"}>
+                <b>RUC: </b>{form.watch("ruc")}
+              </p>
+            </div>
+          )
+        }
+      </div>
+      <div>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button onClick={() => handleClick()} size={"icon"}>
+                <span className={"sr-only"}>Quitar selección</span>
+                <Cross1Icon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Quitar selección</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
   );
 }

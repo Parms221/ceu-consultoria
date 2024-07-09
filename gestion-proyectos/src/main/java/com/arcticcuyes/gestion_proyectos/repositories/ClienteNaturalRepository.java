@@ -5,4 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ClienteNaturalRepository extends CrudRepository<ClienteNatural, Long> {
+    ClienteNatural findByDni(String dni);
+
+    boolean existsByDni(String dni);
 }

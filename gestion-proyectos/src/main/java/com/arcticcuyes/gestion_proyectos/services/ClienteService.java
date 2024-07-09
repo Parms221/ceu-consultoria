@@ -2,6 +2,7 @@ package com.arcticcuyes.gestion_proyectos.services;
 
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
+import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
@@ -11,6 +12,7 @@ import com.arcticcuyes.gestion_proyectos.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 
@@ -35,6 +37,14 @@ public class ClienteService {
         return clienteRepository.findById(id).orElse(null);
     }
 
+    public ClienteNatural findByDni(String dni) {
+        return clienteNaturalRepository.findByDni(dni);
+    }
+
+    public ClienteJuridico findByRuc(String ruc) {
+        return clienteJuridicoRepository.findByRuc(ruc);
+    }
+
     public List<ClienteNatural> findAllClientesNaturales() {
         return (List<ClienteNatural>) clienteNaturalRepository.findAll();
     }
@@ -43,7 +53,11 @@ public class ClienteService {
         return (List<ClienteJuridico>) clienteJuridicoRepository.findAll();
     }
 
-    public ClienteNatural saveClienteNatural(ClienteNaturalDto clienteNaturalDto) {
+    public ClienteNatural saveClienteNatural(ClienteNaturalDto clienteNaturalDto) throws ValidationError {
+        if (clienteNaturalRepository.existsByDni(clienteNaturalDto.getDni())) {
+            throw new ValidationError("El DNI ya existe", "dni");
+        }
+
         ClienteNatural clienteNatural = new ClienteNatural();
         clienteNatural.setNombre(clienteNaturalDto.getNombre());
         clienteNatural.setApellido(clienteNaturalDto.getApellido());
@@ -55,6 +69,10 @@ public class ClienteService {
     }
 
     public ClienteJuridico saveClienteJuridico(ClienteJuridicoDto clienteJuridicoDto) {
+        if (clienteJuridicoRepository.existsByRuc(clienteJuridicoDto.getRuc())) {
+            throw new ValidationError("El RUC ya existe", "ruc");
+        }
+
         ClienteJuridico clienteJuridico = new ClienteJuridico();
         clienteJuridico.setRazonSocial(clienteJuridicoDto.getRazonSocial());
         clienteJuridico.setRuc(clienteJuridicoDto.getRuc());
