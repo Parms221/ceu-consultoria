@@ -16,4 +16,5 @@ public interface ProyectoRepository extends CrudRepository<Proyecto, Long>{
     List<Proyecto> findAllByEstadoIdEstado(Long idEstado);
 
     Page<Proyecto> findAllBy(PageRequest pageRequest);
+    Page<Proyecto> findProyectoByTituloContainingIgnoreCase(String titulo, PageRequest pageRequest);
 }

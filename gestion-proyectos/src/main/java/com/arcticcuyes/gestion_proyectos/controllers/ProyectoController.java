@@ -38,10 +38,11 @@ public class ProyectoController {
     @GetMapping
     public ResponseEntity<Page<Proyecto>> getAllProyectos(
             @RequestParam(defaultValue = "0") Integer pageNo,
-            @RequestParam(defaultValue = "10") Integer pageSize
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String search
     ) {
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
-        Page<Proyecto> proyectos = proyectoService.findProyectos(pageRequest);
+        Page<Proyecto> proyectos = proyectoService.findProyectos(search, pageRequest);
         return ResponseEntity.ok(proyectos);
     }
 

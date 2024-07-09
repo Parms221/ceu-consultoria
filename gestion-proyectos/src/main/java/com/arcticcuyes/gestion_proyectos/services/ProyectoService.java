@@ -50,8 +50,8 @@ public class ProyectoService {
     
 
 
-    public Page<Proyecto> findProyectos(PageRequest pageRequest) {
-        return proyectoRepository.findAllBy(pageRequest);
+    public Page<Proyecto> findProyectos(String titulo, PageRequest pageRequest) {
+        return proyectoRepository.findProyectoByTituloContainingIgnoreCase(titulo, pageRequest);
     }
 
     public Proyecto findProyectoById(Long id) {

@@ -10,17 +10,15 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import PageTitle from "@/components/ui/page-title";
-import { columns } from "./partials/DataTable/columns";
-import { getProyectos } from "@/actions/Proyecto";
 import ProyectoContext from "@/app/(protected)/(admin)/proyectos/partials/DataTable/table-context";
 import DataTable from "@/components/ui/DataTable/DataTable";
+import Filters from "@/app/(protected)/(admin)/proyectos/partials/DataTable/filters";
 
 export const metadata: Metadata = {
   title: "Proyectos"
 };
 
 export default async function Page() {
-  const proyectos = await getProyectos();
   return (
     <main className="space-y-3">
       <PageTitle>Administración de proyectos</PageTitle>
@@ -47,6 +45,7 @@ export default async function Page() {
         </CardHeader>
         <CardContent>
           <ProyectoContext>
+            <Filters />
             <DataTable />
           </ProyectoContext>
           {/*    TODO: add filters and table*/}

@@ -20,7 +20,7 @@ export default function ProyectoContext({
   }
 
   return (
-    <DataTableProvider columns={columns} fetchFn={Query} queryKey={["proyectos"]} initPageSize={2}>
+    <DataTableProvider columns={columns} fetchFn={Query} queryKey={["proyectos"]}>
       {children}
     </DataTableProvider>
   );
