@@ -62,12 +62,12 @@ public class ProyectoService {
         return proyectoRepository.findAllByEstadoIdEstado(idEstado);
     }
 
-    public Proyecto aceptarProyecto(Long idProyecto){
+    public Proyecto cambiarEstadoProyecto(Long idProyecto, Long idEstado){
         Proyecto obtenido = proyectoRepository.findById(idProyecto).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto));
-        Estado estadoPropuesto = estadoRepository.findById(2l).get();
-        obtenido.setEstado(estadoPropuesto);
-        Proyecto proyectoAceptado = proyectoRepository.save(obtenido);
-        return proyectoAceptado;
+        Estado proyectoEstadoAnterior = estadoRepository.findById(idEstado).get();
+        obtenido.setEstado(proyectoEstadoAnterior);
+        Proyecto proyectoNuevoEstado = proyectoRepository.save(obtenido);
+        return proyectoNuevoEstado;
     }
 
 

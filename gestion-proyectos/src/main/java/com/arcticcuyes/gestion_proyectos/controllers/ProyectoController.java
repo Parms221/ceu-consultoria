@@ -10,19 +10,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
-import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
-import com.arcticcuyes.gestion_proyectos.models.Cliente;
-import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
-import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
-import com.arcticcuyes.gestion_proyectos.services.ClienteService;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
 import jakarta.validation.Valid;
@@ -64,11 +58,12 @@ public class ProyectoController {
     }
 
     @PostMapping("/propuestos/{id}")
-    public ResponseEntity<Proyecto> aceptarProyecto(@PathVariable long id) {
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Proyecto> cambiarEstadoProyecto(@PathVariable long id, @RequestBody Map<String, String> payload) {
         try {
-            Proyecto proyectoAceptado;
-            proyectoAceptado = proyectoService.aceptarProyecto(id);    
-            return ResponseEntity.ok(proyectoAceptado);
+            Proyecto proyectoNuevoEstado;
+            proyectoNuevoEstado = proyectoService.cambiarEstadoProyecto(id, Long.parseLong(payload.get("idEstado")));    
+            return ResponseEntity.ok(proyectoNuevoEstado);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }

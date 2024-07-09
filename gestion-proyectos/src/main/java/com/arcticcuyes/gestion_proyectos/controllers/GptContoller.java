@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/gpt")
+@RequestMapping("/ia")
 public class GptContoller {
     @Autowired
     private GptService gptService;

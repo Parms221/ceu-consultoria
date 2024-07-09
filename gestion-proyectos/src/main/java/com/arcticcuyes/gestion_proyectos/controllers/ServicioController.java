@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,6 +40,7 @@ public class ServicioController {
     }
 
     @PostMapping("/create")
+    @Secured({"ROLE_ADMIN", "ROLE_CONSULTOR"})
     public ResponseEntity<?> createServicio(@Valid @RequestBody ServicioDTO servicioDTO, BindingResult bindingResult) {
         System.out.println(servicioDTO);
         if (bindingResult.hasErrors()) {
@@ -65,6 +68,7 @@ public class ServicioController {
     }
 
     @PutMapping("/update/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_CONSULTOR"})
     public ResponseEntity<Servicio> updateServicio(
             @PathVariable Long id,
             @RequestBody ServicioDTO servicioDTO) {
@@ -74,6 +78,7 @@ public class ServicioController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_CONSULTOR"})
     public ResponseEntity<String> deleeteServicio (@PathVariable Long id){
         servicioService.deleteServicio(id);
         return new ResponseEntity<>("Servicio eliminado", HttpStatus.OK);
