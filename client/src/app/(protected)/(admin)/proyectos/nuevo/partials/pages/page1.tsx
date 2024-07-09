@@ -114,6 +114,12 @@ export default function ProjectFormPage1() {
 
   async function handleSubmit(data: z.infer<typeof clienteSchema>) {
     const clientId = formClient.getValues("clientId");
+
+    if (clientId != 0) {
+      next();
+      return;
+    }
+
     const tipo_documento = data.tipo_documento;
     let res = false;
     const toastId = toast.loading("Guardando cliente...", { position: "top-center" });
@@ -260,7 +266,7 @@ function SearchById({
       );
 
       if (!response.ok) {
-        toast.error("Cliente no encontrado", { id: toastId });
+        toast.error("Cliente no encontrado", { id: toastId, position: "top-center" });
         form.setError(type.toLowerCase() as "dni" | "ruc", {
           message: "Cliente no encontrado"
         });
@@ -281,7 +287,7 @@ function SearchById({
 
       form.setValue("email", cliente.email);
       form.setValue("telefono", cliente.telefono);
-      toast.success("Cliente encontrado", { id: toastId });
+      toast.success("Cliente encontrado", { id: toastId, position: "top-center" });
       form.clearErrors(type.toLowerCase() as "dni" | "ruc");
       return "ok";
     },
