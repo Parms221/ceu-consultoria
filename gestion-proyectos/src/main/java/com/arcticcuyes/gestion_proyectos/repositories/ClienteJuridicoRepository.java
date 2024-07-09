@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClienteJuridicoRepository extends CrudRepository<ClienteJuridico, Long> {
     ClienteJuridico findByRuc(String ruc);
+    boolean existsByRuc(String ruc);
 }

@@ -2,6 +2,7 @@ package com.arcticcuyes.gestion_proyectos.controllers;
 
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
 import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
+import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,7 +66,7 @@ public class ClienteController {
     }
 
     @PostMapping("/naturales/create")
-    public ResponseEntity<ClienteNatural> createClienteNatural(@RequestBody @Valid ClienteNaturalDto clienteNaturalDto) {
+    public ResponseEntity<ClienteNatural> createClienteNatural(@RequestBody @Valid ClienteNaturalDto clienteNaturalDto) throws ValidationError {
         System.out.println(clienteNaturalDto);
         ClienteNatural createdCliente = clienteService.saveClienteNatural(clienteNaturalDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCliente);

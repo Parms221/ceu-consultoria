@@ -1,5 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.exception;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,16 +17,32 @@ public class CustomGlobalExceptionHandler {
 
     // Manejar las excepciones de validación
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> customValidationErrorHandling(MethodArgumentNotValidException exception) {
-        Map<String, String> errors = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> customValidationErrorHandling(MethodArgumentNotValidException exception) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("code", "VALIDATION_ERRORS");
+        ArrayList<Map<String, Object>> errors = new ArrayList<>();
         exception.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            errors.add(Map.of("field", fieldName, "message", errorMessage));
         });
+        body.put("errors", errors);
 
         // Devolver una respuesta con el mensaje de error
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ValidationError.class)
+    public ResponseEntity<Map<String, Object>> customValidationErrorHandlingLocal(ValidationError exception) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("code", "VALIDATION_ERRORS");
+        ArrayList<Map<String, Object>> errors = new ArrayList<>();
+        String fieldName = exception.getField();
+        String errorMessage = exception.getMessage();
+        errors.add(Map.of("field", fieldName, "message", errorMessage));
+        body.put("errors", errors);
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

@@ -21,7 +21,7 @@ import { useMutation } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { Cliente } from "@/types/cliente";
 import { NavigationFooter, Next } from "../multi-step-form/navigation";
-import { createClienteJuridico, createClienteNatural } from "@/actions/Proyecto";
+import { createClienteNatural, createClienteJuridico } from "@/services/cliente";
 
 // Nueva función Objetivos importada desde tu primer código
 function Documentos({
@@ -113,8 +113,8 @@ export default function ProjectFormPage1() {
   async function handleSubmit(data: z.infer<typeof clienteSchema>) {
     const clientId = formClient.getValues("clientId");
     const tipo_documento = data.tipo_documento;
-    let res = undefined;
-    const toastId = toast.loading("Guardando cliente...");
+    let res = false;
+    const toastId = toast.loading("Guardando cliente...", {position: "top-center",});
 
     if (tipo_documento === "RUC") {
         res = await createClienteJuridico({
@@ -124,7 +124,7 @@ export default function ProjectFormPage1() {
           direccion: data.direccion!,
           email: data.email!,
           telefono: data.telefono!,
-        });
+        }, formClient, toastId);
     } else {
         res = await createClienteNatural({
           tipo_documento: data.tipo_documento,
@@ -133,22 +133,13 @@ export default function ProjectFormPage1() {
           apellido: data.apellido!,
           email: data.email!,
           telefono: data.telefono!,
-        });
+        }, formClient, toastId);
     }
 
-    if (res.status === "success") {
-
-      data.clientId = res.idCliente;
-      toast.success(res.message, {id: toastId});
-      formProject.setValue(
-        "clienteId",
-        data.clientId as number,
-      );
-      formProject.setValue("cliente", res.cliente!);
+    if (res) {
       next();
-    } else {
-      toast.error(res.message, {id: toastId});
     }
+
     
   }
 
