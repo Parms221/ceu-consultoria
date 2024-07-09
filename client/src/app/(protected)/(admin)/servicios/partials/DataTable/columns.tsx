@@ -19,14 +19,6 @@ export const columns: ColumnDef<Servicio>[] = [
     header: "Descripción",
   },
   {
-    accessorKey: "precio",
-    header: "Cotización",
-    cell: ({ row }) => {
-      const service = row.original as Servicio;
-      return service.precio.toLocaleString('es-PE', { style: 'currency', currency: 'PEN' });
-    }
-  },
-  {
     accessorKey: "entregablesDelServicio",
     header: "Entregables",
     cell: ({ row }) => {
@@ -43,7 +35,7 @@ export const columns: ColumnDef<Servicio>[] = [
               {service.entregablesDelServicio.map(({titulo}) => {
                 return (
                   <li key={titulo}
-                    className="flex gap-2"
+                    className="flex gap-2 items-center"
                   >
                     <CheckCircle className="shrink-0" />
                     <span>{titulo}</span>

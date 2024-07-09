@@ -17,9 +17,6 @@ public class ServicioDTO {
     @NotEmpty(message = "El título del Servicio es obligatorio")
     private String titulo;
 
-    @NotNull(message = "El precio del Servicio es obligatorio")
-    private Double precio;
-
     @NotEmpty(message = "La descripción del Servicio es obligatoria")
     private String descripcion;
 

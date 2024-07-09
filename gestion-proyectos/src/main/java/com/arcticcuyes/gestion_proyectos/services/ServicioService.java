@@ -40,7 +40,6 @@ public class ServicioService {
     public Servicio saveServicio(ServicioDTO servicioDTO) {
         Servicio servicio = new Servicio();
         servicio.setTitulo(servicioDTO.getTitulo());
-        servicio.setPrecio(servicioDTO.getPrecio());
         servicio.setDescripcion(servicioDTO.getDescripcion());
 
         Servicio savedServicio = servicioRepository.save(servicio);
@@ -73,7 +72,6 @@ public class ServicioService {
         
         //Actualizar los campos del servicio
         existingServicio.setTitulo(servicioDTO.getTitulo());
-        existingServicio.setPrecio(servicioDTO.getPrecio());
         existingServicio.setDescripcion(servicioDTO.getDescripcion());
 
         // Manejar los EntregableServicio asociados

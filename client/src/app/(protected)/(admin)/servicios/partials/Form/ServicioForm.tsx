@@ -31,12 +31,6 @@ export default function ServicioForm({ servicio = undefined }: Props) {
     descripcion: z.string({
       message: "La descripción es requerida",
     }),
-    precio: z.coerce
-      .number({
-        message: "El precio es requerido",
-      })
-      .int()
-      .positive(),
     entregablesDelServicio: z
       .array(
         z.object({
@@ -53,7 +47,6 @@ export default function ServicioForm({ servicio = undefined }: Props) {
     mode: "onSubmit",
     defaultValues: {
       titulo: servicio ? servicio.titulo : "",
-      precio: servicio ? servicio.precio : 0,
       descripcion: servicio ? servicio.descripcion : "",
       entregablesDelServicio: servicio ? servicio.entregablesDelServicio : [] as Entregable[],
     },
@@ -100,23 +93,10 @@ export default function ServicioForm({ servicio = undefined }: Props) {
           control={form.control}
           name="titulo"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>Título</FormLabel>
               <FormControl>
-                <Input maxLength={100} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="precio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Precio</FormLabel>
-              <FormControl>
-                <Input type="number" min="0" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
