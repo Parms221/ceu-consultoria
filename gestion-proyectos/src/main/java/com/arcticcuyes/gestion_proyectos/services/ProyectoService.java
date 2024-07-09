@@ -86,14 +86,7 @@ public class ProyectoService {
             throw new ValidationError("Cliente no encontrado", "idCliente");
         }
 
-        // Diagnostico
-        // Cliente cr = saveClienteProyecto(proyectoDTO);
-        // // Alcance
-        Proyecto p = saveAlcanceProyecto(proyectoDTO, cliente.get(), servicio.get(), estado.get());
-        // // Cronograma
-        // saveCronogramaProyecto(proyectoDTO, p);
-
-        return p;
+        return saveAlcanceProyecto(proyectoDTO, cliente.get(), servicio.get(), estado.get());
     }
 
     // public Cliente saveClienteProyecto(ProyectoDTO proyectoDTO){
@@ -114,6 +107,8 @@ public class ProyectoService {
     public Proyecto saveAlcanceProyecto(ProyectoDTO proyectoDTO, Cliente cliente, Servicio servicio, Estado estado){
         Proyecto proyecto = new Proyecto();
         proyecto.setCliente(cliente);
+        proyecto.setEstado(estado);
+        proyecto.setServicio(servicio);
         proyecto.setTitulo(proyectoDTO.getTitulo());
         proyecto.setPrecio(proyectoDTO.getPrecio());
         proyecto.setDescripcion(proyectoDTO.getDescripcion());
@@ -157,7 +152,7 @@ public class ProyectoService {
         //         entregableProyectoRepository.save(entregable);
         //     }
         // }
-        return proyectoRepository.findById(proyecto.getIdProyecto()).get();
+        return proyecto;
     }
 
 

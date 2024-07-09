@@ -42,6 +42,7 @@ import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation"
 import DatePicker from "@/components/ui/datepicker/date-picker";
 import { toast } from "sonner";
 import { createProyectoIncompleto } from "@/services/proyecto";
+import { ProyectoIncompletoJsonResponse } from "@/actions/Proyecto";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -67,9 +68,8 @@ export default function ProjectFormPage2() {
 
   async function handleSubmit(data: z.infer<typeof projectDetailSchema>) {
     const clientId = formProject.getValues("clienteId");
-    let res = undefined;
+    let res = null as ProyectoIncompletoJsonResponse | null;
     const toastId = toast.loading("Guardando proyecto...");
-    console.log("Valor de cliente anterior: " + formProject.getValues("clienteId"));
 
     res = await createProyectoIncompleto(
       {
@@ -84,15 +84,12 @@ export default function ProjectFormPage2() {
         requerimientos: "",
         idCliente: clientId
       }, formProjectDetail, toastId);
-    //
-    // if (res.status === "success") {
-    //   data.proyectoId = res.idProyecto;
-    //   toast.success(res.message, { id: toastId });
-    //   formProject.setValue("project", data);
-    //   next();
-    // } else {
-    //   toast.error(res.message, { id: toastId });
-    // }
+
+    if (res) {
+      data.proyectoId = res.idProyecto;
+      formProject.setValue("project", data);
+      next();
+    }
   }
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 import { UseFormReturn } from "react-hook-form";
-import { ProyectoIncompletoDto } from "@/actions/Proyecto";
+import { ProyectoIncompletoDto, ProyectoIncompletoJsonResponse } from "@/actions/Proyecto";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import HandleServerResponse from "@/lib/handle-response";
 import { toast } from "sonner";
@@ -17,12 +17,14 @@ export async function createProyectoIncompleto(
     const ok = await HandleServerResponse(response, form, toastId);
 
     if (ok) {
-      toast.success("Cliente creado correctamente", { id: toastId, position: "top-center" });
+      const json: ProyectoIncompletoJsonResponse = await response.json();
+      toast.success("Proyecto creado correctamente", { id: toastId, position: "top-center" });
+      return json;
     }
-    return ok;
+    return null;
 
   } catch (err) {
     toast.error("Ha ocurrido un error inesperado", { id: toastId, position: "top-center" });
-    return false;
+    return null;
   }
 }
