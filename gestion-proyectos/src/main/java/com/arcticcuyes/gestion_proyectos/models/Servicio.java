@@ -27,12 +27,14 @@ public class Servicio {
     @Column(nullable = false, length = 100)
     private String titulo;
 
-    @Column(nullable = false)
-    private Double precio = 0d;
-
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @OneToMany(mappedBy = "servicio")
     private List<EntregableServicio> entregablesDelServicio;
+
+    public Servicio(String titulo, String descripcion) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+    }    
 }

@@ -37,4 +37,11 @@ public class EntregableServicio {
     @JoinColumn(name="id_servicio", nullable = false)
     @JsonIgnore
     private Servicio servicio;
+
+    public EntregableServicio(String titulo, Servicio servicio) {
+        this.titulo = titulo;
+        this.servicio = servicio;
+    }
+
+    
 }
