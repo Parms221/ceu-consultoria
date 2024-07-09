@@ -5,6 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StepsNav from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/step-nav";
 import ProjectFormCardTitle from "@/app/(protected)/(admin)/proyectos/nuevo/partials/multi-step-form/card-title";
 import CurrentPage from "@/app/(protected)/(admin)/proyectos/nuevo/partials/pages/current-page";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+  title: "Nuevo proyecto"
+};
 
 export default async function Page() {
   return (

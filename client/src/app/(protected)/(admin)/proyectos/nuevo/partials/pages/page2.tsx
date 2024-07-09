@@ -11,7 +11,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import {
   Check,
   PlusIcon,
-  TrashIcon,
+  TrashIcon
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
@@ -27,7 +27,7 @@ import type { Servicio } from "@/types/servicio";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import {
@@ -35,7 +35,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
+  CommandItem
 } from "@/components/ui/command";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation";
@@ -53,32 +53,36 @@ export default function ProjectFormPage2() {
       title: "Proyecto 1",
       description: "Descripción de proyecto",
       fechaInicio: new Date(),
-      fechaLimite: new Date().setDate(
-        new Date().getDate() + 1,
-      ),
+      fechaLimite: function() {
+        const date = new Date();
+        date.setDate(
+          new Date().getDate() + 1
+        );
+        return date;
+      }(),
       objetivos: ["Objetivo1"],
-      servicioId: 1,
-    },
+      servicioId: 1
+    }
   });
 
   async function handleSubmit(data: z.infer<typeof projectDetailSchema>) {
     const clientId = formProject.getValues("clienteId");
-    let res = undefined
+    let res = undefined;
     const toastId = toast.loading("Guardando proyecto...");
     console.log("Valor de cliente anterior: " + formProject.getValues("clienteId"));
 
     res = await createProyectoIncompleto(
       {
         titulo: data.title,
-        descripcion: data.description, 
-        fechaInicio: data.fechaInicio, 
-        fechaLimite: data.fechaLimite, 
-        objetivos: data.objetivos.join('\n'), 
-        servicio: data.servicioId, 
+        descripcion: data.description,
+        fechaInicio: data.fechaInicio,
+        fechaLimite: data.fechaLimite,
+        objetivos: data.objetivos.join("\n"),
+        servicio: data.servicioId,
         indicaciones: "",
         precio: 100.0,
-        requerimientos:"",
-        idCliente: clientId,
+        requerimientos: "",
+        idCliente: clientId
       });
 
     if (res.status === "success") {
@@ -121,50 +125,50 @@ export default function ProjectFormPage2() {
           )}
         />
         <div className="flex flex-wrap gap-4">
-            <FormField
-              control={formProjectDetail.control}
-              name="fechaInicio"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <div className="flex flex-col gap-2">
-                    <FormLabel>Fecha de inicio</FormLabel>
-                    <DatePicker field={field} />
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={formProjectDetail.control}
-              name="fechaLimite"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                   <div className="flex flex-col gap-2">
-                    <FormLabel>Fecha Límite</FormLabel>
-                    <DatePicker field={field} />
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={formProjectDetail.control}
+            name="fechaInicio"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <div className="flex flex-col gap-2">
+                  <FormLabel>Fecha de inicio</FormLabel>
+                  <DatePicker field={field} />
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={formProjectDetail.control}
+            name="fechaLimite"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <div className="flex flex-col gap-2">
+                  <FormLabel>Fecha Límite</FormLabel>
+                  <DatePicker field={field} />
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <Objetivos form={formProjectDetail} />
         <SelectServicio form={formProjectDetail} />
       </div>
       <NavigationFooter>
-          <Previous onClick={prev}/>
-          <Next 
-              disabled={formProjectDetail.formState.isSubmitting}
-              onClick={formProjectDetail.handleSubmit(handleSubmit)}
-          />
+        <Previous onClick={prev} />
+        <Next
+          disabled={formProjectDetail.formState.isSubmitting}
+          onClick={formProjectDetail.handleSubmit(handleSubmit)}
+        />
       </NavigationFooter>
     </Form>
   );
 }
 
 function Objetivos({
-  form,
-}: {
+                     form
+                   }: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
 }) {
   const objetivos = form.watch("objetivos");
@@ -207,7 +211,7 @@ function Objetivos({
                           onClick={() => {
                             form.setValue(
                               "objetivos",
-                              objetivos.filter((_, i) => i !== index),
+                              objetivos.filter((_, i) => i !== index)
                             );
                           }}
                         >
@@ -228,9 +232,9 @@ function Objetivos({
   );
 }
 
-function SelectServicio ({
-  form,
-}: {
+function SelectServicio({
+                          form
+                        }: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
 }) {
   const dataQuery = useQuery<Servicio[]>({
@@ -243,7 +247,7 @@ function SelectServicio ({
       }
 
       return response.json();
-    },
+    }
   });
   return (
     <div className={"space-y-3"}>
@@ -283,21 +287,21 @@ function SelectServicio ({
                       role="combobox"
                       className={cn(
                         "w-full justify-between border border-input",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value
-                        ? (function () {
-                            const servicio = dataQuery.data.find(
-                              (servicio) => servicio.idServicio === field.value,
-                            );
+                        ? (function() {
+                          const servicio = dataQuery.data.find(
+                            (servicio) => servicio.idServicio === field.value
+                          );
 
-                            if (servicio) {
-                              return servicio.titulo;
-                            }
+                          if (servicio) {
+                            return servicio.titulo;
+                          }
 
-                            return "algo";
-                          })()
+                          return "algo";
+                        })()
                         : "Selecciona un servicio"}
                     </Button>
                   </FormControl>
@@ -326,7 +330,7 @@ function SelectServicio ({
                               "mr-2 h-4 w-4",
                               servicio.idServicio === field.value
                                 ? "opacity-100"
-                                : "opacity-0",
+                                : "opacity-0"
                             )}
                           />
                           {servicio.titulo}
