@@ -41,6 +41,7 @@ public class ProyectoController {
     }
 
     @GetMapping("/propuestos")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<?> getAllProyectosPropuestos() {
         
         try {
@@ -70,6 +71,7 @@ public class ProyectoController {
     }
 
     @PostMapping("/addProyecto")
+    @Secured({"ROLE_ADMIN", "ROLE_CONSULTOR"})
     public ResponseEntity<?> createProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO, BindingResult bindingResult) throws ValidationError {
 
             Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
@@ -103,6 +105,7 @@ public class ProyectoController {
     }
 
     @PutMapping("/updateProyecto/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_CONSULTOR"})
     public ResponseEntity<?> updateProyecto(@PathVariable Long id,@Valid @RequestBody ProyectoDTO proyectoDTO, BindingResult bindingResult) {
         
         if (bindingResult.hasErrors()) {
@@ -124,6 +127,7 @@ public class ProyectoController {
     }
 
     @DeleteMapping("/deleteProyecto/{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Void> deleteProyectoById(@PathVariable Long id) {
         proyectoService.deleteProyecto(id);
         return ResponseEntity.noContent().build();
