@@ -74,6 +74,9 @@
 }
 
 @layer components {
+    .area {
+        @apply border-stroke bg-white dark:border-strokedark dark:bg-boxdark py-4 px-2 rounded-md;
+    }
 }
 
 @layer utilities {

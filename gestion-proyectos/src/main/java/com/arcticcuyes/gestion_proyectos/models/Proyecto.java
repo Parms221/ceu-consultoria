@@ -7,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,10 +35,19 @@ public class Proyecto {
     private long idProyecto;
 
     @Column(columnDefinition = "TEXT")
+    private String titulo;
+
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(columnDefinition = "TEXT")
     private String objetivos;
+
+    @Column(columnDefinition = "TEXT")
+    private String requerimientos;
+
+    @Column(columnDefinition = "TEXT")
+    private String indicaciones;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="fecha_inicio", nullable = false)
@@ -49,26 +57,20 @@ public class Proyecto {
     @Column(name="fecha_limite", nullable = false)
     private Timestamp fechaLimite;
 
-    @Basic
-    private Double cotizacion;
+    @Column(nullable = false)
+    private Double precio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_cliente", referencedColumnName = "id_cliente", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="id_cliente", nullable = false)
     private Cliente cliente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_servicio", referencedColumnName = "id_servicio")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="id_servicio")
     private Servicio servicio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_estado", nullable = false)
     private Estado estado;
-
-    @OneToMany(mappedBy = "proyecto")
-    private List<Reunion> reuniones;
-
-    @OneToMany(mappedBy = "proyectoAsociado")
-    private List<Recurso> recursos;
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
@@ -80,4 +82,16 @@ public class Proyecto {
 
     @OneToMany(mappedBy = "proyectoIngresado")
     private List<Participante> participantes;
+
+    @OneToMany(mappedBy = "proyecto")
+    private List<Reunion> reuniones;
+
+    @OneToMany(mappedBy = "proyecto")
+    private List<Hito> hitos;
+
+    @OneToMany(mappedBy = "proyecto", fetch = FetchType.EAGER)
+    private List<EntregableProyecto> entregables;
+
+    // @OneToMany(mappedBy = "proyectoAsociado")
+    // private List<Recurso> recursos;
 }

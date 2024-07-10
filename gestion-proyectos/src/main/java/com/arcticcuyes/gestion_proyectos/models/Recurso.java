@@ -47,15 +47,15 @@ public class Recurso {
     private Timestamp createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_usuario")
+    private Usuario propietario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_proyecto")
     private Proyecto proyectoAsociado;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_tarea")
-    private Tarea tareaAsociada;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_usuario")
-    private Usuario propietario;
+    @JoinColumn(name="id_entregable_proyecto")
+    private EntregableProyecto entregableAsociado;
 
 }

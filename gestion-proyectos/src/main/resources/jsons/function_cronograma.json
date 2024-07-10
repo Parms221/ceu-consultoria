@@ -1,0 +1,72 @@
+{
+    "type":"function",
+    "function":{
+        "name":"get_cronograma_proyecto",
+        "description":"Proponer hitos, tareas del hito y subtareas de las tareas teniendo en cuenta como entrada el tema de un proyecto",
+        "parameters":{
+            "type":"object",
+            "properties":{
+                "fecha_inicio": {
+                    "type":"string",
+                    "description":"Fecha de inicio del proyecto"
+                },
+                "fecha_fin": {
+                    "type":"string",
+                    "description":"Fecha de fin del proyecto"
+                },
+                "hitos":{
+                    "type":"array",
+                    "items":{
+                        "type":"object",
+                        "properties":{
+                            "titulo":{
+                                "type":"string",
+                                "description":"Título del hito"
+                            },
+                            "fecha_inicio": {
+                                "type":"string",
+                                "description":"Fecha de inicio del hito"
+                            },
+                            "fecha_fin":{
+                                "type":"string",
+                                "description":"Fecha de fin del hito"
+                            },
+                            "tareas":{
+                                "type":"array",
+                                "items":{
+                                    "type":"object",
+                                    "properties":{
+                                        "titulo":{
+                                            "type":"string",
+                                            "description":"Título de la tarea"
+                                        },
+                                        "descripcion":{
+                                            "type":"string",
+                                            "description":"Descripción de la tarea"
+                                        },
+                                        "fecha_inicio": {
+                                            "type":"string",
+                                            "description":"Fecha de inicio de la tarea"
+                                        },
+                                        "fecha_fin":{
+                                            "type":"string",
+                                            "description":"Fecha de fin de la tarea"
+                                        },
+                                        "subtareas":{
+                                            "type":"array",
+                                            "items":{
+                                                "type":"string",
+                                                "description":"Titulo de la subtarea de la tarea"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "required": ["fecha_inicio", "fecha_fin", "hitos"]
+}

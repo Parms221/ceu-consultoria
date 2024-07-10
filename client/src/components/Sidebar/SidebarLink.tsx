@@ -21,7 +21,13 @@ export function SidebarLink({
   function isActive(href: string) {
     const split = href.split("/");
     if (split[1] !== "") {
-      return pathname.includes(split[1]);
+      /*
+        El primer valore del split puede ser my en el caso de consultores por la agrupación de rutas, 
+        entonces se tomaría el segundo valor. Caso contrario, si es admin no tiene el /my por delante, entonces
+        se toma el primer valor.
+      */
+      const group = split[1] === "my" ? split[2] : split[1];
+      return pathname.includes(group);
     } else {
       return pathname === href;
     }
@@ -53,8 +59,8 @@ export function SidebarSubLink({
   return (
     <Link
       href={href}
-      className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-        pathname === href && "text-white"
+      className={`group relative flex items-center gap-2.5 rounded-md px-4 py-1.5 font-medium text-neutral-300 duration-300 ease-in-out hover:text-white ${
+        pathname === href && "text-whiter bg-ceu-azul"
       } ${className}`}
     >
       {children}

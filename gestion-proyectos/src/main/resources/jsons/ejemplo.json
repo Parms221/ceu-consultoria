@@ -1,0 +1,56 @@
+[
+    {
+        "titulo":"Hito A",
+        "fecha_inicio":"2019-01-01",
+        "fecha_fin":"2019-01-31",
+        "tareas":[
+            {
+                "titulo":"Tarea 1",
+                "descripcion":"Descripcion de la tarea 1",
+                "fecha_inicio":"2019-01-01",
+                "fecha_fin":"2019-01-15",
+                "subtareas":[
+                    "Subtarea 1",
+                    "Subtarea 2"
+                ]
+            },
+            {
+                "titulo":"Tarea 2",
+                "descripcion":"Descripcion de la tarea 2",
+                "fecha_inicio":"2019-01-16",
+                "fecha_fin":"2019-01-31",
+                "subtareas":[
+                    "Subtarea 1",
+                    "Subtarea 2"
+                ]
+            }
+        ]
+    },
+    {
+        "titulo":"Hito B",
+        "fecha_inicio":"2019-02-01",
+        "fecha_fin":"2019-02-28",
+        "tareas":[
+            {
+                "titulo":"Tarea 1",
+                "descripcion":"Descripcion de la tarea 1",
+                "fecha_inicio":"2019-02-01",
+                "fecha_fin":"2019-02-15",
+                "subtareas":[
+                    "Subtarea 1",
+                    "Subtarea 2"
+                ]
+            },
+            {
+                "titulo":"Tarea 2",
+                "descripcion":"Descripcion de la tarea 2",
+                "fecha_inicio":"2019-02-16",
+                "fecha_fin":"2019-02-28",
+                "subtareas":[
+                    "Subtarea 1",
+                    "Subtarea 2"
+                ]
+            }
+        ]
+    }
+]
