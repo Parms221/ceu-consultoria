@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@github/relative-time-element": "^4.4.2",
     "@hookform/resolvers": "^3.4.2",
     "@lexical/react": "^0.16.0",
     "@radix-ui/react-avatar": "^1.0.4",

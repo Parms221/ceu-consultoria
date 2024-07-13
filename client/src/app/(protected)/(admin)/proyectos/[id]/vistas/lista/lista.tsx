@@ -1,14 +1,15 @@
 import { HitosTable } from "./DataTable/data-table";
 import { hitosColumns } from "./DataTable/columns";
-import { Hito } from "@/types/proyecto/Hito";
+import { Proyecto } from "@/types/proyecto";
+import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 
-interface IHitos {
-    hitos : Hito[]
-}
 
-export default function VistaLista(
-    { hitos } : IHitos 
-) {
+
+export default function VistaLista() {
+
+    const { proyecto } = useProjectDetail()
+    const hitos = proyecto.hitos ?? []
+
     return (
         <div>
             <HitosTable

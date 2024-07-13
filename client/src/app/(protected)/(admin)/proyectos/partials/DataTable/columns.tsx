@@ -1,15 +1,15 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header"
-import { Usuario } from "@/types/usuario"
 import { ColumnDef } from "@tanstack/react-table"
 import { Edit, Trash2Icon } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import '@github/relative-time-element';
 import { Proyecto } from "@/types/proyecto"
 import DeleteProjectDialog from "../dialogs/delete"
 import { GetClienteName } from "@/types/cliente"
+import { formatRelative } from "date-fns"
+import { es } from "date-fns/locale/es"
 
 function getBadgeByStatus(status: string){
     switch(status){
@@ -77,12 +77,7 @@ export const columns: ColumnDef<Proyecto>[] = [
         date = new Date(lastUpdate)
       return (
         date && (
-          <relative-time 
-            datetime={date.toISOString()}
-            lang="es"
-          >
-            <div className="w-full h-4 bg-accent animate-pulse"></div>
-          </relative-time>
+          formatRelative(date, new Date(), { locale: es })
         )
       )
     }

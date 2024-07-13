@@ -7,7 +7,8 @@ import { Edit, Trash2Icon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import DeleteUserDialog from "../Dialogs/DeleteUserDialog";
-import "@github/relative-time-element";
+import { formatRelative } from "date-fns";
+import { es } from "date-fns/locale/es";
 
 function getBadgeByRol(rol: string) {
   switch (rol) {
@@ -77,9 +78,10 @@ export const columns: ColumnDef<Usuario>[] = [
     cell: ({ row }) => {
       const date = new Date(row.original.updatedAt);
       return (
-        <relative-time datetime={date.toISOString()} lang="es">
-          <div className="h-4 w-full animate-pulse bg-accent"></div>
-        </relative-time>
+        // <relative-time datetime={date.toISOString()} lang="es">
+        //   <div className="h-4 w-full animate-pulse bg-accent"></div>
+        // </relative-time>
+        formatRelative(date, new Date(), { locale: es })
       );
     },
   },

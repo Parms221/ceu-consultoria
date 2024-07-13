@@ -23,6 +23,6 @@ export type Proyecto = {
     updatedAt?: string;
     participantes?: Participante[];
     reuniones?: Reunion[];
-    hito?: Hito[];
+    hitos?: Hito[];
     entregables?: EntregableProyecto[]
 }
