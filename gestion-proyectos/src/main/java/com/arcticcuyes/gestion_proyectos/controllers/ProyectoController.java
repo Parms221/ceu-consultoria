@@ -16,6 +16,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
@@ -134,6 +135,19 @@ public class ProyectoController {
     public ResponseEntity<Void> deleteProyectoById(@PathVariable Long id) {
         proyectoService.deleteProyecto(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    // Endpoints cronograma de proyecto
+    @PostMapping("{id}/cronograma/save")
+    public ResponseEntity<?> saveCronograma(@PathVariable Long id, @RequestBody List<HitoDTO> cronograma) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(id);
+            proyectoService.saveCronogramaProyecto(cronograma, proyecto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el cronograma: " + e.getMessage());
+        }
     }
 
 }

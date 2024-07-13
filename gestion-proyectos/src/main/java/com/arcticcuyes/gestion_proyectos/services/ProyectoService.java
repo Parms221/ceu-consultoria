@@ -152,12 +152,14 @@ public class ProyectoService {
 
 
 
-    public void saveCronogramaProyecto(ProyectoDTO proyectoDTO, Proyecto proyecto) {
+    // public void saveCronogramaProyecto(ProyectoDTO proyectoDTO, Proyecto proyecto) {
+    public void saveCronogramaProyecto(List<HitoDTO> hitos, Proyecto proyecto) {
+
         //proyecto = proyectoRepository.save(proyecto); // Guardar proyecto primero para obtener su ID
         System.out.println("El proyecto id es: " + proyecto.getIdProyecto());
         //List<Hito> hitos = new ArrayList<>();
-        if(proyectoDTO.getHitos() != null){
-            for (HitoDTO hitoDTO : proyectoDTO.getHitos()) {
+        // if(proyectoDTO.getHitos() != null){
+            for (HitoDTO hitoDTO : hitos) {
                 Hito hito = new Hito();
                 hito.setTitulo(hitoDTO.getTitulo());
                 System.out.println("El titulo del hito es: " + hitoDTO.getTitulo());
@@ -194,7 +196,7 @@ public class ProyectoService {
             }
         
         } 
-    }
+    // }
     
 
     public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO) {
