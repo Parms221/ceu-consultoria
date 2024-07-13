@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
@@ -97,9 +99,15 @@ public class ProyectoController {
 
 
     @GetMapping("/getProyecto/{id}")
-    public ResponseEntity<Proyecto> getProyectoById(@PathVariable Long id) {
-        Proyecto proyecto = proyectoService.findProyectoById(id);
-        return ResponseEntity.ok(proyecto);
+    public ResponseEntity<?> getProyectoById(@PathVariable Long id) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(id);
+            return ResponseEntity.ok(proyecto);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proyecto no encontrado");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener el proyecto: " + e.getMessage());
+        }
     }
 
     @PutMapping("/updateProyecto/{id}")
@@ -127,6 +135,19 @@ public class ProyectoController {
     public ResponseEntity<Void> deleteProyectoById(@PathVariable Long id) {
         proyectoService.deleteProyecto(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    // Endpoints cronograma de proyecto
+    @PostMapping("{id}/cronograma/save")
+    public ResponseEntity<?> saveCronograma(@PathVariable Long id, @RequestBody List<HitoDTO> cronograma) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(id);
+            proyectoService.saveCronogramaProyecto(cronograma, proyecto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el cronograma: " + e.getMessage());
+        }
     }
 
 }

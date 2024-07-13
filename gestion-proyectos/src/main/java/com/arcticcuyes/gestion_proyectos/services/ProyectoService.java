@@ -1,20 +1,14 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
 
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -158,12 +152,14 @@ public class ProyectoService {
 
 
 
-    public void saveCronogramaProyecto(ProyectoDTO proyectoDTO, Proyecto proyecto) {
+    // public void saveCronogramaProyecto(ProyectoDTO proyectoDTO, Proyecto proyecto) {
+    public void saveCronogramaProyecto(List<HitoDTO> hitos, Proyecto proyecto) {
+
         //proyecto = proyectoRepository.save(proyecto); // Guardar proyecto primero para obtener su ID
         System.out.println("El proyecto id es: " + proyecto.getIdProyecto());
         //List<Hito> hitos = new ArrayList<>();
-        if(proyectoDTO.getHitos() != null){
-            for (HitoDTO hitoDTO : proyectoDTO.getHitos()) {
+        // if(proyectoDTO.getHitos() != null){
+            for (HitoDTO hitoDTO : hitos) {
                 Hito hito = new Hito();
                 hito.setTitulo(hitoDTO.getTitulo());
                 System.out.println("El titulo del hito es: " + hitoDTO.getTitulo());
@@ -200,7 +196,7 @@ public class ProyectoService {
             }
         
         } 
-    }
+    // }
     
 
     public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO) {

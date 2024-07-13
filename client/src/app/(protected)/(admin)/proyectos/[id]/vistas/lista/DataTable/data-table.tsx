@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -24,6 +24,8 @@ import {
 import Filters from './filters'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Hito } from '@/types/proyecto/Hito'
+import { TasksTable } from './tareas/table-tareas'
+import { tareasColumns } from './tareas/columns-tareas'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -76,28 +78,33 @@ export function HitosTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className='relative'>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
               const hito = row.original as Hito
               return (
-                <Collapsible>
-                  <CollapsibleTrigger asChild>
-                  <TableRow
+                  <React.Fragment 
                     key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
                   >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
+                    <TableRow
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id} className='font-bold'>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          ))}
                     </TableRow>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                      tarea
-                  </CollapsibleContent>
-                </Collapsible>
+                    <tr>
+                      <td colSpan={columns.length}>
+                        <TasksTable
+
+                          columns={tareasColumns}
+                          data={hito.tareasDelHito}
+                        />
+                      </td>
+                    </tr>
+                  </React.Fragment>
               )
             })
           ) : (

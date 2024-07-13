@@ -31,7 +31,14 @@ export default async function ProyectosPendientes() {
             </div>
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel></ResizablePanel>
+          <ResizablePanel>
+            <div className="flex h-full flex-col items-center justify-center p-5">
+              <h1 className="text-gray-800 text-3xl font-bold">¡Bienvenido!</h1>
+              <p className="text-gray-600">
+                Selecciona un proyecto para ver más detalles.
+              </p>
+            </div>
+          </ResizablePanel>
         </ResizablePanelGroup>
       </article>
     </section>

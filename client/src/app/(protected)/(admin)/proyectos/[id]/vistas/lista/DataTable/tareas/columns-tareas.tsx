@@ -5,26 +5,25 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 // import DeleteUserDialog from "../Dialogs/DeleteUserDialog";
-import { Hito } from "@/types/proyecto/Hito";
-import { es } from "date-fns/locale/es";
+import { Tarea } from "@/types/proyecto/Tarea";
 import { formatDistance } from "date-fns";
+import { es } from "date-fns/locale/es";
 
-
-export const hitosColumns: ColumnDef<Hito>[] = [
+export const tareasColumns: ColumnDef<Tarea>[] = [
   {
     id: "titulo",
     accessorKey: "titulo",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Hito" />
+      <DataTableColumnHeader column={column} title="Tareas" className="pl-4"/>
     ),
     cell: ({ row }) => {
-      return <div className="w-[120px]">{row.original.titulo}</div>;
+      return <div className="w-[120px] text-center">{row.original.titulo}</div>;
     }
   },
   {
     accessorKey: "fechaInicio",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha de inicio" />
+      <DataTableColumnHeader column={column} title="Fecha de inicio" className="invisible"/>
     ),
     cell: ({ row }) => {
       const date = new Date(row.original.fechaInicio);
@@ -32,36 +31,39 @@ export const hitosColumns: ColumnDef<Hito>[] = [
     },
   },
   {
-    accessorKey: "fechaFinalizacion",
+    accessorKey: "fechaFin",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha de finalización" />
+      <DataTableColumnHeader column={column} title="Fecha de finalización" className="invisible" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.fechaFinalizacion);
+      const date = new Date(row.original.fechaFin);
       return <div>{date.toLocaleDateString()}</div>;
     },
   },
   {
     id: "duracion",
-    header: "Duración",
+    header: ({column}) => (
+      <div className="invisible">Duración</div>
+    ),
     cell: ({ row }) => {
       const hito = row.original;
       const fechaInicio  = new Date(hito.fechaInicio);
-      const fechaFinalizacion  = new Date(hito.fechaFinalizacion);
-      // get diff time in days using date-fns
-      const diffDays = formatDistance(fechaInicio, fechaFinalizacion, { locale: es})
+      const fechaFinalizacion  = new Date(hito.fechaFin);
+      const diffDays = formatDistance(fechaInicio, fechaFinalizacion, { locale: es });
       return <div>{diffDays}</div>;
     },
   },
   {
     id: "actions",
-    header: "Acciones",
+    header: ({column}) => (
+      <div className="invisible">Acciones</div>
+    ),
     cell: ({ row }) => {
-      const hito = row.original;
+      const tarea = row.original;
 
       return (
         <div className="flex gap-2">
-          <Link href={`/usuarios/${hito.idHito}`}>
+          <Link href={`/usuarios/${tarea.idTarea}`}>
             <Button className="h-fit py-1.5" variant="link" size={"sm"}>
               <Edit size={16} />
             </Button>
