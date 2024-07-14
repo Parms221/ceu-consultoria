@@ -108,12 +108,41 @@ export async function aprobarProyecto(
     };
   }
 }
+export async function guardarParticipantes(
+  proyectoId: string | number,
+  consultoresIds: (string | number)[],
+): Promise<{ status: string; message: string }> {
+  try {
+    const response = await fetcher(
+      "/proyectos/" + proyectoId + "/participantes/save",
+      {
+        method: "POST",
+        body: JSON.stringify(consultoresIds),
+      },
+    );
+    const res = returnResponse(
+      response,
+      "proyectos",
+      "Los participantes han sido guardados",
+      "Error al guardar los participantes",
+    );
+    return res;
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "Error al guardar los participantes",
+    };
+  }
+}
+
 function returnResponse(
   response: Response,
   tag: string,
   successMessage: string,
   errorMessage: string,
 ) {
+  console.log("response", response);
   if (response.ok) {
     revalidateTag(tag);
     return {

@@ -151,15 +151,20 @@ public class ProyectoController {
     }
 
     // Endpoints asginación de participantes
-//    @PostMapping("{id}/participantes/save")
-//    public ResponseEntity<?> saveCronograma(@PathVariable Long id, @RequestBody List<Long> consultores) {
-//        try {
-//            Proyecto proyecto = proyectoService.findProyectoById(id);
-//            proyectoService.saveCronogramaProyecto(cronograma, proyecto);
-//            return ResponseEntity.ok().build();
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el cronograma: " + e.getMessage());
-//        }
-//    }
+    @PostMapping("{id}/participantes/save")
+    public ResponseEntity<?> saveParticipantesProyecto(@PathVariable Long id, @RequestBody List<Long> consultores) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(id);
+            proyectoService.saveParticipantesProyecto(consultores, proyecto);
+            System.out.println("Participantes guardados");
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.err.println("Error en el controlador: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar los participantes: " + e.getMessage());
+        }
+    }
+
+
 
 }

@@ -10,6 +10,9 @@ import {
   IStep,
   STEPS_VALUES,
 } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/constants/steps";
+import { guardarParticipantes } from "@/actions/Proyecto";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface IProjectContext {
   form: UseFormReturn<z.infer<typeof projectCompleteSchema>, any, undefined>;
@@ -30,9 +33,32 @@ export default function ProjectFormContext({
   const form = useForm<z.infer<typeof projectCompleteSchema>>({
     resolver: zodResolver(projectCompleteSchema),
   });
+  const router = useRouter();
 
   async function OnSubmit(data: z.infer<typeof projectCompleteSchema>) {
-    console.log(data);
+    if (
+      !data.project ||
+      !data.project.proyectoId ||
+      !data.participantes ||
+      !data.participantes
+    ) {
+      return;
+    }
+
+    const projectId = data.project.proyectoId;
+    const consultoresIds = data.participantes.map((p) => p.idConsultor);
+    console.log("data", {
+      projectId,
+      consultoresIds,
+    });
+
+    const res = await guardarParticipantes(projectId, consultoresIds);
+    if (res.status === "success") {
+      toast.success(res.message);
+      router.push("/proyectos/" + projectId);
+    } else {
+      toast.error(res.message);
+    }
   }
 
   const [currentStep, setCurrentStep] = useState(STEPS_VALUES[0]);

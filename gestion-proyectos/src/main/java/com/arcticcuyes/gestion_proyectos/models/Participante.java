@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 
@@ -26,25 +27,35 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="PARTICIPANTE", uniqueConstraints = {@UniqueConstraint(name="UniqueConsultorProyecto", columnNames = {"id_consultor", "id_proyecto"})})
+@Table(name = "PARTICIPANTE", uniqueConstraints = {@UniqueConstraint(name = "UniqueConsultorProyecto", columnNames = {"id_consultor", "id_proyecto"})})
 public class Participante {
     @Id
-    @Column(name="id_participante")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "id_participante")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idParticipante;
 
     @CreationTimestamp(source = SourceType.DB)
-    @Column(name="created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_proyecto", nullable = false)
+    @JoinColumn(name = "id_proyecto", nullable = false)
+    @JsonIgnore
     private Proyecto proyectoIngresado;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_consultor", nullable = false)
+    @JoinColumn(name = "id_consultor", nullable = false)
+    @JsonIgnore
     private Consultor consultorParticipante;
+
 
     @ManyToMany(mappedBy = "participantesAsignados")
     private Set<Tarea> tareas = new HashSet<>();
+
+
+    @Override
+    public String toString() {
+        return "Participante{idParticipante=" + idParticipante + "}";
+    }
 }

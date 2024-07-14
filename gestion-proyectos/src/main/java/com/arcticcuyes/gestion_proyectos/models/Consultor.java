@@ -52,4 +52,9 @@ public class Consultor {
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
 
+    @Override
+    public String toString() {
+        return "Consultor{idConsultor=" + idConsultor + ", nombres='" + nombres + "'}";
+    }
+
 }
