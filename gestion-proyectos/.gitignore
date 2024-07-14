@@ -35,3 +35,6 @@ build/
 ### Secrets ###
 .env
 **/certs/
+
+### files storage ###
+/src/main/resources/files/
