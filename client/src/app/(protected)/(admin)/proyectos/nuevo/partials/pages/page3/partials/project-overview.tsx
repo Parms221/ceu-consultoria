@@ -9,13 +9,13 @@ export default function ProjectOverview() {
   const { form } = useProjectForm();
 
   const watchConsultores = form.watch("participantes");
-  const projectDetails = form.getValues().project;
+  const projectDetails = form.getValues().project!;
   const client = form.getValues().cliente;
 
   function removeConsultor(consultorId: number) {
     const consultores = form.getValues().participantes;
-    const newConsultores = consultores.filter(
-      (consultor: any) => consultor.idConsultor !== consultorId
+    const newConsultores = (consultores ?? []).filter(
+      (consultor: any) => consultor.idConsultor !== consultorId,
     );
     form.setValue("participantes", newConsultores);
   }
@@ -89,33 +89,40 @@ export default function ProjectOverview() {
         <CardTitle>Consultores asignados</CardTitle>
         <CardContent>
           <ul className="flex flex-col gap-2">
-            {
-                watchConsultores && watchConsultores.length > 0 ? 
-                watchConsultores?.map((consultor, index) => (
-                    <li key={index} className="rounded-sm w-full flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                            <div className="rounded-md h-12 w-12 bg-accent uppercase grid place-content-center">
-                                {consultor.nombres.charAt(0)}
-                            </div>
-                            <div className="flex flex-col gap-x-1.5">
-                                <h3 className="font-bold">{consultor.nombres} {consultor.apellidos}</h3>
-                                <span className="leading-none text-xs">{consultor.cargo}</span>
-                            </div>
-                        </div>
-                        <Button variant={"ghost"} size={"sm"}
-                            onClick={() => removeConsultor(consultor.idConsultor)}
-                        >
-                            <X size={20}/>
-                            <span className="sr-only">
-                                Eliminar consultor
-                            </span>
-                        </Button>
-                    </li>
-                )) : 
-                <li className="text-xs text-muted-foreground">
-                    No hay consultores asignados
+            {watchConsultores && watchConsultores.length > 0 ? (
+              watchConsultores?.map((consultor, index) => (
+                <li
+                  key={index}
+                  className="flex w-full items-center justify-between rounded-sm"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="grid h-12 w-12 place-content-center rounded-md bg-accent uppercase">
+                      {consultor.nombres.charAt(0)}
+                    </div>
+                    <div className="flex flex-col gap-x-1.5">
+                      <h3 className="font-bold">
+                        {consultor.nombres} {consultor.apellidos}
+                      </h3>
+                      <span className="text-xs leading-none">
+                        {consultor.especialidades}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    variant={"ghost"}
+                    size={"sm"}
+                    onClick={() => removeConsultor(consultor.idConsultor)}
+                  >
+                    <X size={20} />
+                    <span className="sr-only">Eliminar consultor</span>
+                  </Button>
                 </li>
-            }
+              ))
+            ) : (
+              <li className="text-xs text-muted-foreground">
+                No hay consultores asignados
+              </li>
+            )}
           </ul>
         </CardContent>
       </Card>

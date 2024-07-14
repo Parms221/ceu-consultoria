@@ -5,6 +5,6 @@ export const assignationSchema = z.array(
     idConsultor: z.number(),
     nombres: z.string(),
     apellidos: z.string(),
-    cargo: z.string(),
-  })
-)
+    especialidades: z.string(),
+  }),
+);

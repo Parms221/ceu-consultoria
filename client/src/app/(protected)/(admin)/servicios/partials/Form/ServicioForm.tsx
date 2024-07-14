@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { createServicio, udpateServicio } from "@/actions/Servicio";
+import { createServicio, udpateServicio } from "@/actions/Consultor";
 import { Entregable, Servicio } from "@/types/servicio";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusIcon, Trash2Icon } from "lucide-react";
@@ -48,7 +48,9 @@ export default function ServicioForm({ servicio = undefined }: Props) {
     defaultValues: {
       titulo: servicio ? servicio.titulo : "",
       descripcion: servicio ? servicio.descripcion : "",
-      entregablesDelServicio: servicio ? servicio.entregablesDelServicio : [] as Entregable[],
+      entregablesDelServicio: servicio
+        ? servicio.entregablesDelServicio
+        : ([] as Entregable[]),
     },
   });
 

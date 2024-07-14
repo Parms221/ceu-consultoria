@@ -4,9 +4,7 @@ import { clienteSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partial
 import { assignationSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/schemas/assignation.schema";
 
 export const projectCompleteSchema = z.object({
-  clienteId: z.number().positive({ message: "El cliente es requerido" }),
-  proyectoId:z.number().positive({ message: "El proyecto es requerido" }),
   cliente: clienteSchema.optional(),
-  project: projectDetailSchema,
-  participantes: assignationSchema,
+  project: projectDetailSchema.optional(),
+  participantes: assignationSchema.optional(),
 });
