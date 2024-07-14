@@ -3,7 +3,7 @@ import { PlusIcon, ChevronsRightIcon } from "lucide-react";
 import { Drawer, DrawerClose, DrawerContent,  DrawerHeader, DrawerTrigger } from "@/components/ui/drawer";
 import HitoForm from "./form";
 
-export default function HitoModal() {
+export default function NewHitoModal() {
   return (
     <Drawer direction="right">
       <DrawerTrigger

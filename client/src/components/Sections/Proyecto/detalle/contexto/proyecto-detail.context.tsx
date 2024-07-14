@@ -2,8 +2,11 @@
 import { createContext, useContext, useState } from "react";
 import { Proyecto } from "@/types/proyecto";
 import { Hito } from "@/types/proyecto/Hito";
-import { Tarea } from "@/types/proyecto/Tarea";
-// import { zodResolver } from "@hookform/resolvers/zod";
+import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
+import { FieldArrayWithId, useFieldArray, UseFieldArrayAppend, UseFieldArrayRemove, useForm, UseFormReturn } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { hitoSchema, tareaSchema } from "../forms/schemas/nuevo-hito.schema";
 
 
 interface IProjectDetailContext {
@@ -13,6 +16,12 @@ interface IProjectDetailContext {
     setProyecto: (proyecto: Proyecto) => void
     setSelectedHito: (hito: Hito | null) => void
     setSelectedTask: (task: Tarea | null) => void 
+    hitoForm : UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
+    tareaForm: UseFormReturn<z.infer<typeof tareaSchema>, any, undefined>;
+
+    subtareasFields: FieldArrayWithId<TareaDTO, "subTareas", "id">[];
+    appendSubtarea: UseFieldArrayAppend<TareaDTO, "subTareas">;
+    removeSubtarea: UseFieldArrayRemove;
 }
 
 export const ProjectDetailContext = createContext<IProjectDetailContext>(
@@ -30,6 +39,38 @@ export default function ProjectDetailProvider({
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
   const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
 
+  const tareaForm = useForm<z.infer<typeof tareaSchema>>({
+    resolver: zodResolver(tareaSchema),
+    defaultValues: {
+        titulo: selectedTask ? selectedTask.titulo : "Nueva tarea",
+        fechaFin: selectedTask ? new Date(selectedTask.fechaFin) : new Date(),
+        fechaInicio: selectedTask ? new Date(selectedTask.fechaInicio) : new Date(),
+      }
+  })
+
+  const hitoForm = useForm<z.infer<typeof hitoSchema>>({
+    resolver: zodResolver(hitoSchema),
+    defaultValues: {
+        titulo: selectedHito ? selectedHito.titulo : "Nueva tarea",
+        fechaFinalizacion: selectedHito ? new Date(selectedHito.fechaFinalizacion) : new Date(),
+        fechaInicio: selectedHito ? new Date(selectedHito.fechaInicio) : new Date(),
+      }
+  })
+
+    const {
+      fields: subtareasFields,
+      append: appendSubtarea,
+      remove: removeSubtarea,
+    } = useFieldArray({
+      control: tareaForm.control,
+      name: "subTareas",
+      rules: {
+        required: true,
+        minLength: 1,
+      },
+    });
+
+
   return (
     <ProjectDetailContext.Provider value={{ 
         proyecto,
@@ -37,7 +78,14 @@ export default function ProjectDetailProvider({
         selectedHito,
         setSelectedHito,
         selectedTask,
-        setSelectedTask
+        setSelectedTask,
+
+        hitoForm,
+        tareaForm,
+
+        appendSubtarea,
+        removeSubtarea,
+        subtareasFields
     }}>
         {children}
     </ProjectDetailContext.Provider>

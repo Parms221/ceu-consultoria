@@ -9,7 +9,11 @@ export const tareaSchema = z.object({
   fechaFin: z.date({
     required_error: "La fecha de finalización es requerida",
   }),
-  estado: z.string().optional(),
+  estado: z.object({
+    idEstado: z.number(),
+    descripcion: z.string(),
+    tipo: z.number(),
+    }),
   participantesAsignados: z.array(
     z.object({
       idParticipante: z.number(),

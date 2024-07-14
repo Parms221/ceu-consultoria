@@ -24,7 +24,11 @@ export default function NewTaskModal() {
             Añadir tarea
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[800px]">
+      <DialogContent className="max-w-[800px] max-h-[550px] overflow-hidden overflow-y-auto" 
+        style={
+          {scrollbarWidth: 'thin'}
+        }
+      >
         <DialogTitle className="text-ceu-celeste">
             {
                 selectedTask ? `Editar tarea ${selectedTask.titulo}` : `Nueva tarea` 
