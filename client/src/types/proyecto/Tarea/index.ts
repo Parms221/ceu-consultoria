@@ -1,8 +1,10 @@
+export * from './dto/TareaDTO'
+
 import { Estado } from "@/types/estado";
 import { Participante } from "../Participante";
 
 export type Tarea = {
-    idTarea: number;
+    idTarea?: number;
     titulo : string;
     descripcion : string;
     fechaInicio : string;
@@ -12,5 +14,11 @@ export type Tarea = {
     tareaAnterior? : Tarea
     estado : Estado
     participantesAsignados : Participante[] // Consultores
+    subTareas: SubTarea[]
+}
 
+export type SubTarea = {
+    idSubTarea: number
+    descripcion: string
+    completado: boolean
 }

@@ -25,12 +25,14 @@ import {
 
 import Filters from './filters'
 import { Hito } from '@/types/proyecto/Hito'
+import Filter from '@/components/ui/DataTable/filters/default-filter'
 
 
 interface DataTableProps<TData, TSubRowsField extends keyof TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   subRowsField: TSubRowsField; // Field in TData that contains the sub rows
+  newTask?: React.ReactNode;
 }
 
 export function HitosTable<
@@ -40,6 +42,7 @@ export function HitosTable<
   columns,
   data,
   subRowsField,
+  newTask
 }: DataTableProps<TData, TSubRowsField, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
@@ -70,7 +73,10 @@ export function HitosTable<
 
   return (
     <div>
-      <Filters table={table} />
+      <div className="flex justify-between items-center px-2">
+        <Filters table={table} />
+        {newTask}
+      </div>
       <Table>
         <TableHeader className="bg-accent">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -80,10 +86,20 @@ export function HitosTable<
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : (
+                          <div className='space-y-1.5'>
+                            {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {header.column.getCanFilter() ? (
+                            <div>
+                              <Filter column={header.column} table={table} />
+                            </div>
+                          ) : null}
+                        </div>
+                      )
+                    }
                   </TableHead>
                 )
               })}
@@ -113,7 +129,7 @@ export function HitosTable<
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                No hay tareas para mostrar
               </TableCell>
             </TableRow>
           )}

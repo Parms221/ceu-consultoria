@@ -27,7 +27,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     header: ({ table }) => (
       <div className="flex items-center">
       <Button
-      className="p-0"
+      className="p-0 h-fit"
       variant={"link"}
       onClick={() => table.toggleAllRowsExpanded()}
       >
@@ -64,32 +64,27 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
   },
   {
     accessorKey: "fechaInicio",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha de inicio" />
-    ),
+    header: "Fecha de inicio",
     cell: ({ row }) => {
       const fechaInicio = row.original.fechaInicio
       if(!fechaInicio) return "-"
       const date = new Date(fechaInicio);
-      return <div>{
-        format(date, 'd/MM/yyyy')
-        }</div>;
+      return format(date, 'd/MM/yyyy');
     },
   },
   {
     accessorKey: "fechaFinalizacion",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha de finalización" />
-    ),
+    header: "Fecha de finalización",
     cell: ({ row }) => {
       const dateFin = row.original.fechaFinalizacion || row.original.fechaFin;
       if(!dateFin) return "-"
-      return <div>{format(dateFin, 'd/MM/yyyy')}</div>;
+      return format(dateFin, 'd/MM/yyyy');
     },
   },
   {
     id: "duracion",
-    header: "Duración",
+    header: "Duración (días)",
+    enableColumnFilter: true,
     cell: ({ row }) => {
       const inicio = row.original.fechaInicio;
       const final = row.original.fechaFinalizacion || row.original.fechaFin
@@ -97,8 +92,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     
       // get diff time in days using date-fns
       const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)})
-      const duracionStr = formatDuration(duracion, { locale: es});
-      return <div>{duracionStr}</div>;
+      return Number(duracion.days);
     },
   },
   {
