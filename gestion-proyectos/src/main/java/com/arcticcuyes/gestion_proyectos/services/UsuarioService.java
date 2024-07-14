@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
+import com.arcticcuyes.gestion_proyectos.models.Consultor;
 import com.arcticcuyes.gestion_proyectos.repositories.ClienteRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class UsuarioService {
     private RolRepository roleRepository;
     @Autowired
     private ClienteRepository clienteRepository;
+    @Autowired
+    private ConsultorRepository consultorRepository;
 
     public List<Usuario> getUsuarios() {
         return (List<Usuario>) uRepository.findAll();
@@ -55,6 +59,17 @@ public class UsuarioService {
         if (cliente != null) {
             cliente.setUsuarioCliente(createdUser);
             clienteRepository.save(cliente);
+        }
+
+        // si el rol es Consultor, se crea un nuevo Consultor
+        if (roles.contains(roleRepository.findByRol("ROLE_CONSULTOR"))) {
+            Consultor consultor = new Consultor();
+            consultor.setNombres(usuarioDto.getName());
+            consultor.setApellidos("");
+            consultor.setGenero('M');
+            consultor.setEspecialidades("");
+            consultor.setUsuarioConsultor(createdUser);
+            consultorRepository.save(consultor);
         }
 
         return createdUser;
