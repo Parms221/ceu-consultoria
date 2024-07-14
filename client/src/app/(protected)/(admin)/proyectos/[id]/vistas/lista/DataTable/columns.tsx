@@ -8,18 +8,56 @@ import Link from "next/link";
 import { Hito } from "@/types/proyecto/Hito";
 import { es } from "date-fns/locale/es";
 import { formatDistance } from "date-fns";
+import { WithSubRows } from "./data-table";
+import { Tarea } from "@/types/proyecto/Tarea";
 
 
-export const hitosColumns: ColumnDef<Hito>[] = [
+export const hitosColumns: ColumnDef<WithSubRows<Tarea>,Hito>[] = [
   {
     id: "titulo",
     accessorKey: "titulo",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Hito" />
+    header: ({ table }) => (
+      <>
+      <button
+        {...{
+          onClick: table.getToggleAllRowsExpandedHandler(),
+        }}
+      >
+        {table.getIsAllRowsExpanded() ? '👇' : '👉'}
+      </button>{' '}
+      First Name
+    </>
     ),
-    cell: ({ row }) => {
-      return <div className="w-[120px]">{row.original.titulo}</div>;
-    }
+    // cell: ({ row }) => {
+    //   return <div className="w-[120px]">{row.original.titulo}</div>;
+    // }
+    cell: ({ row }) => (
+      <div
+        style={{
+          // Since rows are flattened by default,
+          // we can use the row.depth property
+          // and paddingLeft to visually indicate the depth
+          // of the row
+          paddingLeft: `${row.depth * 2}rem`,
+        }}
+      >
+        <div>
+          {row.getCanExpand() ? (
+            <button
+              {...{
+                onClick: row.getToggleExpandedHandler(),
+                style: { cursor: 'pointer' },
+              }}
+            >
+              {row.getIsExpanded() ? '👇' : '👉'}
+            </button>
+          ) : (
+            '🔵'
+          )}{' '}
+          {row.original.titulo}
+        </div>
+      </div>
+    )
   },
   {
     accessorKey: "fechaInicio",
@@ -37,7 +75,8 @@ export const hitosColumns: ColumnDef<Hito>[] = [
       <DataTableColumnHeader column={column} title="Fecha de finalización" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.fechaFinalizacion);
+      const dateFin = row.original.fechaFinalizacion || row.original.fechaFin
+      const date = new Date(dateFin);
       return <div>{date.toLocaleDateString()}</div>;
     },
   },
@@ -47,7 +86,8 @@ export const hitosColumns: ColumnDef<Hito>[] = [
     cell: ({ row }) => {
       const hito = row.original;
       const fechaInicio  = new Date(hito.fechaInicio);
-      const fechaFinalizacion  = new Date(hito.fechaFinalizacion);
+      const dateFin = hito.fechaFinalizacion || hito.fechaFin
+      const fechaFinalizacion  = new Date(dateFin);
       // get diff time in days using date-fns
       const diffDays = formatDistance(fechaInicio, fechaFinalizacion, { locale: es})
       return <div>{diffDays}</div>;

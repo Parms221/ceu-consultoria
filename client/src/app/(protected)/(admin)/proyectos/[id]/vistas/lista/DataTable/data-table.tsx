@@ -9,6 +9,8 @@ import {
   // getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  getExpandedRowModel,
+  ExpandedState,
   useReactTable,
 } from "@tanstack/react-table"
 
@@ -32,14 +34,21 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
+// TODO: Hacer esto más genérico para que pueda ser usado en cualquier parte
+export type WithSubRows<T> = T & { tareasDelHito?: WithSubRows<T>[] } & Hito;
+
 export function HitosTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<
+  WithSubRows<TData>
+, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
+
+  const [expanded, setExpanded] = useState<ExpandedState>({})
 
   const table = useReactTable({
     data,
@@ -49,10 +58,15 @@ export function HitosTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    onExpandedChange: setExpanded,
+    enableExpanding: true,
+    getSubRows: row => row.tareasDelHito,
     // getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
+      expanded
     },
   })
 
@@ -81,7 +95,7 @@ export function HitosTable<TData, TValue>({
         <TableBody className='relative'>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
-              const hito = row.original as Hito
+              const hito = row.original as unknown as Hito
               return (
                   <React.Fragment 
                     key={row.id}
@@ -90,20 +104,11 @@ export function HitosTable<TData, TValue>({
                       data-state={row.getIsSelected() && "selected"}
                     >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id} className='font-bold'>
+                            <TableCell key={cell.id}>
                               {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </TableCell>
                           ))}
                     </TableRow>
-                    <tr>
-                      <td colSpan={columns.length}>
-                        <TasksTable
-
-                          columns={tareasColumns}
-                          data={hito.tareasDelHito}
-                        />
-                      </td>
-                    </tr>
                   </React.Fragment>
               )
             })
