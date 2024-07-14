@@ -25,6 +25,7 @@ import {
 
 import Filters from './filters'
 import { Hito } from '@/types/proyecto/Hito'
+import Filter from '@/components/ui/DataTable/filters/default-filter'
 
 
 interface DataTableProps<TData, TSubRowsField extends keyof TData, TValue> {
@@ -85,10 +86,20 @@ export function HitosTable<
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : (
+                          <div className='space-y-1.5'>
+                            {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {header.column.getCanFilter() ? (
+                            <div>
+                              <Filter column={header.column} table={table} />
+                            </div>
+                          ) : null}
+                        </div>
+                      )
+                    }
                   </TableHead>
                 )
               })}

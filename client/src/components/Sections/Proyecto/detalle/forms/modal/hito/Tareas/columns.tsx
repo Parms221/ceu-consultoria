@@ -24,7 +24,7 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
     header: ({ table }) => (
       <div className="flex items-center">
       <Button
-      className="p-0"
+      className="p-0 h-fit"
       variant={"link"}
       onClick={() => table.toggleAllRowsExpanded()}
       >
@@ -46,7 +46,7 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
           {row.getCanExpand() ? (
             <Button
             variant={"ghost"}
-            className="p-0"
+            className="p-0 h-fit"
               onClick={() => row.toggleExpanded()}
             >
               {isExpandedChevron(row.getIsExpanded())}
@@ -91,7 +91,7 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
       // get diff time in days using date-fns
       const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)})
       const duracionStr = formatDuration(duracion, { locale: es});
-      return <div>{duracionStr}</div>;
+      return {duracionStr};
     },
   },
   {
