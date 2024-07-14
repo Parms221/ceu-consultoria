@@ -9,6 +9,8 @@ import {
   // getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  getExpandedRowModel,
+  ExpandedState,
   useReactTable,
 } from "@tanstack/react-table"
 
@@ -22,24 +24,29 @@ import {
 } from "@/components/ui/table"
 
 import Filters from './filters'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Hito } from '@/types/proyecto/Hito'
-import { TasksTable } from './tareas/table-tareas'
-import { tareasColumns } from './tareas/columns-tareas'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+
+interface DataTableProps<TData, TSubRowsField extends keyof TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  subRowsField: TSubRowsField; // Field in TData that contains the sub rows
 }
 
-export function HitosTable<TData, TValue>({
+export function HitosTable<
+  TData, 
+  TSubRowsField extends keyof TData, 
+  TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  subRowsField,
+}: DataTableProps<TData, TSubRowsField, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
+
+  const [expanded, setExpanded] = useState<ExpandedState>(true)  
 
   const table = useReactTable({
     data,
@@ -49,10 +56,15 @@ export function HitosTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    onExpandedChange: setExpanded,
+    enableExpanding: true,
+    getSubRows: (row) => row[subRowsField] as TData[],
     // getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
+      expanded
     },
   })
 
@@ -81,7 +93,7 @@ export function HitosTable<TData, TValue>({
         <TableBody className='relative'>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
-              const hito = row.original as Hito
+              const hito = row.original as unknown as Hito
               return (
                   <React.Fragment 
                     key={row.id}
@@ -90,20 +102,11 @@ export function HitosTable<TData, TValue>({
                       data-state={row.getIsSelected() && "selected"}
                     >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id} className='font-bold'>
+                            <TableCell key={cell.id}>
                               {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </TableCell>
                           ))}
                     </TableRow>
-                    <tr>
-                      <td colSpan={columns.length}>
-                        <TasksTable
-
-                          columns={tareasColumns}
-                          data={hito.tareasDelHito}
-                        />
-                      </td>
-                    </tr>
                   </React.Fragment>
               )
             })
