@@ -6,13 +6,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Tarea } from "@/types/proyecto/Tarea";
-import { Hito } from "@/types/proyecto/Hito";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { useProjectDetail } from '@/components/Sections/Proyecto/detalle/contexto/proyecto-detail.context';
+import TareaForm from "./form";
 
 export default function NewTaskModal() {
   const { selectedHito, selectedTask } = useProjectDetail()
@@ -27,7 +24,7 @@ export default function NewTaskModal() {
             Añadir tarea
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-[800px]">
         <DialogTitle className="text-ceu-celeste">
             {
                 selectedTask ? `Editar tarea ${selectedTask.titulo}` : `Nueva tarea` 
@@ -36,7 +33,7 @@ export default function NewTaskModal() {
         <DialogDescription>
             {selectedTask && `En lista ${selectedTask.estado}`  }
         </DialogDescription>
-       Formulario de tarea
+       <TareaForm />
       </DialogContent>
     </Dialog>
   );

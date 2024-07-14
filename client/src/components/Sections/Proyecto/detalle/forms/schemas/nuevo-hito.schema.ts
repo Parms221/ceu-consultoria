@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const tareaSchema = z.object({
   titulo: z.string().min(2).max(50),
-  descripción: z.string().min(2).max(50),
+  descripcion: z.string().min(2).max(50),
   fechaInicio: z.date({
     required_error: "La fecha de inicio es requerida",
   }),
