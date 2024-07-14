@@ -6,11 +6,32 @@ import { PROJECT_VIEWS } from "./vistas";
 import { useQuery } from "@tanstack/react-query";
 import { Proyecto } from "@/types/proyecto";
 import { getProyecto } from "./contexto/data";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 
 export default function ProjectDetails(
     { id }: { id: number }
 ) {
+    const searchParams = useSearchParams()
+    const pathname = usePathname()
+    const router = useRouter()
+    const currentView = searchParams.get("view")
+
+    let view
+    if (currentView && PROJECT_VIEWS.some(view => view.id === currentView)) {
+        view = currentView
+    } else {
+        view = PROJECT_VIEWS[0].id
+        updateSearchParams("view", view)
+      } 
+
+    function updateSearchParams(
+        key: string,
+        value: string
+    ){
+      router.push(pathname + '?' + `${key}=${value}`)
+    }
+
     const {
         data: proyecto,
         isLoading,
@@ -47,17 +68,18 @@ export default function ProjectDetails(
             </div>
             </header>
          {/* Tabs de navegación */}
-            <Tabs defaultValue={PROJECT_VIEWS[0].id} className="space-y-1.5 p-0">
+            <Tabs defaultValue={view} className="space-y-1.5 p-0">
             <TabsList>
                 {PROJECT_VIEWS.map((view) => {
                 return (
                     <TabsTrigger
-                    key={view.id}
-                    value={view.id}
-                    className="flex items-center gap-2"
+                      key={view.id}
+                      value={view.id}
+                      className="flex items-center gap-2"
+                      onClick={() => updateSearchParams("view", view.id)}
                     >
-                    {view.icon}
-                    <span>{view.label}</span>
+                      {view.icon}
+                      <span>{view.label}</span>
                     </TabsTrigger>
                 );
                 })}
