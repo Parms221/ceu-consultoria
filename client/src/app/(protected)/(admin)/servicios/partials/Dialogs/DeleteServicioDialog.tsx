@@ -1,5 +1,5 @@
 "use client";
-import { deleteServicio } from "@/actions/Servicio";
+import { deleteServicio } from "@/actions/Consultor";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

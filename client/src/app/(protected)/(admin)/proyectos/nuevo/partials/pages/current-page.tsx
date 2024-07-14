@@ -15,7 +15,7 @@ export default function CurrentPage() {
     case 1:
       return <ProjectFormPage2 />;
     case 2:
-      return <ProjectFormPage3 />
+      return <ProjectFormPage3 />;
     case 3:
       return (
         <div>

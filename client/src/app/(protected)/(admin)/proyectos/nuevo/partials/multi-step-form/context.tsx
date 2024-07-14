@@ -29,9 +29,6 @@ export default function ProjectFormContext({
 }) {
   const form = useForm<z.infer<typeof projectCompleteSchema>>({
     resolver: zodResolver(projectCompleteSchema),
-    defaultValues: {
-      clienteId: 0,
-    },
   });
 
   async function OnSubmit(data: z.infer<typeof projectCompleteSchema>) {
@@ -43,6 +40,9 @@ export default function ProjectFormContext({
   const next = () => {
     if (currentStep.order < STEPS_VALUES.length - 1) {
       setCurrentStep(STEPS_VALUES[currentStep.order + 1]);
+    }
+    if (currentStep.order === STEPS_VALUES.length - 1) {
+      form.handleSubmit(OnSubmit)();
     }
   };
 
