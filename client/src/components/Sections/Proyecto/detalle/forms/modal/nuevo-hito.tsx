@@ -10,7 +10,7 @@ type Props = {
 
 export default function NuevoHitoForm({ proyecto }: Props) {
   return (
-    <Drawer direction="right">
+    <Drawer direction="right" >
       <DrawerTrigger
          className="flex items-center gap-2 rounded-md bg-ceu-celeste px-2 py-1.5 text-sm text-white"
         type="button"
