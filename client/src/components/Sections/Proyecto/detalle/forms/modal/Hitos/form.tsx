@@ -11,14 +11,16 @@ import DatePicker from "@/components/ui/datepicker/date-picker";
 import { HitosTable } from "../../../vistas/lista/DataTable/data-table";
 import { tareasColumns } from "../Tareas/columns";
 import NewTaskModal from "../Tareas/nuevo-modal";
+import { Tarea } from "@/types/proyecto/Tarea";
 
 export default function HitoForm(
 ) {
     const { selectedHito, proyecto, hitoForm : form } = useProjectDetail()
-   
+    
+    const tareasInForm = form.getValues("tareas") as unknown as Tarea[] ?? []
 
     async function onSubmit(values: z.infer<typeof hitoSchema>){
-        console.log(values)
+        console.log(JSON.stringify(values))
     }
     
     return (
@@ -81,10 +83,9 @@ export default function HitoForm(
                     )}
                 />
                 {/* Tareas del hito */}
-                {JSON.stringify(form.getValues("tareas"))}
                 <HitosTable 
                     columns={tareasColumns}
-                    data={selectedHito?.tareasDelHito || []}
+                    data={selectedHito?.tareasDelHito || tareasInForm}
                     subRowsField="subTareas"
                     newTask = {<NewTaskModal />}
                 />

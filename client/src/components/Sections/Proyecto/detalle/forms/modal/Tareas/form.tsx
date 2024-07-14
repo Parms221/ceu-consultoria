@@ -25,21 +25,35 @@ import { z } from "zod";
 import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import SubTareasChecklist from "./sub-tareas";
+import SubTareasChecklist from "./partials/sub-tareas";
+import { Estado } from "@/types/estado";
+import { useState } from "react";
+import { ParticipanteDTO } from "@/types/proyecto/Tarea";
 
 export default function TareaForm() {
-  const { selectedTask, tareaForm: form, hitoForm } = useProjectDetail();
+  const { selectedTask, tareaForm: form, hitoForm, appendSubtarea } = useProjectDetail();
+
+  const [responsables, setResponsables ] = useState<ParticipanteDTO[]>([])
+
 
   async function onSubmit(values: z.infer<typeof tareaSchema>) {
     console.log(values);
+    const currentTareas = hitoForm.getValues("tareas");
+    if(currentTareas){
+      hitoForm.setValue("tareas", [...currentTareas, values])
+    }else {
+      hitoForm.setValue("tareas", [values])
+    }
   }
 
   return (
-    <div className="grid grid-cols-3">
-      <div className="col-span-2 p-2">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
+    <Form {...form}>
+    <form className="grid grid-cols-3" 
+       onSubmit={form.handleSubmit(onSubmit)}
+    
+    >
+      <article className="col-span-2 p-2">
+          <div
             className="space-y-4 [&>div>div>label]:w-[200px]"
           >
             <FormField
@@ -71,16 +85,21 @@ export default function TareaForm() {
                       placeholder="Seleccione un responsable"
                       options={[
                         {
-                          label: "RUC",
-                          value: "RUC",
+                          label: "Consultor 1",
+                          value: "1",
                         },
                         {
-                          label: "DNI",
-                          value: "DNI",
+                          label: "Consultor 2",
+                          value: "2",
                         },
                       ]}
                       onSelect={(value) => {
-                        field.onChange(value);
+                        const participante = {} as ParticipanteDTO
+                        participante.idConsultor = Number(value)
+                        if(responsables.find((p) => p.idConsultor === participante.idConsultor) === undefined){
+                          setResponsables([...responsables, participante])
+                        }
+                        field.onChange(responsables);
                       }}
                     />
                   </div>
@@ -104,15 +123,21 @@ export default function TareaForm() {
                       options={[
                         {
                           label: "En progreso",
-                          value: "En progreso",
+                          value: "1",
                         },
                         {
                           label: "Terminado",
-                          value: "Terminado",
+                          value: "2",
                         },
                       ]}
                       onSelect={(value) => {
-                        field.onChange(value);
+                        const estado  = {} as Estado
+                        console.log(value)
+                        // TODO estandarizar esto con la BD
+                        estado.idEstado = Number(value)
+                        estado.descripcion = "En progreso"
+                        estado.tipo = 0
+                        field.onChange(estado);
                       }}
                     />
                   </div>
@@ -172,9 +197,8 @@ export default function TareaForm() {
             />
             {/* Lista de subtareas checklist */}
             <SubTareasChecklist />
-          </form>
-        </Form>
-      </div>
+          </div>
+      </article>
       <aside className="rounded-md bg-[#EBEBEB] p-2 [&>div]:space-y-1.5">
         <div>
           <h4>Añadir a la tarea</h4>
@@ -191,13 +215,17 @@ export default function TareaForm() {
             className="w-full"
             size={"sm"}
             variant={"outline"}
+            onClick={() => appendSubtarea({
+              descripcion: "Nueva subtarea",
+              completado: false,
+            })}
           >
             <CheckCircle size={18} /> Subtareas
           </Button>
         </div>
         <div>
           <h4>Acciones</h4>
-          <Button type="submit" className="w-full" size={"sm"}>
+          <Button className="w-full" size={"sm"}>
             Guardar
           </Button>
           <Button
@@ -210,6 +238,7 @@ export default function TareaForm() {
           </Button>
         </div>
       </aside>
-    </div>
+    </form>
+    </Form>
   );
 }

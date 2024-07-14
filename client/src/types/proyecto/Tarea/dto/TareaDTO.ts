@@ -1,6 +1,6 @@
 import { Estado } from "@/types/estado";
 import { Participante } from "@/types/proyecto/Participante"
-import { SubTarea } from "..";
+import { Consultor } from "@/types/consultor";
 
 export type TareaDTO = {
     titulo : string;
@@ -11,11 +11,16 @@ export type TareaDTO = {
     updatedAt?: string;
     tareaAnterior? : TareaDTO
     estado : Estado
-    participantesAsignados : Participante[] // Consultores
+    participantesAsignados : ParticipanteDTO[] // Consultores
     subTareas: SubTareaDTO[]
 }
 
 export type SubTareaDTO = {
     descripcion: string
     completado: boolean
+}
+
+export type ParticipanteDTO = {
+    // createdAt : string
+    idConsultor : number
 }

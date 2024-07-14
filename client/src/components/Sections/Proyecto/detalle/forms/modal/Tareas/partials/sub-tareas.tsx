@@ -3,35 +3,31 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
+import { useProjectDetail } from "../../../../contexto/proyecto-detail.context";
 import { Checkbox } from "@/components/ui/checkbox";
 
 
 export default function SubTareasChecklist() {
     const { 
-      appendSubtarea,
       removeSubtarea,
 
       subtareasFields, 
-      tareaForm : form } = useProjectDetail();
+      tareaForm : form 
+    } = useProjectDetail();
    
     return (
       <div className={"space-y-3"}>
         <div className={"flex items-center gap-2"}>
           <h3 className="text-sm font-bold text-black">Lista de subtareas</h3>
-          <Button
-            size={"icon"}
-            className={"max-h-7 max-w-7"}
-            onClick={() => appendSubtarea({
-              descripcion: "Nueva subtarea",
-              completado: false,
-            })}
-          >
-            <span className={"sr-only"}>Añadir subtarea</span>
-            <PlusIcon className={"max-h-4 max-w-4"} />
-          </Button>
         </div>
         <ul className={"space-y-2"}>
+          {subtareasFields.length === 0 && (
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-gray-500">
+                No hay subtareas por realizar
+              </p>
+            </div>
+          )} 
           {subtareasFields.map((obj, index) => {
             return (
               <div key={index} className="flex items-center gap-2">

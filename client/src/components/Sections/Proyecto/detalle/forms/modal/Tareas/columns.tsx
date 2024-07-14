@@ -66,9 +66,7 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
       const fechaInicio = row.original.fechaInicio
       if(!fechaInicio) return "-"
       const date = new Date(fechaInicio);
-      return <div>{
-        format(date, 'd/MM/yyyy')
-        }</div>;
+      return format(date, 'd/MM/yyyy');
     },
   },
   {
@@ -77,21 +75,20 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
     cell: ({ row }) => {
       const dateFin = row.original.fechaFin;
       if(!dateFin) return "-"
-      return <div>{format(dateFin, 'd/MM/yyyy')}</div>;
+      return format(dateFin, 'd/MM/yyyy');
     },
   },
   {
     id: "duracion",
-    header: "Duración",
+    header: "Duración (días)",
     cell: ({ row }) => {
       const inicio = row.original.fechaInicio;
       const final = row.original.fechaFin
       if (!inicio || !final) return "-";
     
       // get diff time in days using date-fns
-      const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)})
-      const duracionStr = formatDuration(duracion, { locale: es});
-      return {duracionStr};
+      const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)}).days
+      return Number(duracion ?? 0);
     },
   },
   {

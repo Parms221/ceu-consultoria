@@ -16,15 +16,7 @@ export const tareaSchema = z.object({
     }),
   participantesAsignados: z.array(
     z.object({
-      idParticipante: z.number(),
-      createdAt: z.string(),
-      consultorParticipante: z.object({
-        idConsultor: z.number(),
-        nombres: z.string(),
-        apellidos: z.string(),
-        genero: z.string(),
-        cargo: z.string(),
-      }),
+      idConsultor: z.number(),
     }),
   ),
   subTareas: z.array(
