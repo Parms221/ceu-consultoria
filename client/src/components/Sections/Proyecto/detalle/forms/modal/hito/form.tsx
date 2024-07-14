@@ -8,7 +8,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Target } from "lucide-react";
+import { Calendar, CalendarCheck, Target } from "lucide-react";
+import { Tarea } from "@/types/proyecto/Tarea";
+import DatePicker from "@/components/ui/datepicker/date-picker";
+import { HitosTable } from "../../../vistas/lista/DataTable/data-table";
+import { tareasColumns } from "./Tareas/columns";
+import NewTaskModal from "./Tareas/nuevo-modal";
 
 export default function HitoForm(
 ) {
@@ -16,7 +21,9 @@ export default function HitoForm(
     const form = useForm<z.infer<typeof hitoSchema>>({
         resolver: zodResolver(hitoSchema),
         defaultValues: {
-            titulo: selectedHito ? selectedHito.titulo : "Nuevo hito"
+            titulo: selectedHito ? selectedHito.titulo : "Nuevo hito",
+            fechaFinalizacion: selectedHito ? new Date(selectedHito.fechaFinalizacion) : new Date(),
+            fechaInicio: selectedHito ? new Date(selectedHito.fechaInicio) : new Date(),
         }
     })
 
@@ -28,7 +35,7 @@ export default function HitoForm(
         <Form {...form}>
             <form 
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
+                className="space-y-4 [&>div>div>label]:w-[200px]"
             >
                 <FormField 
                     control={form.control}
@@ -36,9 +43,7 @@ export default function HitoForm(
                     render={({ field }) => (
                         <FormItem>
                             <div className="flex items-center gap-1.5">
-                                <FormLabel>
-                                    <Target size={24} />
-                                </FormLabel>
+                                <Target size={24} />
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -47,7 +52,51 @@ export default function HitoForm(
                         </FormItem>
                     )}
                 />
-
+                <FormField 
+                    control={form.control}
+                    name="fechaInicio"
+                    render={({ field }) => (
+                        <FormItem className="pl-1">
+                            <div className="flex items-center justify-around gap-1.5">
+                                <FormLabel className="flex items-center gap-1 shrink-0 text-sm">
+                                    <Calendar size={14} />
+                                    Fecha de inicio
+                                </FormLabel>
+                                    <DatePicker
+                                        field={field}
+                                        useOpenState
+                                    />
+                            </div>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField 
+                    control={form.control}
+                    name="fechaFinalizacion"
+                    render={({ field }) => (
+                        <FormItem className="pl-1">
+                            <div className="flex items-center gap-1.5">
+                                <FormLabel className="flex items-center gap-1 shrink-0 text-sm">
+                                    <CalendarCheck size={14}/>
+                                    Fecha de finalización
+                                </FormLabel>
+                                <DatePicker
+                                    field={field}
+                                    useOpenState
+                                />
+                            </div>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                {/* Tareas del hito */}
+                <HitosTable 
+                    columns={tareasColumns}
+                    data={selectedHito?.tareasDelHito || []}
+                    subRowsField="subTareas"
+                    newTask = {<NewTaskModal />}
+                />
                 <DrawerFooter>
                     <Button>Guardar</Button>
                     <DrawerClose asChild>

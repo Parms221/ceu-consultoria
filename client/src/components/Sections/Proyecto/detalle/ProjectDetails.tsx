@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Proyecto } from "@/types/proyecto";
 import { getProyecto } from "./contexto/data";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 
 export default function ProjectDetails(
@@ -16,14 +17,7 @@ export default function ProjectDetails(
     const pathname = usePathname()
     const router = useRouter()
     const currentView = searchParams.get("view")
-
-    let view
-    if (currentView && PROJECT_VIEWS.some(view => view.id === currentView)) {
-        view = currentView
-    } else {
-        view = PROJECT_VIEWS[0].id
-        updateSearchParams("view", view)
-      } 
+    const view = currentView && PROJECT_VIEWS.find(v => v.id === currentView) ? currentView : PROJECT_VIEWS[0].id
 
     function updateSearchParams(
         key: string,

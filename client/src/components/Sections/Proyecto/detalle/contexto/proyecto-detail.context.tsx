@@ -2,14 +2,17 @@
 import { createContext, useContext, useState } from "react";
 import { Proyecto } from "@/types/proyecto";
 import { Hito } from "@/types/proyecto/Hito";
+import { Tarea } from "@/types/proyecto/Tarea";
 // import { zodResolver } from "@hookform/resolvers/zod";
 
 
 interface IProjectDetailContext {
     proyecto: Proyecto,
     selectedHito: Hito | null,
+    selectedTask: Tarea | null,
     setProyecto: (proyecto: Proyecto) => void
     setSelectedHito: (hito: Hito | null) => void
+    setSelectedTask: (task: Tarea | null) => void 
 }
 
 export const ProjectDetailContext = createContext<IProjectDetailContext>(
@@ -25,13 +28,16 @@ export default function ProjectDetailProvider({
 
   const [proyecto, setProyecto] = useState<Proyecto>(selectedProject);
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
 
   return (
     <ProjectDetailContext.Provider value={{ 
         proyecto,
         setProyecto,
         selectedHito,
-        setSelectedHito
+        setSelectedHito,
+        selectedTask,
+        setSelectedTask
     }}>
         {children}
     </ProjectDetailContext.Provider>

@@ -12,5 +12,11 @@ export type Tarea = {
     tareaAnterior? : Tarea
     estado : Estado
     participantesAsignados : Participante[] // Consultores
+    subTareas: SubTarea[]
+}
 
+export type SubTarea = {
+    idSubTarea: number
+    descripcion: string
+    completado: boolean
 }

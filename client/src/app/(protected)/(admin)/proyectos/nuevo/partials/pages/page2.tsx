@@ -42,7 +42,7 @@ import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation"
 import DatePicker from "@/components/ui/datepicker/date-picker";
 import { toast } from "sonner";
 import { createProyectoIncompleto } from "@/services/proyecto";
-import { ProyectoIncompletoJsonResponse } from "@/actions/Proyecto";
+import { ProyectoIncompletoJsonResponse } from "@/types/proyecto/Response";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();

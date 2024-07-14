@@ -6,7 +6,7 @@ export type Consultor = {
     apellidos : string
     genero : string
     cargo : string
-    usuarioConsultor : Usuario
+    usuarioConsultor? : Usuario
     createdAt?: string;
     updatedAt?: string;
 }

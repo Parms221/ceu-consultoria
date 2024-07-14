@@ -1,12 +1,11 @@
 import { PlusIcon, ChevronsRightIcon } from "lucide-react";
 
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
+import { Drawer, DrawerClose, DrawerContent,  DrawerHeader, DrawerTrigger } from "@/components/ui/drawer";
 import HitoForm from "./form";
 
 export default function HitoModal() {
   return (
-    <Drawer direction="right" >
+    <Drawer direction="right">
       <DrawerTrigger
          className="flex items-center gap-2 rounded-md bg-ceu-celeste px-2 py-1.5 text-sm text-white"
         type="button"

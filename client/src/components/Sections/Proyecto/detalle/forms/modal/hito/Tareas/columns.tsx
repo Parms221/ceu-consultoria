@@ -3,14 +3,11 @@ import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2Icon, ChevronRight } from "lucide-react";
-import Link from "next/link";
-// import DeleteUserDialog from "../Dialogs/DeleteUserDialog";
 import { Hito } from "@/types/proyecto/Hito";
 import { es } from "date-fns/locale/es";
 import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Tarea } from "@/types/proyecto/Tarea";
-import FeedbackChat from "../../../forms/modal/feedback-de-tarea";
+import { SubTarea, Tarea } from "@/types/proyecto/Tarea";
 
 
 function isExpandedChevron(isExpanded: boolean) {
@@ -20,7 +17,7 @@ function isExpandedChevron(isExpanded: boolean) {
   )}/>
 }
 
-export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
+export const tareasColumns: ColumnDef<Tarea>[] = [
   {
     id: "titulo",
     accessorKey: "titulo",
@@ -64,7 +61,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
   },
   {
     accessorKey: "fechaInicio",
-    header: "Fecha de inicio",
+    header:"Fecha de inicio",
     cell: ({ row }) => {
       const fechaInicio = row.original.fechaInicio
       if(!fechaInicio) return "-"
@@ -78,7 +75,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     accessorKey: "fechaFinalizacion",
     header: "Fecha de finalización",
     cell: ({ row }) => {
-      const dateFin = row.original.fechaFinalizacion || row.original.fechaFin;
+      const dateFin = row.original.fechaFin;
       if(!dateFin) return "-"
       return <div>{format(dateFin, 'd/MM/yyyy')}</div>;
     },
@@ -88,7 +85,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     header: "Duración",
     cell: ({ row }) => {
       const inicio = row.original.fechaInicio;
-      const final = row.original.fechaFinalizacion || row.original.fechaFin
+      const final = row.original.fechaFin
       if (!inicio || !final) return "-";
     
       // get diff time in days using date-fns
@@ -101,19 +98,24 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     id: "actions",
     header: "Acciones",
     cell: ({ row }) => {
-      const hito = row.original;
+      const tarea = row.original;
 
       return (
         <div className="flex gap-2">
-          {
-            hito.idHito ? (
-              <FeedbackChat tarea={hito as Hito} />
-            ) : 
-             (
-              <FeedbackChat tarea={hito as Tarea} />
-             )
-          }
-            
+          <Button
+            variant="ghost"
+            className="p-0"
+            onClick={() => console.log("Editando tarea", tarea.idTarea)}
+          >
+            <Edit size={20} />
+          </Button>
+          <Button
+            variant="ghost"
+            className="p-0"
+            onClick={() => console.log("Eliminando tarea", tarea.idTarea)}
+          >
+            <Trash2Icon size={20} />
+          </Button>  
         </div>
       );
     },
