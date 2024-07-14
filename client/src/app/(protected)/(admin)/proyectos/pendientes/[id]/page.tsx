@@ -6,7 +6,6 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import Link from "next/link";
-import "@github/relative-time-element";
 import ProyectoPendienteCard from "../partials/ProyectoPendienteCard";
 import ProyectoDetails from "./partials/proyecto-details";
 
@@ -34,14 +33,16 @@ export default async function ProyectosPendientes({
             defaultSize={40}
             maxSize={50}
           >
-            <div className="grid grid-cols-1 gap-5 px-5">
-              {data?.map((proyecto) => (
-                <ProyectoPendienteCard
-                  active={proyecto.idProyecto == id}
-                  key={proyecto.idProyecto}
-                  proyecto={proyecto}
-                />
-              ))}
+            <div className="md:max-h-[calc(100vh-240px)] md:overflow-y-scroll">
+              <div className="grid grid-cols-1 gap-5 px-5">
+                {data?.map((proyecto) => (
+                  <ProyectoPendienteCard
+                    key={proyecto.idProyecto}
+                    proyecto={proyecto}
+                    active={proyecto.idProyecto == id}
+                  />
+                ))}
+              </div>
             </div>
           </ResizablePanel>
           <ResizableHandle className="hidden md:block" />

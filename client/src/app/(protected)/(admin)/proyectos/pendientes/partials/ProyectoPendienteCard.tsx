@@ -1,8 +1,11 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn, trimText } from "@/lib/utils";
 import { Proyecto } from "@/types/proyecto";
+import { formatDistance } from "date-fns";
 import Link from "next/link";
 import React from "react";
+import { es } from "date-fns/locale/es";
+
 type Props = {
   proyecto: Proyecto;
   active?: boolean;
@@ -12,6 +15,7 @@ const ProyectoPendienteCard = ({ proyecto, active = false }: Props) => {
     <Link
       key={proyecto.idProyecto}
       href={`/proyectos/pendientes/${proyecto.idProyecto}`}
+      scroll={false}
     >
       <Card
         className={
@@ -24,10 +28,7 @@ const ProyectoPendienteCard = ({ proyecto, active = false }: Props) => {
           <span className="text-title-md font-semibold text-black dark:text-white">
             {proyecto.titulo}
           </span>
-          <relative-time
-            datetime={new Date(proyecto.createdAt!).toISOString()}
-            lang="es"
-          ></relative-time>
+          {formatDistance(proyecto.createdAt!, new Date(), { locale: es })}
         </CardHeader>
         <CardContent>
           <p className="text-body-sm text-black dark:text-white">
