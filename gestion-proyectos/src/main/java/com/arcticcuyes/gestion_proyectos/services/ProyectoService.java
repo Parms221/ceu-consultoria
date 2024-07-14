@@ -1,5 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -197,7 +198,21 @@ public class ProyectoService {
         
         } 
     // }
-    
+
+    public void saveParticipantesProyecto(List<Long> consultores, Proyecto proyecto) {
+        List<Participante> participantes = new ArrayList<>();
+            for (Long consultorId : consultores) {
+                // buscar consultor por id o null
+                Consultor consultor = consultorRepository.findById(consultorId ).orElse(null);
+                // Crear el objeto Participante y establecer la relación bidireccional
+                Participante participante = new Participante();
+                participante.setProyectoIngresado(proyecto);
+                participante.setConsultorParticipante(consultorId);
+
+                // Guardar cada participante
+                // participanteRepository.save(participante);
+            }
+    }
 
     public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO) {
         Proyecto existingProyecto = proyectoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + id));
