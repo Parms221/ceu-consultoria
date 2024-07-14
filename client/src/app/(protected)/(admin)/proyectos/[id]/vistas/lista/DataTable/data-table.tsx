@@ -24,31 +24,29 @@ import {
 } from "@/components/ui/table"
 
 import Filters from './filters'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Hito } from '@/types/proyecto/Hito'
-import { TasksTable } from './tareas/table-tareas'
-import { tareasColumns } from './tareas/columns-tareas'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+
+interface DataTableProps<TData, TSubRowsField extends keyof TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  subRowsField: TSubRowsField; // Field in TData that contains the sub rows
 }
 
-// TODO: Hacer esto más genérico para que pueda ser usado en cualquier parte
-export type WithSubRows<T> = T & { tareasDelHito?: WithSubRows<T>[] } & Hito;
-
-export function HitosTable<TData, TValue>({
+export function HitosTable<
+  TData, 
+  TSubRowsField extends keyof TData, 
+  TValue>({
   columns,
   data,
-}: DataTableProps<
-  WithSubRows<TData>
-, TValue>) {
+  subRowsField,
+}: DataTableProps<TData, TSubRowsField, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
 
-  const [expanded, setExpanded] = useState<ExpandedState>({})
+  const [expanded, setExpanded] = useState<ExpandedState>(true)  
 
   const table = useReactTable({
     data,
@@ -61,7 +59,7 @@ export function HitosTable<TData, TValue>({
     getExpandedRowModel: getExpandedRowModel(),
     onExpandedChange: setExpanded,
     enableExpanding: true,
-    getSubRows: row => row.tareasDelHito,
+    getSubRows: (row) => row[subRowsField] as TData[],
     // getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
