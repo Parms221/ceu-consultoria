@@ -1,5 +1,9 @@
+"use server";
+
+import ESTADOS from "@/constants/proyectos/estados";
 import { fetcher } from "@/server/fetch/server-side";
 import { Proyecto } from "@/types/proyecto";
+import { revalidateTag } from "next/cache";
 
 export async function getProyectos(): Promise<Proyecto[] | undefined> {
   try {
@@ -52,4 +56,73 @@ export async function getProyectoById(
   } catch (error) {
     console.error(error);
   }
+}
+export async function rechazarProyecto(
+  id: string | number,
+): Promise<{ status: string; message: string }> {
+  try {
+    const response = await fetcher("/proyectos/propuestos/" + id, {
+      method: "POST",
+      body: JSON.stringify({
+        idEstado: ESTADOS.rechazado,
+      }),
+    });
+    const res = returnResponse(
+      response,
+      "proyectos/propuestos",
+      "El proyecto ha sido rechazado",
+      "Error al rechazar el proyecto",
+    );
+    return res;
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "Error al rechazar el proyecto",
+    };
+  }
+}
+export async function aprobarProyecto(
+  id: string | number,
+): Promise<{ status: string; message: string }> {
+  try {
+    const data = {
+      idEstado: ESTADOS.desarrollo,
+    };
+    const response = await fetcher("/proyectos/propuestos/" + id, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    const res = returnResponse(
+      response,
+      "proyectos/propuestos",
+      "El proyecto ha sido aprobado",
+      "Error al aprobar el proyecto",
+    );
+    return res;
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "Error al rechazar el proyecto",
+    };
+  }
+}
+function returnResponse(
+  response: Response,
+  tag: string,
+  successMessage: string,
+  errorMessage: string,
+) {
+  if (response.ok) {
+    revalidateTag(tag);
+    return {
+      status: "success",
+      message: successMessage,
+    };
+  }
+  return {
+    status: "error",
+    message: errorMessage,
+  };
 }

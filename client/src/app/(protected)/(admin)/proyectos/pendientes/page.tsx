@@ -18,29 +18,38 @@ export default async function ProyectosPendientes() {
         <Link href="/proyectos">Proyectos /</Link>
       </Breadcrumb>
 
-      <article className="area">
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel minSize={30} defaultSize={40} maxSize={50}>
-            <div className="grid grid-cols-1 gap-5 px-5">
-              {data?.map((proyecto) => (
-                <ProyectoPendienteCard
-                  key={proyecto.idProyecto}
-                  proyecto={proyecto}
-                />
-              ))}
-            </div>
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel>
-            <div className="flex h-full flex-col items-center justify-center p-5">
-              <h1 className="text-gray-800 text-3xl font-bold">¡Bienvenido!</h1>
-              <p className="text-gray-600">
-                Selecciona un proyecto para ver más detalles.
-              </p>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </article>
+      {data?.length === 0 && ( // If there are no projects to show
+        <div className="flex w-full items-center justify-center p-5">
+          <p>No hay proyectos por confirmar</p>
+        </div>
+      )}
+      {data?.length !== 0 && (
+        <article className="area">
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel minSize={30} defaultSize={40} maxSize={50}>
+              <div className="grid grid-cols-1 gap-5 px-5">
+                {data?.map((proyecto) => (
+                  <ProyectoPendienteCard
+                    key={proyecto.idProyecto}
+                    proyecto={proyecto}
+                  />
+                ))}
+              </div>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel>
+              <div className="flex h-full flex-col items-center justify-center p-5">
+                <h1 className="text-gray-800 text-3xl font-bold">
+                  ¡Bienvenido!
+                </h1>
+                <p className="text-gray-600">
+                  Selecciona un proyecto para ver más detalles.
+                </p>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </article>
+      )}
     </section>
   );
 }
