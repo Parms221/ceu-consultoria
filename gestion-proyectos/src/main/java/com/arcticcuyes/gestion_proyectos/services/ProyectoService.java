@@ -42,7 +42,10 @@ public class ProyectoService {
     private SubtareaRepository subTareaRepository;
     @Autowired
     private HitoRepository hitoRepository;
-    
+    @Autowired
+    private ConsultorRepository consultorRepository;
+    @Autowired
+    private ParticipanteRepository participanteRepository;
 
 
     public Page<Proyecto> findProyectos(String titulo, PageRequest pageRequest) {
@@ -199,20 +202,36 @@ public class ProyectoService {
         } 
     // }
 
-//    public void saveParticipantesProyecto(List<Long> consultores, Proyecto proyecto) {
-//        List<Participante> participantes = new ArrayList<>();
-//            for (Long consultorId : consultores) {
-//                // buscar consultor por id o null
-//                Consultor consultor = consultorRepository.findById(consultorId ).orElse(null);
-//                // Crear el objeto Participante y establecer la relación bidireccional
-//                Participante participante = new Participante();
-//                participante.setProyectoIngresado(proyecto);
-//                participante.setConsultorParticipante(consultorId);
-//
-//                // Guardar cada participante
-//                // participanteRepository.save(participante);
-//            }
-//    }
+    @Transactional
+    public void saveParticipantesProyecto(List<Long> consultores, Proyecto proyecto) {
+        try {
+            // Limpiar la lista existente de participantes
+            proyecto.getParticipantes().clear();
+
+            for (Long consultorId : consultores) {
+                // buscar consultor por id o null
+                Consultor consultor = consultorRepository.findById(consultorId).orElse(null);
+                if (consultor == null) {
+                    System.out.println("Consultor con id " + consultorId + " no encontrado.");
+                    continue;
+                }
+                // Crear el objeto Participante y establecer la relación bidireccional
+                Participante participante = new Participante();
+                participante.setProyectoIngresado(proyecto);
+                participante.setConsultorParticipante(consultor);
+
+                // Guardar cada participante
+                participanteRepository.save(participante);
+                proyecto.getParticipantes().add(participante);
+            }
+
+            proyectoRepository.save(proyecto);
+        } catch (Exception e) {
+            System.err.println("Error al guardar los participantes: " + e.getMessage());
+            e.printStackTrace();
+            throw e; // Re-throw the exception to be handled by the controller
+        }
+    }
 
     public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO) {
         Proyecto existingProyecto = proyectoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + id));
