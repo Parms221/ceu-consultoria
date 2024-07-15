@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 public class HitoDTO {
-    @Length(min = 80, max = 100)
     private String titulo;
     private Timestamp fechaInicio;
     private Timestamp fechaFinalizacion;
