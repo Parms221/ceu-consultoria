@@ -22,6 +22,7 @@ import com.arcticcuyes.gestion_proyectos.services.HitoService;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
 @RestController
+@RequestMapping("/hito")
 public class HitoController {
 
     @Autowired
@@ -30,12 +31,12 @@ public class HitoController {
     @Autowired
     ProyectoService proyectoService;
 
-    @GetMapping("/hito/{id}")
+    @GetMapping("/{id}")
     public Optional<Hito> getHitoByID(@PathVariable Long id){
         return hitoService.findHitoById(id);
     }
 
-    @PostMapping("/hito/{idProyecto}/update/{idHito}")
+    @PostMapping("/{idProyecto}/update/{idHito}")
     public ResponseEntity<?> updateHito(@PathVariable Long idHito, @RequestBody HitoDTO hitodDto, @PathVariable Long idProyecto) {
         try {
             Proyecto p = proyectoService.findProyectoById(idProyecto);
@@ -46,7 +47,7 @@ public class HitoController {
         }
     }
 
-    @DeleteMapping("/hito/deleteHito/{id}")
+    @DeleteMapping("/deleteHito/{id}")
     public ResponseEntity<Void> deleteHitoById(@PathVariable Long id) {
         hitoService.deleteHitoById(id);
         return ResponseEntity.noContent().build();
