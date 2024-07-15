@@ -33,7 +33,6 @@ export default function ProjectDetails(
       } = useQuery<Proyecto>({
         queryKey: ["proyecto", id],
         queryFn: async () => getProyecto(id),
-        enabled: !!id,
       });
     
       if (isLoading) {
