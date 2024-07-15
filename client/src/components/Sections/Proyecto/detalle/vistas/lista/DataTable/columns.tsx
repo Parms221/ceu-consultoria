@@ -3,14 +3,12 @@ import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2Icon, ChevronRight } from "lucide-react";
-import Link from "next/link";
-// import DeleteUserDialog from "../Dialogs/DeleteUserDialog";
 import { Hito } from "@/types/proyecto/Hito";
 import { es } from "date-fns/locale/es";
-import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
+import { format, formatDuration, intervalToDuration } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Tarea } from "@/types/proyecto/Tarea";
-import FeedbackChat from "../../../forms/modal/feedback-de-tarea";
+import { DeleteTask, FeedbackChat } from "../dialogs";
 
 
 function isExpandedChevron(isExpanded: boolean) {
@@ -92,7 +90,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     
       // get diff time in days using date-fns
       const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)})
-      return Number(duracion.days);
+      return Number(duracion.days ?? 0);
     },
   },
   {
@@ -112,6 +110,18 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
              )
           }
             
+          {/* Editar y eliminar */}
+          {
+            hito.idHito ? (
+              <DeleteTask task={hito as Hito} />
+            ) : (
+              <DeleteTask task={hito as Tarea} />
+            )
+          }
+
+          {
+            
+          }
         </div>
       );
     },

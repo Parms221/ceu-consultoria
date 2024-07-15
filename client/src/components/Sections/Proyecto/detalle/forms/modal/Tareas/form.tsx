@@ -218,7 +218,9 @@ export default function TareaForm() {
         </div>
         <div>
           <h4>Acciones</h4>
-          <Button className="w-full" size={"sm"} form="tarea-form">
+          <Button className="w-full" size={"sm"} form="tarea-form"
+            onClick={() => form.handleSubmit(onSubmit)()}
+          >
             Guardar
           </Button>
           <Button

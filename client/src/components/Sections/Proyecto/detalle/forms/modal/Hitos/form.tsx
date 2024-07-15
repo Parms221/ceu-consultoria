@@ -29,7 +29,10 @@ export default function HitoForm(
             resetForms()
             // TODO : hacer funcionar la revalidación del query key 
             console.log("Invalidando proyecto", proyecto.idProyecto)
-            queryClient.invalidateQueries({queryKey: ["proyecto", proyecto.idProyecto]})
+            queryClient.invalidateQueries({
+                queryKey: ["proyecto", proyecto.idProyecto],
+                refetchType: "all"
+            })
         },
     })
 
