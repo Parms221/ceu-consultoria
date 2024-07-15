@@ -34,8 +34,10 @@ public class ProyectoService {
     private ServicioService servicioService;
     @Autowired
     private EntregableServicioRepository entregableServicioRepository;
+    
     @Autowired
     private EntregableProyectoRepository entregableProyectoRepository;
+
     @Autowired
     private TareaRepository tareaRepository;
     @Autowired

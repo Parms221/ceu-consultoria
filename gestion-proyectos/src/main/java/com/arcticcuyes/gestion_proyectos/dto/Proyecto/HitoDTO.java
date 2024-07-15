@@ -16,6 +16,5 @@ public class HitoDTO {
     private Timestamp fechaInicio;
     private Timestamp fechaFinalizacion;
     private List<TareaDTO> tareas;
-
 }
 

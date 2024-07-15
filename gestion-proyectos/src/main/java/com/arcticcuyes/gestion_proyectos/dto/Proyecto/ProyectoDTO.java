@@ -51,7 +51,8 @@ public class ProyectoDTO {
     private Long servicio;
 
     private Long estado = 1l;
-    // private List<Participante> participantes;
+    
+    private List<Long> participantes;
 
     // private List<Reunion> reuniones;
 
