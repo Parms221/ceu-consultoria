@@ -9,22 +9,18 @@ export const tareaSchema = z.object({
   fechaFin: z.date({
     required_error: "La fecha de finalización es requerida",
   }),
-  estado: z.object({
-    idEstado: z.number(),
-    descripcion: z.string(),
-    tipo: z.number(),
-    }),
+  estado: z.number(),
   participantesAsignados: z.array(
     z.object({
       idConsultor: z.number(),
     }),
-  ),
-  subTareas: z.array(
+  ).optional(),
+  subtareas: z.array(
     z.object({
       descripcion: z.string().min(2).max(50),
       completado: z.boolean(),
     }),
-  ),
+  ).optional(),
 });
 
 export const hitoSchema = z.object({

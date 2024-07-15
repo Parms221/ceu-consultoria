@@ -26,7 +26,6 @@ import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import SubTareasChecklist from "./partials/sub-tareas";
-import { Estado } from "@/types/estado";
 import { useState } from "react";
 import { ParticipanteDTO } from "@/types/proyecto/Tarea";
 
@@ -37,7 +36,6 @@ export default function TareaForm() {
 
 
   async function onSubmit(values: z.infer<typeof tareaSchema>) {
-    console.log(values);
     const currentTareas = hitoForm.getValues("tareas");
     if(currentTareas){
       hitoForm.setValue("tareas", [...currentTareas, values])
@@ -49,6 +47,7 @@ export default function TareaForm() {
   return (
     <Form {...form}>
     <form className="grid grid-cols-3" 
+       id="tarea-form"
        onSubmit={form.handleSubmit(onSubmit)}
     
     >
@@ -131,13 +130,7 @@ export default function TareaForm() {
                         },
                       ]}
                       onSelect={(value) => {
-                        const estado  = {} as Estado
-                        console.log(value)
-                        // TODO estandarizar esto con la BD
-                        estado.idEstado = Number(value)
-                        estado.descripcion = "En progreso"
-                        estado.tipo = 0
-                        field.onChange(estado);
+                        field.onChange(Number(value));
                       }}
                     />
                   </div>
@@ -225,7 +218,7 @@ export default function TareaForm() {
         </div>
         <div>
           <h4>Acciones</h4>
-          <Button className="w-full" size={"sm"}>
+          <Button className="w-full" size={"sm"} form="tarea-form">
             Guardar
           </Button>
           <Button

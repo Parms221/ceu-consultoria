@@ -55,6 +55,43 @@ public class HitoService {
         return hitoRepository.findById(id);
     }
    
+    @Transactional
+    public Hito saveHito(HitoDTO hitoDTO, Proyecto proyecto) {
+        Hito hito = new Hito();
+        hito.setTitulo(hitoDTO.getTitulo());
+        System.out.println("El titulo del hito creado es: " + hitoDTO.getTitulo());
+        hito.setFechaInicio(hitoDTO.getFechaInicio());
+        hito.setFechaFinalizacion(hitoDTO.getFechaFinalizacion());
+        hito.setProyecto(proyecto);
+
+        hito = hitoRepository.save(hito); // Guardar hito para obtener su ID
+
+        // List<Tarea> tareas = new ArrayList<>();
+        if (hitoDTO.getTareas() != null) {
+            for (TareaDTO tareaDTO : hitoDTO.getTareas()) {
+                Tarea tarea = new Tarea();
+                tarea.setTitulo(tareaDTO.getTitulo());
+                tarea.setDescripcion(tareaDTO.getDescripcion());
+                tarea.setFechaInicio(tareaDTO.getFechaInicio());
+                tarea.setFechaFin(tareaDTO.getFechaFin());
+                tarea.setHito(hito);
+
+                tarea = tareaRepository.save(tarea); // Guardar tarea para obtener su ID
+
+                // List<SubTarea> subtareas = new ArrayList<>();
+                if (hitoDTO.getTareas() != null) {
+                    for (SubtareaDTO subtareaDTO : tareaDTO.getSubtareas()) {
+                        SubTarea subtarea = new SubTarea();
+                        subtarea.setDescripcion(subtareaDTO.getDescripcion());
+                        subtarea.setTarea(tarea);
+
+                        subTareaRepository.save(subtarea); // Guardar subtarea para obtener su ID
+                    }
+                }
+            }
+        }
+        return hito;
+    }
 
     @Transactional
     public Hito updateHitoById(HitoDTO hitoDTO, Long id, Proyecto proyecto) {

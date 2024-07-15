@@ -18,9 +18,10 @@ interface IProjectDetailContext {
     setSelectedTask: (task: Tarea | null) => void 
     hitoForm : UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
     tareaForm: UseFormReturn<z.infer<typeof tareaSchema>, any, undefined>;
+    resetForms: () => void;
 
-    subtareasFields: FieldArrayWithId<TareaDTO, "subTareas", "id">[];
-    appendSubtarea: UseFieldArrayAppend<TareaDTO, "subTareas">;
+    subtareasFields: FieldArrayWithId<TareaDTO, "subtareas", "id">[];
+    appendSubtarea: UseFieldArrayAppend<TareaDTO, "subtareas">;
     removeSubtarea: UseFieldArrayRemove;
 }
 
@@ -63,12 +64,17 @@ export default function ProjectDetailProvider({
       remove: removeSubtarea,
     } = useFieldArray({
       control: tareaForm.control,
-      name: "subTareas",
+      name: "subtareas",
       rules: {
         required: true,
         minLength: 1,
       },
     });
+
+    function resetForms(){
+      tareaForm.reset()
+      hitoForm.reset()
+    }
 
 
   return (
@@ -79,9 +85,10 @@ export default function ProjectDetailProvider({
         setSelectedHito,
         selectedTask,
         setSelectedTask,
-
+        
         hitoForm,
         tareaForm,
+        resetForms,
 
         appendSubtarea,
         removeSubtarea,

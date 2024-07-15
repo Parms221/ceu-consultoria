@@ -33,7 +33,7 @@ export default function SubTareasChecklist() {
               <div key={index} className="flex items-center gap-2">
                  <FormField 
                     control={form.control}
-                    name={`subTareas.${index}.completado`}
+                    name={`subtareas.${index}.completado`}
                     render = {({field}) => (
                         <FormItem>
                             <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ export default function SubTareasChecklist() {
                 />
                 <FormField
                   control={form.control}
-                  name={`subTareas.${index}.descripcion`}
+                  name={`subtareas.${index}.descripcion`}
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <div className={"flex gap-2"}>

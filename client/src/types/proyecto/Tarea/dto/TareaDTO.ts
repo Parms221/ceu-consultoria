@@ -1,4 +1,3 @@
-import { Estado } from "@/types/estado";
 import { Participante } from "@/types/proyecto/Participante"
 import { Consultor } from "@/types/consultor";
 
@@ -10,9 +9,9 @@ export type TareaDTO = {
     createdAt?: string;
     updatedAt?: string;
     tareaAnterior? : TareaDTO
-    estado : Estado
-    participantesAsignados : ParticipanteDTO[] // Consultores
-    subTareas: SubTareaDTO[]
+    estado : number
+    participantesAsignados? : ParticipanteDTO[] // Consultores
+    subtareas?: SubTareaDTO[]
 }
 
 export type SubTareaDTO = {

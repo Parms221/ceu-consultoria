@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data

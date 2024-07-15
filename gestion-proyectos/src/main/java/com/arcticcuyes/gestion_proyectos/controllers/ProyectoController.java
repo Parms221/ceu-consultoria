@@ -141,6 +141,7 @@ public class ProyectoController {
     // Endpoints cronograma de proyecto -> hitos y tareas
     @PostMapping("{id}/hitos/save")
     public ResponseEntity<?> saveCronograma(@PathVariable Long id, @RequestBody List<HitoDTO> cronograma) {
+        System.out.println("Guardando cronograma" + cronograma);
         try {
             Proyecto proyecto = proyectoService.findProyectoById(id);
             proyectoService.saveCronogramaProyecto(cronograma, proyecto);

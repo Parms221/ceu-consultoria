@@ -11,16 +11,39 @@ import DatePicker from "@/components/ui/datepicker/date-picker";
 import { HitosTable } from "../../../vistas/lista/DataTable/data-table";
 import { tareasColumns } from "../Tareas/columns";
 import NewTaskModal from "../Tareas/nuevo-modal";
-import { Tarea } from "@/types/proyecto/Tarea";
+import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
+import { saveHito } from "../../../contexto/hito.data";
 
 export default function HitoForm(
 ) {
-    const { selectedHito, proyecto, hitoForm : form } = useProjectDetail()
+    const queryClient = useQueryClient()
+    const { selectedHito, proyecto, hitoForm : form, resetForms } = useProjectDetail()
     
     const tareasInForm = form.getValues("tareas") as unknown as Tarea[] ?? []
 
+    const storeHitoMutation = useMutation({
+        mutationFn: (dto : HitoDTO) => saveHito(proyecto.idProyecto, dto),
+        onSuccess: () => {
+            resetForms()
+            // TODO : hacer funcionar la revalidación del query key 
+            queryClient.invalidateQueries({queryKey: ["proyecto", proyecto.idProyecto]})
+        },
+    })
+
     async function onSubmit(values: z.infer<typeof hitoSchema>){
-        console.log(JSON.stringify(values))
+        const formatTareas : TareaDTO[] = values.tareas.map(tarea => ({
+            ...tarea,
+            participantesAsignados: tarea.participantesAsignados ?? [],
+            subtareas: tarea.subtareas ?? []
+        }))
+        storeHitoMutation.mutate({
+            titulo: values.titulo,
+            fechaInicio: values.fechaInicio,
+            fechaFinalizacion: values.fechaFinalizacion,
+            tareas: formatTareas
+        })
     }
     
     return (
