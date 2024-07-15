@@ -2,7 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import { Proyecto } from "@/types/proyecto";
 import { Hito } from "@/types/proyecto/Hito";
-import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
+import { ParticipanteDTO, Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { FieldArrayWithId, useFieldArray, UseFieldArrayAppend, UseFieldArrayRemove, useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,9 +46,16 @@ export default function ProjectDetailProvider({
         titulo: selectedTask ? selectedTask.titulo : "Nueva tarea",
         fechaFin: selectedTask ? new Date(selectedTask.fechaFin) : new Date(),
         fechaInicio: selectedTask ? new Date(selectedTask.fechaInicio) : new Date(),
+        descripcion: selectedTask ? selectedTask.descripcion : "",
+        estado: selectedTask ? selectedTask.estado.idEstado : 0,
+        participantesAsignados: selectedTask ? 
+          selectedTask.participantesAsignados.map(p => {
+            return {idConsultor: p.consultorParticipante.idConsultor}}
+          ) : [] as ParticipanteDTO[],
+        subtareas: selectedTask ? selectedTask.subTareas : []
       }
   })
-
+  
   const hitoForm = useForm<z.infer<typeof hitoSchema>>({
     resolver: zodResolver(hitoSchema),
     defaultValues: {

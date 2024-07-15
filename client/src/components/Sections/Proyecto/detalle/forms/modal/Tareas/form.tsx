@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import SubTareasChecklist from "./partials/sub-tareas";
 import { useState } from "react";
 import { ParticipanteDTO } from "@/types/proyecto/Tarea";
+import { toast } from "sonner";
 
 export default function TareaForm() {
   const { selectedTask, tareaForm: form, hitoForm, appendSubtarea } = useProjectDetail();
@@ -42,6 +43,8 @@ export default function TareaForm() {
     }else {
       hitoForm.setValue("tareas", [values])
     }
+    toast.success("Tarea añadida")
+    form.reset();
   }
 
   return (
