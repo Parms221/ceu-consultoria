@@ -164,7 +164,18 @@ export default function TareaForm() {
                       <CalendarCheck size={14} />
                       Fecha de finalización
                     </FormLabel>
-                    <DatePicker field={field} useOpenState />
+                    <DatePicker field={field} 
+                      useOpenState
+                      disable = {
+                        (value) => {
+                          const fechaInicio = form.getValues("fechaInicio")
+                          if(fechaInicio){
+                            return new Date(value) < new Date(fechaInicio)
+                          }
+                          return false
+                        }
+                      }
+                    />
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -219,6 +230,7 @@ export default function TareaForm() {
         <div>
           <h4>Acciones</h4>
           <Button className="w-full" size={"sm"} form="tarea-form"
+            type="button"
             onClick={() => form.handleSubmit(onSubmit)()}
           >
             Guardar
