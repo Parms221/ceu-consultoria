@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import SubTareasChecklist from "./partials/sub-tareas";
 import { useState } from "react";
 import { ParticipanteDTO } from "@/types/proyecto/Tarea";
+import { toast } from "sonner";
 
 export default function TareaForm() {
   const { selectedTask, tareaForm: form, hitoForm, appendSubtarea } = useProjectDetail();
@@ -42,6 +43,8 @@ export default function TareaForm() {
     }else {
       hitoForm.setValue("tareas", [values])
     }
+    toast.success("Tarea añadida")
+    form.reset();
   }
 
   return (
@@ -164,7 +167,18 @@ export default function TareaForm() {
                       <CalendarCheck size={14} />
                       Fecha de finalización
                     </FormLabel>
-                    <DatePicker field={field} useOpenState />
+                    <DatePicker field={field} 
+                      useOpenState
+                      disable = {
+                        (value) => {
+                          const fechaInicio = form.getValues("fechaInicio")
+                          if(fechaInicio){
+                            return new Date(value) < new Date(fechaInicio)
+                          }
+                          return false
+                        }
+                      }
+                    />
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -219,6 +233,7 @@ export default function TareaForm() {
         <div>
           <h4>Acciones</h4>
           <Button className="w-full" size={"sm"} form="tarea-form"
+            type="button"
             onClick={() => form.handleSubmit(onSubmit)()}
           >
             Guardar

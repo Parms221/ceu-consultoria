@@ -13,14 +13,15 @@ export default function NewHitoModal() {
           <PlusIcon />
           Añadir hito
       </DrawerTrigger>
-      <DrawerContent className="py-0 h-[calc(100vh-80px)] bottom-0 right-0 left-auto mt-0 w-full lg:max-w-[60%] rounded-none
+      <DrawerContent 
+      className="py-0 h-[calc(100vh-80px)] bottom-0 right-0 left-auto mt-0 w-full lg:max-w-[60%] rounded-none
         overflow-hidden overflow-y-auto
       "
       style={
         {scrollbarWidth: 'thin'}
       }
       >
-        <div>
+        <div data-vaul-no-drag>
           <DrawerHeader className="px-2 py-1.5">
               <DrawerClose>
                 <ChevronsRightIcon size={18} />
