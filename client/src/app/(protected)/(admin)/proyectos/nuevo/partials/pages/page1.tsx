@@ -54,7 +54,7 @@ function Documentos({
             form.setValue("documentos", [...documentos, ""]);
           }}
         >
-          <span className={"sr-only"}>Añadir Objetivo</span>
+          <span className={"sr-only"}>Añadir Documento</span>
           <PlusIcon className={"max-h-4 max-w-4"} />
         </Button>
       </div>
@@ -71,7 +71,7 @@ function Documentos({
                       <Input
                         {...field}
                         className={"flex-1"}
-                        placeholder={`Objetivo del proyecto ${index + 1}`}
+                        placeholder={`Documento ${index + 1}`}
                       />
                     </FormControl>
                     {documentos.length > 1 && (
@@ -84,7 +84,7 @@ function Documentos({
                           );
                         }}
                       >
-                        <span className={"sr-only"}>Eliminar Objetivo</span>
+                        <span className={"sr-only"}>Eliminar Documento</span>
                         <TrashIcon className={"max-h-4 max-w-4"} />
                       </Button>
                     )}

@@ -1,5 +1,5 @@
 "use client";
-import { deleteServicio } from "@/actions/Consultor";
+import { deleteServicio } from "@/actions/Servicio";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -46,23 +46,11 @@ export default function DeleteServicioDialog({
         </DialogTitle>
         <DialogDescription>
           ¿Estás seguro de que deseas eliminar el servicio{" "}
-          <strong>
-            {servicio.tipo_documento === "DNI"
-              ? servicio.nombre
-              : servicio.razonSocial}
-          </strong>
-          ?
+          <strong>{servicio.titulo}</strong>?
         </DialogDescription>
         <DialogFooter>
           <Button
-            onClick={() =>
-              dropServicio(
-                servicio.idServicio,
-                servicio.tipo_documento == "DNI"
-                  ? servicio.nombre
-                  : servicio.razonSocial,
-              )
-            }
+            onClick={() => dropServicio(servicio.idServicio, servicio.titulo)}
             variant={"destructive"}
           >
             Eliminar

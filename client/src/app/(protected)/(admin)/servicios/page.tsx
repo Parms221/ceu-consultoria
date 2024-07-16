@@ -2,7 +2,7 @@ import React from "react";
 
 import { DataTable } from "./partials/DataTable/data-table";
 import { columns } from "./partials/DataTable/columns";
-import { getServicios } from "@/actions/Consultor";
+import { getServicios } from "@/actions/Servicio";
 import AddEditServicioDialog from "./partials/Dialogs/AddEditServicioDialog";
 
 export default async function Servicios() {

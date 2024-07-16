@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { createServicio, udpateServicio } from "@/actions/Consultor";
+import { createServicio, udpateServicio } from "@/actions/Servicio";
 import { Entregable, Servicio } from "@/types/servicio";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusIcon, Trash2Icon } from "lucide-react";
