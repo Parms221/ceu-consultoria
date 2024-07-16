@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.arcticcuyes.gestion_proyectos.models.Cliente;
 import com.arcticcuyes.gestion_proyectos.models.EntregableProyecto;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.models.Recurso;
@@ -53,7 +54,8 @@ public class StorageService {
         "application/x-7z-compressed"
     );
 
-    public Recurso uploadFile(MultipartFile file, Long idProyecto, Long idEntregableProyecto, Usuario usuario) {
+    //Zona de trabajo y entregables
+    public Recurso uploadFilesRelatedToProject(MultipartFile file, Long idProyecto, Long idEntregableProyecto, Usuario usuario) {
         if(!isSupportedContentType(file.getContentType())){
             return null;
         }
@@ -79,27 +81,59 @@ public class StorageService {
 
             dirPath = filesDirPath + "/entregables/" + proyecto.getIdProyecto() +"-"+proyecto.getTitulo();
         }
+
+        String filePath = guardarArchivo(file, dirPath);
+
+        if(filePath == null) return null;
+
         Recurso recursoNuevo = null;
-        try {
+        recursoNuevo = new Recurso(file.getOriginalFilename(), filePath, true, true, usuario, proyecto, entregableProyecto);
+        recursoRepository.saveAndFlush(recursoNuevo);
+
+        return recursoNuevo;
+    }
+
+    public Recurso uploadClientFiles(MultipartFile file, Cliente cliente, Usuario usuario) {
+        if(!isSupportedContentType(file.getContentType())){
+            return null;
+        }
+
+        if(file.getSize() > 10_000_000){
+            return null;
+        }
+
+        String dirPath = filesDirPath + "/clientes/" + cliente.getIdCliente();
+
+        String filePath = guardarArchivo(file, dirPath);
+
+        if(filePath == null) return null;
+
+        Recurso recursoNuevo = new Recurso(dirPath, filePath, true, true, usuario, cliente);
+        recursoRepository.saveAndFlush(recursoNuevo);
+
+        return recursoNuevo;
+    }
+
+    public File obtenerArchivoPorPath(Recurso recurso){
+        return new File(recurso.getEnlace());
+    }
+
+    private boolean isSupportedContentType(String contentType) {
+        return ALLOWED_CONTENT_TYPES.contains(contentType);
+    }
+
+    private String guardarArchivo(MultipartFile file, String dirPath){
+        try{
             Files.createDirectories(Paths.get(dirPath));
             String filePath = dirPath + "/" + file.getOriginalFilename();
             System.out.println(filePath);
             file.transferTo(new File(filePath));
 
-            recursoNuevo = new Recurso(file.getOriginalFilename(), filePath, true, true, usuario, proyecto, entregableProyecto);
-            recursoRepository.saveAndFlush(recursoNuevo);
-
-        } catch (Exception e) {
-            System.out.println("Error al guardar archivo: " + e.getMessage());
-            System.out.println(e.getStackTrace());
+            return filePath;
+        }catch(Exception ex){
+            System.out.println("Error al guardar archivo: "+ex.getMessage());
+            System.out.println(ex.getStackTrace());
             return null;
         }
-
-        return recursoNuevo;
-        
-    }
-
-    private boolean isSupportedContentType(String contentType) {
-        return ALLOWED_CONTENT_TYPES.contains(contentType);
     }
 }
