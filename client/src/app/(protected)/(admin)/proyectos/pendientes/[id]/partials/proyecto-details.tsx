@@ -53,7 +53,7 @@ const ProyectoDetails = ({ proyecto }: Props) => {
         <h3 className="font-medium text-black dark:text-white">
           Consultores asignados
         </h3>
-        <ul className="mt-1">
+        <ul className="mt-1 flex gap-2">
           {proyecto.participantes?.map((consultor) => (
             <li key={consultor.idParticipante}>
               <TooltipProvider>
@@ -65,7 +65,7 @@ const ProyectoDetails = ({ proyecto }: Props) => {
                     </Avatar>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{consultor.consultorParticipante.nombres}</p>
+                    <p>{consultor.consultorParticipante?.nombres}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
