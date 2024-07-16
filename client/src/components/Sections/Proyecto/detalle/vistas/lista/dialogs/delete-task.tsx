@@ -9,18 +9,18 @@ import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 export default function DeleteTask(
     { task } : { task : Hito | Tarea }
 ) {
-    const { proyecto } = useProjectDetail()
+    const { projectId } = useProjectDetail()
     const queryClient = useQueryClient()
     async function deleteTask (task: Hito | Tarea){
         // check if task is a Hito type or Tarea
         const parseTask = task as Hito
         if(parseTask.idHito){
-            deleteHito(parseTask.idHito)
+            await deleteHito(parseTask.idHito)
         } else {
             console.log("remove tarea")
         }
         console.log("invalidando query")
-        queryClient.invalidateQueries({queryKey: ["proyecto", proyecto.idProyecto]})
+        queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     }
 
     return (

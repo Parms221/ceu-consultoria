@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
+import com.arcticcuyes.gestion_proyectos.models.Hito;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
@@ -139,6 +140,16 @@ public class ProyectoController {
 
 
     // Endpoints cronograma de proyecto -> hitos y tareas
+    @GetMapping("{id}/hitos")
+    public ResponseEntity<?> getCronogramaProyecto(@PathVariable Long id) {
+        try {
+            List<Hito> cronograma = proyectoService.getCronogramaProyecto(id);
+            return ResponseEntity.ok(cronograma);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener el cronograma: " + e.getMessage());
+        }
+    }
+
     @PostMapping("{id}/hitos/save")
     public ResponseEntity<?> saveCronograma(@PathVariable Long id, @RequestBody List<HitoDTO> cronograma) {
         System.out.println("Guardando cronograma" + cronograma);
