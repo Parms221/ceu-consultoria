@@ -19,7 +19,7 @@ import { saveHito } from "../../../contexto/hito.data";
 export default function HitoForm(
 ) {
     const queryClient = useQueryClient()
-    const { selectedHito, proyecto, hitoForm : form, resetForms } = useProjectDetail()
+    const { selectedHito, projectId, hitoForm : form, resetForms } = useProjectDetail()
     
     const tareasInForm = form.getValues("tareas") as unknown as Tarea[] ?? []
 
@@ -36,8 +36,8 @@ export default function HitoForm(
             fechaFinalizacion: values.fechaFinalizacion,
             tareas: formatTareas
         }
-        saveHito(proyecto.idProyecto, formattedData)
-        queryClient.invalidateQueries({queryKey: ["proyecto", proyecto.idProyecto]})
+        await saveHito(projectId, formattedData)
+        queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     }
     
     return (

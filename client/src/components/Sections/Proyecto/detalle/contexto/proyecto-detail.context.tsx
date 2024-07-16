@@ -10,10 +10,11 @@ import { hitoSchema, tareaSchema } from "../forms/schemas/nuevo-hito.schema";
 
 
 interface IProjectDetailContext {
-    proyecto: Proyecto,
+    // proyecto: Proyecto,
     selectedHito: Hito | null,
     selectedTask: Tarea | null,
-    setProyecto: (proyecto: Proyecto) => void
+    projectId: number,
+    // setProyecto: (proyecto: Proyecto) => void
     setSelectedHito: (hito: Hito | null) => void
     setSelectedTask: (task: Tarea | null) => void 
     hitoForm : UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
@@ -30,13 +31,16 @@ export const ProjectDetailContext = createContext<IProjectDetailContext>(
 );
 
 export default function ProjectDetailProvider({
-  children, selectedProject
+  children, 
+  // selectedProject
+  projectId
 }: {
   children: React.ReactNode,
-  selectedProject : Proyecto
+  // selectedProject : Proyecto
+  projectId : number
 }) {
 
-  const [proyecto, setProyecto] = useState<Proyecto>(selectedProject);
+  // const [proyecto, setProyecto] = useState<Proyecto>(selectedProject);
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
   const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
 
@@ -86,8 +90,9 @@ export default function ProjectDetailProvider({
 
   return (
     <ProjectDetailContext.Provider value={{ 
-        proyecto,
-        setProyecto,
+        // proyecto,
+        // setProyecto,
+        projectId,
         selectedHito,
         setSelectedHito,
         selectedTask,

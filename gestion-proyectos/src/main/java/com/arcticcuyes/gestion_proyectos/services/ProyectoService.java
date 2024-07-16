@@ -158,7 +158,13 @@ public class ProyectoService {
 
 
 
-    // public void saveCronogramaProyecto(ProyectoDTO proyectoDTO, Proyecto proyecto) {
+    public List<Hito> getCronogramaProyecto(Long idProyecto){
+        return proyectoRepository.findById(idProyecto)
+            .orElseThrow(() -> 
+            new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto))
+            .getHitos();
+    }
+
     public void saveCronogramaProyecto(List<HitoDTO> hitos, Proyecto proyecto) {
 
         //proyecto = proyectoRepository.save(proyecto); // Guardar proyecto primero para obtener su ID

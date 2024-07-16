@@ -44,7 +44,7 @@ export default function ProjectDetails(
       }
 
     return (
-    <ProjectDetailProvider selectedProject={proyecto}>
+    <ProjectDetailProvider projectId={id}>
         <section className="mx-auto space-y-1.5">
             <header className="flex">
             <div className="flex items-center gap-2">
