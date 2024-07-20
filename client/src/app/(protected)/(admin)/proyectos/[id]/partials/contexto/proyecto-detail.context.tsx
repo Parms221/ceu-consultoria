@@ -44,6 +44,7 @@ export default function ProjectDetailProvider({
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
   const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
 
+  // FORM SCHEMAS
   const tareaForm = useForm<z.infer<typeof tareaSchema>>({
     resolver: zodResolver(tareaSchema),
     defaultValues: {
@@ -68,7 +69,7 @@ export default function ProjectDetailProvider({
         fechaInicio: selectedHito ? new Date(selectedHito.fechaInicio) : new Date(),
       }
   })
-
+  
     const {
       fields: subtareasFields,
       append: appendSubtarea,

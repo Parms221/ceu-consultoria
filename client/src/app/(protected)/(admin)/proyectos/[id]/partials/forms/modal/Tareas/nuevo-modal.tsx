@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
-import { useProjectDetail } from '@/components/Sections/Proyecto/detalle/contexto/proyecto-detail.context';
+import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/partials/contexto/proyecto-detail.context';
 import TareaForm from "./form";
 
 export default function NewTaskModal() {

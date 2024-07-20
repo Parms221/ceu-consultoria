@@ -1,13 +1,13 @@
 "use client"
 import Image from "next/image";
-import ProjectDetailProvider, { useProjectDetail } from "./contexto/proyecto-detail.context";
+import ProjectDetailProvider from "./contexto/proyecto-detail.context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PROJECT_VIEWS } from "./vistas";
 import { useQuery } from "@tanstack/react-query";
 import { Proyecto } from "@/types/proyecto";
 import { getProyecto } from "./contexto/data";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { fetcher } from "@/server/fetch/server-side";
 
 
 export default function ProjectDetails(
@@ -32,7 +32,18 @@ export default function ProjectDetails(
         isError,
       } = useQuery<Proyecto>({
         queryKey: ["proyecto", id],
-        queryFn: async () => getProyecto(id),
+        queryFn: async () => {
+          "use server"
+          const response = await fetcher(`/proyectos/getProyecto/${id}`);
+
+            if (!response.ok) {
+              throw new Error("Error fetching project");
+            }
+
+            const data = await response.json();
+
+            return data as Proyecto;
+        },
       });
     
       if (isLoading) {
