@@ -33,11 +33,11 @@ export default function Filters<TData>(
         <div className="flex flex-wrap items-center py-4 [&>div]:space-y-1 gap-4">
             <div className="max-w-sm">
               <Label htmlFor="hito">
-                Buscar
+                Buscar tarea
               </Label>
               <Input
-                placeholder="Usuario"
-                name="hito"
+                placeholder="Tarea"
+                name="titulo"
                 value={(table.getColumn("titulo")?.getFilterValue() as string) ?? ""}
                 onChange={(event) =>
                   table.getColumn("titulo")?.setFilterValue(event.target.value)
@@ -50,7 +50,7 @@ export default function Filters<TData>(
                 <Combobox
                     options={ROL_OPTIONS}
                     onSelect={(value) => {
-                        table.getColumn("roles")?.setFilterValue(value)
+                        table.getColumn("estado")?.setFilterValue(value)
                     }
                     }
                 />

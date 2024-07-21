@@ -24,6 +24,7 @@ public class EstadosRunnerService {
             estadoRepository.save(new Estado("En desarrollo", 1));
             estadoRepository.save(new Estado("Finalizado", 1));
             estadoRepository.save(new Estado("Cancelado", 1));
+            estadoRepository.save(new Estado("Rechazado", 1));
 
         }
 

@@ -7,4 +7,5 @@ export type Servicio = {
   titulo: string;
   descripcion: string;
   entregablesDelServicio: Entregable[];
+  precio: number
 };

@@ -24,13 +24,13 @@ type Props = {
     value: string
     id?: number | string
   }[]
-
+  placeholder?: string
   onSelect?: (value: string, id?: number | string) => void
   isDisabled?: boolean
 }
 
 export function Combobox(
-  { options, onSelect, isDisabled }: Props
+  { options, onSelect, isDisabled, placeholder }: Props
 ) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
@@ -48,7 +48,7 @@ export function Combobox(
         >
           {value
             ? options.find((option) => option.value.toLowerCase() === value.toLowerCase())?.label
-            : "Seleccione una opción"}
+            : placeholder || "Seleccione una opción"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

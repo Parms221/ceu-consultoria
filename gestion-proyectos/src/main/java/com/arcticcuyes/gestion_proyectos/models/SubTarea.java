@@ -33,7 +33,7 @@ public class SubTarea {
     @Basic
     private boolean completado = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_tarea", referencedColumnName = "id_tarea", nullable = false)
     @JsonIgnore
     private Tarea tarea;

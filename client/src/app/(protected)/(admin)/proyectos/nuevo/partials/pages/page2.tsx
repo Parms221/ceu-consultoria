@@ -11,23 +11,19 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  Check,
-  PlusIcon,
-  TrashIcon
-} from "lucide-react";
+import { Check, PlusIcon, TrashIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import type { Servicio } from "@/types/servicio";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import {
@@ -35,14 +31,18 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem
+  CommandItem,
 } from "@/components/ui/command";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { NavigationFooter, Next, Previous } from "../multi-step-form/navigation";
+import {
+  NavigationFooter,
+  Next,
+  Previous,
+} from "../multi-step-form/navigation";
 import DatePicker from "@/components/ui/datepicker/date-picker";
 import { toast } from "sonner";
 import { createProyectoIncompleto } from "@/services/proyecto";
-import { ProyectoIncompletoJsonResponse } from "@/actions/Proyecto";
+import { ProyectoIncompletoJsonResponse } from "@/types/proyecto/Response";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -54,20 +54,18 @@ export default function ProjectFormPage2() {
       title: "Proyecto 1",
       description: "Descripción de proyecto",
       fechaInicio: new Date(),
-      fechaLimite: function() {
+      fechaLimite: (function () {
         const date = new Date();
-        date.setDate(
-          new Date().getDate() + 1
-        );
+        date.setDate(new Date().getDate() + 1);
         return date;
-      }(),
+      })(),
       objetivos: ["Objetivo1"],
-      servicioId: 1
-    }
+      servicioId: 1,
+    },
   });
 
   async function handleSubmit(data: z.infer<typeof projectDetailSchema>) {
-    const clientId = formProject.getValues("clienteId");
+    const clientId = formProject.getValues("cliente.clientId");
     let res = null as ProyectoIncompletoJsonResponse | null;
     const toastId = toast.loading("Guardando proyecto...");
 
@@ -82,8 +80,11 @@ export default function ProjectFormPage2() {
         indicaciones: "",
         precio: 100.0,
         requerimientos: "",
-        idCliente: clientId
-      }, formProjectDetail, toastId);
+        idCliente: clientId as number,
+      },
+      formProjectDetail,
+      toastId,
+    );
 
     if (res) {
       data.proyectoId = res.idProyecto;
@@ -129,21 +130,24 @@ export default function ProjectFormPage2() {
               <FormItem className="flex-1">
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha de inicio</FormLabel>
-                  <DatePicker field={field} onChange={(date) => {
-                    if (!date) {
-                      return;
-                    }
+                  <DatePicker
+                    field={field}
+                    onChange={(date) => {
+                      if (!date) {
+                        return;
+                      }
 
-                    if (date.getTime() > formProjectDetail.getValues("fechaLimite").getTime()) {
-                      const dateCopy = date;
-                      dateCopy.setDate(
-                        date.getDate() + 1
-                      );
+                      if (
+                        date.getTime() >
+                        formProjectDetail.getValues("fechaLimite").getTime()
+                      ) {
+                        const dateCopy = date;
+                        dateCopy.setDate(date.getDate() + 1);
 
-                      formProjectDetail.setValue("fechaLimite", dateCopy);
-                    }
-
-                  }} />
+                        formProjectDetail.setValue("fechaLimite", dateCopy);
+                      }
+                    }}
+                  />
                 </div>
                 <FormMessage />
               </FormItem>
@@ -156,9 +160,15 @@ export default function ProjectFormPage2() {
               <FormItem className="flex-1">
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha Límite</FormLabel>
-                  <DatePicker field={field} disable={(date) => {
-                    return date.getTime() < formProjectDetail.watch("fechaInicio").getTime();
-                  }} />
+                  <DatePicker
+                    field={field}
+                    disable={(date) => {
+                      return (
+                        date.getTime() <
+                        formProjectDetail.watch("fechaInicio").getTime()
+                      );
+                    }}
+                  />
                 </div>
                 <FormMessage />
               </FormItem>
@@ -180,8 +190,8 @@ export default function ProjectFormPage2() {
 }
 
 function Objetivos({
-                     form
-                   }: {
+  form,
+}: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
 }) {
   const objetivos = form.watch("objetivos");
@@ -224,7 +234,7 @@ function Objetivos({
                           onClick={() => {
                             form.setValue(
                               "objetivos",
-                              objetivos.filter((_, i) => i !== index)
+                              objetivos.filter((_, i) => i !== index),
                             );
                           }}
                         >
@@ -246,8 +256,8 @@ function Objetivos({
 }
 
 function SelectServicio({
-                          form
-                        }: {
+  form,
+}: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
 }) {
   const dataQuery = useQuery<Servicio[]>({
@@ -260,7 +270,7 @@ function SelectServicio({
       }
 
       return response.json();
-    }
+    },
   });
   return (
     <div className={"space-y-3"}>
@@ -300,21 +310,21 @@ function SelectServicio({
                       role="combobox"
                       className={cn(
                         "w-full justify-between border border-input",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
-                        ? (function() {
-                          const servicio = dataQuery.data.find(
-                            (servicio) => servicio.idServicio === field.value
-                          );
+                        ? (function () {
+                            const servicio = dataQuery.data.find(
+                              (servicio) => servicio.idServicio === field.value,
+                            );
 
-                          if (servicio) {
-                            return servicio.titulo;
-                          }
+                            if (servicio) {
+                              return servicio.titulo;
+                            }
 
-                          return "algo";
-                        })()
+                            return "algo";
+                          })()
                         : "Selecciona un servicio"}
                     </Button>
                   </FormControl>
@@ -343,7 +353,7 @@ function SelectServicio({
                               "mr-2 h-4 w-4",
                               servicio.idServicio === field.value
                                 ? "opacity-100"
-                                : "opacity-0"
+                                : "opacity-0",
                             )}
                           />
                           {servicio.titulo}

@@ -17,7 +17,7 @@ import { signIn } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
-  email: z.string().email("Correo no válido"),
+  email: z.string().email("Correo no válido").min(0, "Ingrese su dirección de correo"),
   password: z
     .string()
     .min(1, "Ingrese una contraseña"),

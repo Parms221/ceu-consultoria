@@ -48,7 +48,9 @@ export default function ServicioForm({ servicio = undefined }: Props) {
     defaultValues: {
       titulo: servicio ? servicio.titulo : "",
       descripcion: servicio ? servicio.descripcion : "",
-      entregablesDelServicio: servicio ? servicio.entregablesDelServicio : [] as Entregable[],
+      entregablesDelServicio: servicio
+        ? servicio.entregablesDelServicio
+        : ([] as Entregable[]),
     },
   });
 

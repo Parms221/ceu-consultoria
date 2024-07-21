@@ -9,6 +9,7 @@ import org.hibernate.annotations.SourceType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -51,12 +52,12 @@ public class Hito {
     @Column(name="created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_proyecto", nullable = false)
     @JsonIgnore
     private Proyecto proyecto;
 
-    @OneToMany(mappedBy = "hito")
+    @OneToMany(mappedBy = "hito",cascade = CascadeType.ALL)
     private List<Tarea> tareasDelHito;
 
    

@@ -6,12 +6,10 @@ export const clienteSchema = z
     tipo_documento: z.enum(["DNI", "RUC"]),
     nombre: z.string().optional(),
     apellido: z.string().optional(),
-    dni: z
-      .string()
-      .optional()
-      .refine((value) => value?.length === 8 || value?.length === 0, {
-        message: "El DNI debe tener 8 dígitos",
-      }),
+    dni: z.string().optional(),
+    // .refine((value) => value?.length === 8 || value?.length === 0, {
+    //   message: "El DNI debe tener 8 dígitos",
+    // })
     telefono: z
       .string()
       .refine(
@@ -27,12 +25,10 @@ export const clienteSchema = z
       .optional(),
     direccion: z.string().optional(),
     razonSocial: z.string().optional(),
-    ruc: z
-      .string()
-      .optional()
-      .refine((value) => value?.length === 11 || value?.length === 0, {
-        message: "El RUC debe tener 11 dígitos",
-      }),
+    ruc: z.string().optional(),
+    // .refine((value) => value?.length === 11 || value?.length === 0, {
+    //   message: "El RUC debe tener 11 dígitos",
+    // })
     documentos: z.array(z.string()).default([]), // Añadir esta línea
   })
   .superRefine((data, ctx) => {
@@ -58,6 +54,13 @@ export const clienteSchema = z
           path: ["dni"],
         });
       }
+
+      if (data.dni?.length !== 8) {
+        ctx.addIssue({
+          message: "El DNI debe tener 8 dígitos",
+          code: z.ZodIssueCode.custom,
+        });
+      }
     }
     if (data.tipo_documento === "RUC") {
       if (!data.razonSocial) {
@@ -72,6 +75,12 @@ export const clienteSchema = z
           message: "El RUC es requerido",
           code: z.ZodIssueCode.custom,
           path: ["ruc"],
+        });
+      }
+      if (data.ruc?.length !== 11) {
+        ctx.addIssue({
+          message: "El RUC debe tener 11 dígitos",
+          code: z.ZodIssueCode.custom,
         });
       }
     }
