@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useProjectDetail } from "../../../../contexto/proyecto-detail.context";
+import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import { Checkbox } from "@/components/ui/checkbox";
 
 

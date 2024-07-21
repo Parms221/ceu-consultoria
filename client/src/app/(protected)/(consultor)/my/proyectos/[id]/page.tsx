@@ -1,5 +1,5 @@
 "use client";
-import ProjectDetails from "@/components/Sections/Proyecto/detalle/ProjectDetails";
+import ProjectDetails from "@/app/(protected)/(admin)/proyectos/[id]/partials/ProjectDetails";
 
 
 export default function ProjectDetail({ params }: { params: { id: number } }) {

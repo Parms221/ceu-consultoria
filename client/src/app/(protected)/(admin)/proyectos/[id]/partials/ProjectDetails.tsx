@@ -1,22 +1,26 @@
 "use client"
 import Image from "next/image";
-import ProjectDetailProvider, { useProjectDetail } from "./contexto/proyecto-detail.context";
+import ProjectDetailProvider from "./contexto/proyecto-detail.context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PROJECT_VIEWS } from "./vistas";
 import { useQuery } from "@tanstack/react-query";
 import { Proyecto } from "@/types/proyecto";
-import { getProyecto } from "./contexto/data";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { fetcher } from "@/server/fetch/server-side";
+import { fetcherLocal } from "@/server/fetch/client-side";
+import useProyecto from "@/hooks/Proyecto/useProyecto";
 
 
 export default function ProjectDetails(
     { id }: { id: number }
 ) {
+    const { getProyectoByIdQuery } = useProyecto()
+    // Usando search params para mantener la vista al recargar la página
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const router = useRouter()
     const currentView = searchParams.get("view")
+    // Validar el valor del param
     const view = currentView && PROJECT_VIEWS.find(v => v.id === currentView) ? currentView : PROJECT_VIEWS[0].id
 
     function updateSearchParams(
@@ -26,14 +30,7 @@ export default function ProjectDetails(
       router.push(pathname + '?' + `${key}=${value}`)
     }
 
-    const {
-        data: proyecto,
-        isLoading,
-        isError,
-      } = useQuery<Proyecto>({
-        queryKey: ["proyecto", id],
-        queryFn: async () => getProyecto(id),
-      });
+    const { data : proyecto, isLoading, isError } = getProyectoByIdQuery(id)
     
       if (isLoading) {
         return <div>Cargando ... </div>;

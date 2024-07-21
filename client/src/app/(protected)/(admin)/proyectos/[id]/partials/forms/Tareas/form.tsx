@@ -19,8 +19,8 @@ import {
   Target,
   User2,
 } from "lucide-react";
-import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
-import { tareaSchema } from "../../schemas/nuevo-hito.schema";
+import { useProjectDetail } from "../../contexto/proyecto-detail.context";
+import { tareaSchema } from "../schemas";
 import { z } from "zod";
 import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
