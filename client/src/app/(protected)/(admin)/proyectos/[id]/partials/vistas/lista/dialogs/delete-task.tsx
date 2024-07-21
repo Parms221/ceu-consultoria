@@ -2,13 +2,16 @@
 import { Hito } from "@/types/proyecto/Hito";
 import { Tarea } from "@/types/proyecto/Tarea";
 import DeleteDialog from "@/components/ui/dialogs/delete-dialog";
-import { deleteHito } from "../../../contexto/hito.data";
 import { useQueryClient } from "@tanstack/react-query";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
+import useHito from "@/hooks/Hito/useHito";
 
 export default function DeleteTask(
     { task } : { task : Hito | Tarea }
 ) {
+
+    const { deleteHito } = useHito()
+
     const { projectId } = useProjectDetail()
     const queryClient = useQueryClient()
     async function deleteTask (task: Hito | Tarea){

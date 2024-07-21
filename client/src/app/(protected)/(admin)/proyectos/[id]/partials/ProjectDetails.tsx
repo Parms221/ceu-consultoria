@@ -8,6 +8,7 @@ import { Proyecto } from "@/types/proyecto";
 import { getProyecto } from "./contexto/data";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { fetcher } from "@/server/fetch/server-side";
+import { fetcherLocal } from "@/server/fetch/client-side";
 
 
 export default function ProjectDetails(
@@ -33,8 +34,7 @@ export default function ProjectDetails(
       } = useQuery<Proyecto>({
         queryKey: ["proyecto", id],
         queryFn: async () => {
-          "use server"
-          const response = await fetcher(`/proyectos/getProyecto/${id}`);
+          const response = await fetcherLocal(`/proyectos/getProyecto/${id}`);
 
             if (!response.ok) {
               throw new Error("Error fetching project");

@@ -1,6 +1,6 @@
 "use client";
-import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
-import { hitoSchema } from "../../schemas/nuevo-hito.schema";
+import { useProjectDetail } from "../../contexto/proyecto-detail.context";
+import { hitoSchema } from "../../forms/schemas";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -8,18 +8,19 @@ import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Calendar, CalendarCheck, Target } from "lucide-react";
 import DatePicker from "@/components/ui/datepicker/date-picker";
-import { HitosTable } from "../../../vistas/lista/DataTable/data-table";
+import { HitosTable } from "../../vistas/lista/DataTable/data-table";
 import { tareasColumns } from "../Tareas/columns";
-import NewTaskModal from "../Tareas/nuevo-modal";
+import NewTaskModal from "../Tareas";
 import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { useQueryClient } from "@tanstack/react-query";
 import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
-import { saveHito } from "../../../contexto/hito.data";
+import useHito from "@/hooks/Hito/useHito";
 
 export default function HitoForm(
 ) {
     const queryClient = useQueryClient()
     const { selectedHito, projectId, hitoForm : form, resetForms } = useProjectDetail()
+    const { saveHito } = useHito()
     
     const tareasInForm = form.getValues("tareas") as unknown as Tarea[] ?? []
 

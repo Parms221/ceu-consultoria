@@ -6,7 +6,7 @@ import { ParticipanteDTO, Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { FieldArrayWithId, useFieldArray, UseFieldArrayAppend, UseFieldArrayRemove, useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { hitoSchema, tareaSchema } from "../forms/schemas/nuevo-hito.schema";
+import { hitoSchema, tareaSchema } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/schemas";
 
 
 interface IProjectDetailContext {
