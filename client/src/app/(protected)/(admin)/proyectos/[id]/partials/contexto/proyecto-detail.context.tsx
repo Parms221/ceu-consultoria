@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Proyecto } from "@/types/proyecto";
 import { Hito } from "@/types/proyecto/Hito";
 import { ParticipanteDTO, Tarea, TareaDTO } from "@/types/proyecto/Tarea";
@@ -42,22 +42,19 @@ export default function ProjectDetailProvider({
 
   // const [proyecto, setProyecto] = useState<Proyecto>(selectedProject);
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
-  const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);  
 
   // FORM SCHEMAS
   const tareaForm = useForm<z.infer<typeof tareaSchema>>({
     resolver: zodResolver(tareaSchema),
     defaultValues: {
-        titulo: selectedTask ? selectedTask.titulo : "Nueva tarea",
-        fechaFin: selectedTask ? new Date(selectedTask.fechaFin) : new Date(),
-        fechaInicio: selectedTask ? new Date(selectedTask.fechaInicio) : new Date(),
-        descripcion: selectedTask ? selectedTask.descripcion : "",
-        estado: selectedTask ? selectedTask.estado.idEstado : 0,
-        participantesAsignados: selectedTask ? 
-          selectedTask.participantesAsignados.map(p => {
-            return {idConsultor: p.consultorParticipante.idConsultor}}
-          ) : [] as ParticipanteDTO[],
-        subtareas: selectedTask ? selectedTask.subTareas : []
+        titulo: "Nueva tarea",
+        fechaFin: new Date(),
+        fechaInicio: new Date(),
+        descripcion: "",
+        estado: 0,
+        participantesAsignados: [],
+        subtareas: []
       }
   })
   
@@ -67,9 +64,11 @@ export default function ProjectDetailProvider({
         titulo: selectedHito ? selectedHito.titulo : "Nueva tarea",
         fechaFinalizacion: selectedHito ? new Date(selectedHito.fechaFinalizacion) : new Date(),
         fechaInicio: selectedHito ? new Date(selectedHito.fechaInicio) : new Date(),
+        tareas : []
       }
   })
   
+  // Array de subtareas
     const {
       fields: subtareasFields,
       append: appendSubtarea,
@@ -88,6 +87,46 @@ export default function ProjectDetailProvider({
       hitoForm.reset()
     }
 
+  // capturar el cambio de selected task para actualizar el formulario (Edit)
+
+  useEffect(() => {
+    if(!selectedTask) return
+    tareaForm.reset(
+      {
+        titulo: selectedTask.titulo,
+        fechaFin: new Date(selectedTask.fechaFin),
+        fechaInicio: new Date(selectedTask.fechaInicio),
+        descripcion: selectedTask.descripcion,
+        estado: selectedTask.estado?.idEstado,
+        participantesAsignados: 
+          selectedTask.participantesAsignados ? selectedTask.participantesAsignados.map(p => {
+            return {idConsultor: p.consultorParticipante.idConsultor}}
+          ) : [] as ParticipanteDTO[],
+        subtareas: selectedTask.subTareas ? selectedTask.subTareas : []
+      }
+    )
+  }, [selectedTask])
+    
+
+  useEffect(() => {
+    if (!selectedHito) return
+    hitoForm.reset({
+      titulo: selectedHito.titulo,
+      fechaFinalizacion: new Date(selectedHito.fechaFinalizacion),
+      fechaInicio: new Date(selectedHito.fechaInicio),
+      tareas : selectedHito.tareasDelHito.map(t =>{
+        return {
+          ...t, 
+          fechaFin : new Date(t.fechaFin), 
+          fechaInicio: new Date(t.fechaInicio), 
+          estado : t.estado?.idEstado,
+          participantesAsignados: t.participantesAsignados.map(p => {
+            return {idConsultor: p.consultorParticipante.idConsultor}}
+          ),
+        }
+      }) ?? []
+    })
+  }, [selectedHito])
 
   return (
     <ProjectDetailContext.Provider value={{ 

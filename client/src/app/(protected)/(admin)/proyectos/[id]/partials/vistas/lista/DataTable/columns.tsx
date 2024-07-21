@@ -2,13 +2,16 @@
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2Icon, ChevronRight, Diamond, Circle } from "lucide-react";
+import { Edit, Trash2Icon, ChevronRight, Diamond, Circle, Pen } from "lucide-react";
 import { Hito } from "@/types/proyecto/Hito";
 import { es } from "date-fns/locale/es";
 import { format, formatDuration, intervalToDuration } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Tarea } from "@/types/proyecto/Tarea";
 import { DeleteTask, FeedbackChat } from "../dialogs";
+import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
+import NewTaskModal from "../../../forms/Tareas";
+import NewHitoModal from "../../../forms/Hitos";
 
 function isExpandedChevron(isExpanded: boolean) {
   return (
@@ -111,24 +114,21 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     id: "actions",
     header: "Acciones",
     cell: ({ row }) => {
-      const hito = row.original;
-
+      const task = row.original
+      const { setSelectedHito, setSelectedTask } = useProjectDetail()
       return (
         <div className="flex gap-2">
-          {hito.idHito ? (
-            <FeedbackChat tarea={hito as Hito} />
-          ) : (
-            <FeedbackChat tarea={hito as Tarea} />
-          )}
-
+          <FeedbackChat tarea={task as Tarea | Hito} />
           {/* Editar y eliminar */}
-          {hito.idHito ? (
-            <DeleteTask task={hito as Hito} />
-          ) : (
-            <DeleteTask task={hito as Tarea} />
-          )}
+          {
+            task.idTarea ? 
+              (<NewTaskModal asEdit task={task as Tarea}/>) 
+               : 
+              <NewHitoModal asEdit task={task as Hito} />
+          }
+          <DeleteTask tarea={task as Tarea | Hito} />
 
-          {}
+          
         </div>
       );
     },

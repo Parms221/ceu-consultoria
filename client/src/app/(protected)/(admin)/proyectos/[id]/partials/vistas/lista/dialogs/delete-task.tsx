@@ -7,16 +7,16 @@ import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import useHito from "@/hooks/Hito/useHito";
 
 export default function DeleteTask(
-    { task } : { task : Hito | Tarea }
+    { tarea } : { tarea : Hito | Tarea }
 ) {
 
     const { deleteHito } = useHito()
 
     const { projectId } = useProjectDetail()
     const queryClient = useQueryClient()
-    async function deleteTask (task: Hito | Tarea){
-        // check if task is a Hito type or Tarea
-        const parseTask = task as Hito
+    async function deleteTask (tarea: Hito | Tarea){
+        // check if tarea is a Hito type or Tarea
+        const parseTask = tarea as Hito
         if(parseTask.idHito){
             await deleteHito(parseTask.idHito)
         } else {
@@ -30,9 +30,9 @@ export default function DeleteTask(
        <DeleteDialog 
             title="Eliminar tarea"
             description={<>
-                `Está seguro que quiere eliminar la tarea {<span className="font-bold">{task.titulo}</span>}`
+                `Está seguro que quiere eliminar la tarea {<span className="font-bold">{tarea.titulo}</span>}`
             </>}
-            onDelete={() => deleteTask(task)}
+            onDelete={() => deleteTask(tarea)}
        />
     );
 }
