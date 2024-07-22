@@ -2,27 +2,24 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn, trimText } from "@/lib/utils";
 import { Proyecto } from "@/types/proyecto";
 import { formatDistance } from "date-fns";
-import Link from "next/link";
 import React from "react";
 import { es } from "date-fns/locale/es";
 
 type Props = {
   proyecto: Proyecto;
   active?: boolean;
+  onClick?: () => void;
 };
-const ProyectoPendienteCard = ({ proyecto, active = false }: Props) => {
+const ProyectoPendienteCard = ({ proyecto, onClick, active = false }: Props) => {
   return (
-    <Link
-      key={proyecto.idProyecto}
-      href={`/proyectos/pendientes/${proyecto.idProyecto}`}
-      scroll={false}
-    >
       <Card
         className={
-          active
-            ? cn("rounded-md border-ceu-celeste bg-white dark:border-white")
-            : "rounded-md"
+          cn(
+            "rounded-md cursor-pointer",
+            active && "rounded-md border-ceu-celeste bg-white dark:border-white"
+          )
         }
+        onClick={onClick}
       >
         <CardHeader className="flex flex-row justify-between">
           <span className="text-title-md font-semibold text-black dark:text-white">
@@ -36,7 +33,6 @@ const ProyectoPendienteCard = ({ proyecto, active = false }: Props) => {
           </p>
         </CardContent>
       </Card>
-    </Link>
   );
 };
 

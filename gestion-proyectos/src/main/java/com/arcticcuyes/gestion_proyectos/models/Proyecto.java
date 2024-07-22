@@ -79,7 +79,7 @@ public class Proyecto {
     @OneToMany(mappedBy = "proyecto")
     private List<Hito> hitos;
 
-    @OneToMany(mappedBy = "proyecto", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "proyecto", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EntregableProyecto> entregables;
 
     // @OneToMany(mappedBy = "proyectoAsociado")

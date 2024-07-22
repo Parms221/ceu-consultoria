@@ -1,6 +1,5 @@
 "use client";
 
-import { aprobarProyecto, rechazarProyecto } from "@/actions/Proyecto";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,37 +12,36 @@ import { Proyecto } from "@/types/proyecto";
 import { format } from "date-fns";
 import { CircleCheck, CircleX } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import useProyecto from "@/hooks/Proyecto/useProyecto";
+import ESTADOS from "@/constants/proyectos/estados";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   proyecto: Proyecto;
 };
 const ProyectoDetails = ({ proyecto }: Props) => {
-  const [aceptando, setAceptando] = useState(false);
-  const [rechazando, setRechazando] = useState(false);
-  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { actualizarEstadoProyecto } = useProyecto();
+  const [updating, setUpdating] = useState(false);
 
   const handleRechazarProyecto = async () => {
-    setRechazando(true);
-    const response = await rechazarProyecto(proyecto.idProyecto);
-    if (response.status === "success") {
-      toast.success("Proyecto rechazado");
-      router.push("/proyectos/pendientes");
-    }
-
-    setRechazando(false);
+    setUpdating(true);
+    await actualizarEstadoProyecto(proyecto.idProyecto, ESTADOS.rechazado);
+    invalidatePropuestos();
+    setUpdating(false);
   };
 
   const handleAceptarProyecto = async () => {
-    setAceptando(true);
-    const response = await aprobarProyecto(proyecto.idProyecto.toString());
-    if (response.status === "success") {
-      toast.success("Proyecto aceptado");
-      router.push("/proyectos/pendientes");
-    }
-    setAceptando(false);
+    setUpdating(true);
+    const response = await actualizarEstadoProyecto(proyecto.idProyecto, ESTADOS.desarrollo)
+    invalidatePropuestos();
+    setUpdating(false);
   };
+
+  function invalidatePropuestos(){
+    queryClient.invalidateQueries({queryKey: ["proyectos","propuestos"]})
+  }
+  
   return (
     <section className="flex flex-col gap-3 p-3">
       <h2 className="text-xl font-bold text-ceu-celeste dark:text-ceu-gris">
@@ -126,7 +124,7 @@ const ProyectoDetails = ({ proyecto }: Props) => {
       </div>
       <div className="flex flex-wrap gap-5">
         <Button
-          disabled={aceptando}
+          disabled={updating}
           onClick={() => handleAceptarProyecto()}
           className="flex items-center gap-2"
           variant={"default"}
@@ -136,7 +134,7 @@ const ProyectoDetails = ({ proyecto }: Props) => {
           <CircleCheck size={20} />
         </Button>
         <Button
-          disabled={rechazando}
+          disabled={updating}
           onClick={() => handleRechazarProyecto()}
           className="flex items-center gap-2"
           variant={"destructive"}

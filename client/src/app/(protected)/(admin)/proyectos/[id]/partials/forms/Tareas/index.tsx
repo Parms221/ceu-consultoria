@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/partials/contexto/proyecto-detail.context';
 import TareaForm from "./form";
 import { Tarea } from "@/types/proyecto/Tarea";
-import { Hito } from "@/types/proyecto/Hito";
 
 interface IProps {
   asEdit? : boolean

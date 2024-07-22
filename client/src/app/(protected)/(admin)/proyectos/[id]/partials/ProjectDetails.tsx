@@ -3,11 +3,7 @@ import Image from "next/image";
 import ProjectDetailProvider from "./contexto/proyecto-detail.context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PROJECT_VIEWS } from "./vistas";
-import { useQuery } from "@tanstack/react-query";
-import { Proyecto } from "@/types/proyecto";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { fetcher } from "@/server/fetch/server-side";
-import { fetcherLocal } from "@/server/fetch/client-side";
 import useProyecto from "@/hooks/Proyecto/useProyecto";
 
 

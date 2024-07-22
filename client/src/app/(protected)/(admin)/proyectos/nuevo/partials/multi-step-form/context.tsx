@@ -38,27 +38,30 @@ export default function ProjectFormContext({
   async function OnSubmit(data: z.infer<typeof projectCompleteSchema>) {
     if (
       !data.project ||
-      !data.project.proyectoId ||
-      !data.participantes ||
-      !data.participantes
+      !data.project.proyectoId
     ) {
       return;
     }
 
     const projectId = data.project.proyectoId;
-    const consultoresIds = data.participantes.map((p) => p.idConsultor);
+    const consultoresIds = data.participantes && data.participantes.map((p) => p.idConsultor);
     console.log("data", {
       projectId,
       consultoresIds,
     });
 
-    const res = await guardarParticipantes(projectId, consultoresIds);
-    if (res.status === "success") {
-      toast.success(res.message);
+    if(consultoresIds && consultoresIds.length !== 0){
+      const res = await guardarParticipantes(projectId, consultoresIds);
+      if (res.status === "success") {
+        toast.success(res.message);
+        router.push("/proyectos/" + projectId);
+      } else {
+       toast.error(res.message);
+      }
+    }else{
       router.push("/proyectos/" + projectId);
-    } else {
-      toast.error(res.message);
     }
+
   }
 
   const [currentStep, setCurrentStep] = useState(STEPS_VALUES[0]);
