@@ -2,14 +2,15 @@
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { Proyecto } from "@/types/proyecto";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export default function useProyecto() {
+  const queryClient = useQueryClient();
 
-  function getProyectosPropuestosQuery(){
+  function getProyectosPropuestosQuery() {
     return useQuery<Proyecto[]>({
-      queryKey: ["proyectos","propuestos"],
+      queryKey: ["proyectos", "propuestos"],
       queryFn: async () => {
         const response = await fetcherLocal(`/proyectos/propuestos`);
 
@@ -65,9 +66,32 @@ export default function useProyecto() {
     }
   }
 
+  async function deleteProyecto(id: number) {
+    const toastId = toast.loading(`Eliminando proyecto ...`);
+    try {
+      const response = await fetcherLocal(`/proyectos/deleteProyecto/${id}`, {
+        method: "DELETE",
+      });
+      const ok = await HandleServerResponse(response, undefined, toastId);
+      if (!ok) {
+        throw new Error(`Ocurrió un error, inténtelo nuevamente`);
+      }
+      toast.success("Proyecto eliminado", {
+        id: toastId,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocurrió un error, inténtelo nuevamente", {
+        id: toastId,
+      });
+    }
+    queryClient.invalidateQueries({queryKey: ["proyectos"]}); 
+  }
+
   return {
     getProyectoByIdQuery,
     getProyectosPropuestosQuery,
-    actualizarEstadoProyecto
+    actualizarEstadoProyecto,
+    deleteProyecto
   };
 }
