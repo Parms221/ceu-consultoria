@@ -1,4 +1,4 @@
-import { getProyectosPropuestos } from "@/actions/Proyecto";
+"use client"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import {
   ResizableHandle,
@@ -7,9 +7,11 @@ import {
 } from "@/components/ui/resizable";
 import Link from "next/link";
 import ProyectoPendienteCard from "./partials/ProyectoPendienteCard";
+import useProyecto from "@/hooks/Proyecto/useProyecto";
 
-export default async function ProyectosPendientes() {
-  const data = await getProyectosPropuestos();
+export default function ProyectosPendientes() {
+  const { getProyectosPropuestosQuery } = useProyecto()
+  const { data } = getProyectosPropuestosQuery()
 
   return (
     <section>
@@ -38,7 +40,7 @@ export default async function ProyectosPendientes() {
               </div>
             </ResizablePanel>
             <ResizableHandle className="hidden md:block" />
-            <ResizablePanel className="hidden md:block">
+            <ResizablePanel className="hidden md:block" minSize={50} defaultSize={60} maxSize={70}>
               <div className="flex h-full flex-col items-center justify-center p-5">
                 <h1 className="text-gray-800 text-3xl font-bold">
                   ¡Bienvenido!

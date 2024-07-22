@@ -1,4 +1,4 @@
-import { getProyectoById, getProyectosPropuestos } from "@/actions/Proyecto";
+"use client"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import {
   ResizableHandle,
@@ -8,15 +8,29 @@ import {
 import Link from "next/link";
 import ProyectoPendienteCard from "../partials/ProyectoPendienteCard";
 import ProyectoDetails from "./partials/proyecto-details";
+import useProyecto from "@/hooks/Proyecto/useProyecto";
 
-export default async function ProyectosPendientes({
+export default function ProyectosPendientes({
   params,
 }: {
   params: { id: number };
 }) {
+  const { getProyectosPropuestosQuery, getProyectoByIdQuery } = useProyecto()
   const { id } = params;
-  const data = await getProyectosPropuestos();
-  const proyecto = await getProyectoById(id);
+  // const data = await getProyectosPropuestos();
+  const { data, isLoading, isError } = getProyectosPropuestosQuery()
+  const { data : proyecto} = getProyectoByIdQuery(id);
+
+  if(isLoading){
+    <section>
+      <Breadcrumb pageName={"Proyectos por confirmar"} slug={"Pendientes"}>
+        <Link href="/proyectos">Proyectos /</Link>
+      </Breadcrumb>
+      <div className="flex w-full items-center justify-center p-5">
+        <p>Cargando...</p>
+      </div>
+    </section>
+  }
 
   return (
     <section>
@@ -46,7 +60,12 @@ export default async function ProyectosPendientes({
             </div>
           </ResizablePanel>
           <ResizableHandle className="hidden md:block" />
-          <ResizablePanel>
+          <ResizablePanel
+            className="hidden md:block"
+            minSize={50}
+            defaultSize={60}
+            maxSize={70}
+          >
             {proyecto ? (
               <ProyectoDetails proyecto={proyecto} />
             ) : (

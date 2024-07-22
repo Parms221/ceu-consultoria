@@ -50,9 +50,9 @@ public class ProyectoController {
         try {
             final int estadoPropuestoId = 1;
             List<Proyecto> proyectos = proyectoService.getProyectosByEstado((long)estadoPropuestoId);
-            if(proyectos.isEmpty()){
-                return ResponseEntity.badRequest().build();
-            }
+            // if(proyectos.isEmpty()){
+            //     return ResponseEntity.badRequest().build();
+            // }
 
         return ResponseEntity.ok(proyectos);    
         } catch (Exception e) {
