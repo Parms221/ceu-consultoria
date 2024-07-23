@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { projectDetailSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/schemas/project-detail.schema";
@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Check, PlusIcon, TrashIcon } from "lucide-react";
+import { Check, CheckCircle2, ChevronDown, PlusIcon, TrashIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import type { Servicio } from "@/types/servicio";
@@ -43,6 +43,9 @@ import DatePicker from "@/components/ui/datepicker/date-picker";
 import { toast } from "sonner";
 import { createProyectoIncompleto } from "@/services/proyecto";
 import { ProyectoIncompletoJsonResponse } from "@/types/proyecto/Response";
+import { useEffect } from "react";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { CollapsibleTrigger } from "@radix-ui/react-collapsible";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -175,8 +178,8 @@ export default function ProjectFormPage2() {
             )}
           />
         </div>
-        <Objetivos form={formProjectDetail} />
         <SelectServicio form={formProjectDetail} />
+        <Objetivos form={formProjectDetail} />
       </div>
       <NavigationFooter>
         <Previous onClick={prev} />
@@ -260,6 +263,14 @@ function SelectServicio({
 }: {
   form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
 }) {
+  const {
+    fields : hitosFields,
+    append: appendHito,
+    remove: removeHito,
+  } = useFieldArray({
+    control: form.control,
+    name: "hitos",
+  })
   const dataQuery = useQuery<Servicio[]>({
     queryKey: ["servicios"],
     queryFn: async () => {
@@ -272,6 +283,36 @@ function SelectServicio({
       return response.json();
     },
   });
+
+  const watchServicio = form.watch("servicioId");
+
+  useEffect(() =>{
+    console.log("Servicio seleccionado: "+watchServicio)
+    // Clear hitos fields
+    for (let index = hitosFields.length - 1; index >= 0; index--) {
+      console.log("eliminando hito", index);
+      removeHito(index);
+    }
+    //
+    if(watchServicio){
+      if(!dataQuery.data) return;
+      const existingServicio = dataQuery.data.find(s => s.idServicio === watchServicio);
+      if(existingServicio){
+        const entregables = existingServicio.entregablesDelServicio
+        entregables.forEach(entregable => {
+          appendHito({
+           titulo: entregable.titulo,
+           fechaFinalizacion: new Date(),
+           fechaInicio: new Date(),
+           tareas: []
+          })
+        })
+      }
+    }
+  }, [
+    watchServicio
+  ])
+
   return (
     <div className={"space-y-3"}>
       <h3 className="text-xl font-bold text-primary">Servicio</h3>
@@ -381,6 +422,79 @@ function SelectServicio({
           </FormItem>
         )}
       />
+      <h3 className="text-black">Entregables</h3>
+      {
+        hitosFields.map((field, index) => {
+          return (
+            <Collapsible key={field.id}>
+              <CollapsibleTrigger className="flex items-center gap-1.5">
+                  <CheckCircle2 />
+                  <span className="text-ceu-celeste">
+                    {field.titulo}
+                  </span>
+                  <ChevronDown />  
+              </CollapsibleTrigger>
+              <CollapsibleContent className="flex items-center gap-x-1.5">
+                  {/* <FormField 
+                    control={form.control}
+                    name={`hitos.${index}.titulo`}
+                    render={({field}) => (
+                      <FormItem className="flex-1">
+                        <div>
+                          <FormLabel>Entregable</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder={`Entregable ${index + 1}`}/>
+                          </FormControl>
+                        </div>
+                        <FormMessage />
+                        </FormItem>
+                      )}
+                  /> */}
+                  <FormField 
+                    control={form.control}
+                    name={`hitos.${index}.fechaInicio`}
+                    render={({field}) => (
+                      <FormItem className="flex-1">
+                        <div>
+                          <FormLabel>Fecha de inicio</FormLabel>
+                          <FormControl>
+                            <DatePicker field={field} />
+                          </FormControl>
+                        </div>
+                        <FormMessage />
+                        </FormItem>
+                      )}
+                  />
+                  <FormField 
+                    control={form.control}
+                    name={`hitos.${index}.fechaFinalizacion`}
+                    render={({field}) => (
+                      <FormItem className="flex-1">
+                        <div>
+                        <FormLabel>Fecha de fin</FormLabel>
+                          <FormControl>
+                            <DatePicker field={field} />
+                          </FormControl>
+                        </div>
+                        <FormMessage />
+                        </FormItem>
+                      )}
+                  />
+                  <Button
+                    size={"icon"}
+                    className={"max-h-7 max-w-7 mt-5"}
+                    onClick={() => {
+                      removeHito(index);
+                    }}
+                  >
+                      <span className={"sr-only"}>Eliminar Entregable</span>
+                      <TrashIcon className={"max-h-4 max-w-4"} />
+                  </Button>
+              </CollapsibleContent>
+            </Collapsible>
+          )
+        })
+      }
     </div>
   );
 }

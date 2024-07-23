@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { hitoSchema } from "../../../[id]/partials/forms/schemas";
 
 export const projectDetailSchema = z.object({
   proyectoId: z.number().optional(),
@@ -18,6 +19,11 @@ export const projectDetailSchema = z.object({
     )
     .min(1, { message: "Debe tener al menos un objetivo" }),
   servicioId: z.coerce.number().min(1, { message: "El servicio es requerido" }),
+  hitos: z.array(
+    hitoSchema
+  ).min(1, { message: "Debe tener al menos un entregable" }),
+
+  // Fechas de inicio y fin de proyecto 
   fechaInicio: z.date({
     required_error: "La fecha de inicio es requerida",
   }),
