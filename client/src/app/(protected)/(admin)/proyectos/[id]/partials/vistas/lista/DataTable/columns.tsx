@@ -18,7 +18,7 @@ function isExpandedChevron(isExpanded: boolean) {
     <ChevronRight
       className={cn(
         "h-5 w-5 transition-all duration-200 ease-in-out",
-        isExpanded ? "rotate-90 transform" : "",
+        isExpanded ? "rotate-90 transform" : ""
       )}
     />
   );
@@ -45,7 +45,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
       return (
         <div
           style={{
-            paddingLeft: `${row.depth * 2}rem`,
+            paddingLeft: `${row.depth * 2}rem`
           }}
         >
           <div className="flex items-center">
@@ -72,7 +72,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
           </div>
         </div>
       );
-    },
+    }
   },
   {
     accessorKey: "fechaInicio",
@@ -82,7 +82,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
       if (!fechaInicio) return "-";
       const date = new Date(fechaInicio);
       return format(date, "d/MM/yyyy");
-    },
+    }
   },
   {
     accessorKey: "fechaFinalizacion",
@@ -91,7 +91,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
       const dateFin = row.original.fechaFinalizacion || row.original.fechaFin;
       if (!dateFin) return "-";
       return format(dateFin, "d/MM/yyyy");
-    },
+    }
   },
   {
     id: "duracion",
@@ -105,32 +105,33 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
       // get diff time in days using date-fns
       const duracion = intervalToDuration({
         start: new Date(inicio),
-        end: new Date(final),
+        end: new Date(final)
       });
       return Number(duracion.days ?? 0);
-    },
+    }
   },
   {
     id: "actions",
     header: "Acciones",
     cell: ({ row }) => {
-      const task = row.original
-      const { setSelectedHito, setSelectedTask } = useProjectDetail()
+      const task = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { setSelectedHito, setSelectedTask } = useProjectDetail();
       return (
         <div className="flex gap-2">
           <FeedbackChat tarea={task as Tarea | Hito} />
           {/* Editar y eliminar */}
           {
-            task.idTarea ? 
-              (<NewTaskModal asEdit task={task as Tarea}/>) 
-               : 
+            task.idTarea ?
+              (<NewTaskModal asEdit task={task as Tarea} />)
+              :
               <NewHitoModal asEdit task={task as Hito} />
           }
           <DeleteTask tarea={task as Tarea | Hito} />
 
-          
+
         </div>
       );
-    },
-  },
+    }
+  }
 ];

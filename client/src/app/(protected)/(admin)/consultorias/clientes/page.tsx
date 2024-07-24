@@ -5,6 +5,8 @@ import { columns } from "./partials/DataTable/columns";
 import AddEditClienteDialog from "./partials/Dialogs/AddEditClienteDialog";
 import { getClientes } from "@/actions/Cliente";
 
+export const dynamic = "force-dynamic";
+
 export default async function Clientes() {
   const data = await getClientes();
   return (

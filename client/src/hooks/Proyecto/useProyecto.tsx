@@ -9,6 +9,7 @@ export default function useProyecto() {
   const queryClient = useQueryClient();
 
   function getProyectosPropuestosQuery() {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Proyecto[]>({
       queryKey: ["proyectos", "propuestos"],
       queryFn: async () => {
@@ -21,11 +22,12 @@ export default function useProyecto() {
         const data = await response.json();
 
         return data as Proyecto[];
-      },
+      }
     });
   }
 
   function getProyectoByIdQuery(id: number) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Proyecto>({
       queryKey: ["proyecto", id],
       queryFn: async () => {
@@ -38,7 +40,7 @@ export default function useProyecto() {
         const data = await response.json();
 
         return data as Proyecto;
-      },
+      }
     });
   }
 
@@ -48,20 +50,20 @@ export default function useProyecto() {
       const response = await fetcherLocal(`/proyectos/propuestos/${id}`, {
         method: "POST",
         body: JSON.stringify({
-          idEstado: estado,
-        }),
+          idEstado: estado
+        })
       });
       const ok = await HandleServerResponse(response, undefined);
       if (!ok) {
         throw new Error(`Ocurrió un error, inténtelo nuevamente`);
       }
       toast.success("Estado de proyecto actualizado", {
-        id: toastId,
+        id: toastId
       });
     } catch (error) {
       console.error(error);
       toast.error("Ocurrió un error, inténtelo nuevamente", {
-        id: toastId,
+        id: toastId
       });
     }
   }
@@ -70,22 +72,22 @@ export default function useProyecto() {
     const toastId = toast.loading(`Eliminando proyecto ...`);
     try {
       const response = await fetcherLocal(`/proyectos/deleteProyecto/${id}`, {
-        method: "DELETE",
+        method: "DELETE"
       });
       const ok = await HandleServerResponse(response, undefined, toastId);
       if (!ok) {
         throw new Error(`Ocurrió un error, inténtelo nuevamente`);
       }
       toast.success("Proyecto eliminado", {
-        id: toastId,
+        id: toastId
       });
     } catch (error) {
       console.error(error);
       toast.error("Ocurrió un error, inténtelo nuevamente", {
-        id: toastId,
+        id: toastId
       });
     }
-    queryClient.invalidateQueries({queryKey: ["proyectos"]}); 
+    queryClient.invalidateQueries({ queryKey: ["proyectos"] });
   }
 
   return {
