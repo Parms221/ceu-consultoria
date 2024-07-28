@@ -29,6 +29,7 @@ import SubTareasChecklist from "./partials/sub-tareas";
 import { useState } from "react";
 import { ParticipanteDTO } from "@/types/proyecto/Tarea";
 import { toast } from "sonner";
+import SelectEstadoTarea from "./partials/estados";
 
 export default function TareaForm() {
   const { selectedTask, tareaForm: form, hitoForm, appendSubtarea } = useProjectDetail();
@@ -109,38 +110,7 @@ export default function TareaForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="estado"
-              render={({ field }) => (
-                <FormItem className="pl-1">
-                  <div className="flex items-center gap-1.5">
-                    {/* TODO: traer estados de backend */}
-                    <FormLabel className="flex shrink-0 items-center gap-1 text-sm">
-                      <Loader size={14} />
-                      Estado
-                    </FormLabel>
-                    <Combobox
-                      placeholder="Seleccione un estado"
-                      options={[
-                        {
-                          label: "En progreso",
-                          value: "1",
-                        },
-                        {
-                          label: "Terminado",
-                          value: "2",
-                        },
-                      ]}
-                      onSelect={(value) => {
-                        field.onChange(Number(value));
-                      }}
-                    />
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <SelectEstadoTarea form={form}/>
             <FormField
               control={form.control}
               name="fechaInicio"

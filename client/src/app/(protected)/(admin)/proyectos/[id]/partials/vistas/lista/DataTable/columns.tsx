@@ -12,6 +12,22 @@ import { DeleteTask, FeedbackChat } from "../dialogs";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import NewTaskModal from "../../../forms/Tareas";
 import NewHitoModal from "../../../forms/Hitos";
+import { Badge } from "@/components/ui/badge";
+import { Estado } from "@/types/estado";
+
+export function getBadgeByEstado(estado: Estado) {
+  return (
+    <Badge
+      variant={
+        estado.idEstado === 6 ? "ghost" : 
+        estado.idEstado === 7 ? "default" :
+        estado.idEstado === 8 ? "success" : "destructive"
+      }
+    > 
+      {estado.descripcion}
+    </Badge>
+  )
+}
 
 function isExpandedChevron(isExpanded: boolean) {
   return (
@@ -108,6 +124,16 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
         end: new Date(final)
       });
       return Number(duracion.days ?? 0);
+    }
+  },
+  {
+    id: "estado",
+    accessorKey: "estado",
+    header: "Estado",
+    cell: ({ row }) => {
+      const estado = row.original.estado;
+      if (!estado) return "";
+      return getBadgeByEstado(estado);
     }
   },
   {

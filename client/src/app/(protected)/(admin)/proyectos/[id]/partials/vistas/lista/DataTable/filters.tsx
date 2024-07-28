@@ -33,7 +33,7 @@ export default function Filters<TData>(
         <div className="flex flex-wrap items-center py-4 [&>div]:space-y-1 gap-4">
             <div className="max-w-sm">
               <Label htmlFor="hito">
-                Buscar tarea
+                Buscar tarea hito
               </Label>
               <Input
                 placeholder="Tarea"

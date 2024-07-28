@@ -1,13 +1,15 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2Icon, ChevronRight } from "lucide-react";
-import { Hito } from "@/types/proyecto/Hito";
-import { es } from "date-fns/locale/es";
 import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
-import { SubTarea, Tarea } from "@/types/proyecto/Tarea";
+import { getBadgeByEstado } from "../../vistas/lista/DataTable/columns";
+import { Tarea } from "@/types/proyecto/Tarea";
+import { useQuery } from "@tanstack/react-query";
+import { Estado } from "@/types/estado";
+import { fetcherLocal } from "@/server/fetch/client-side";
+import { useAppContext } from "@/app/(protected)/app.context";
 
 
 function isExpandedChevron(isExpanded: boolean) {
@@ -76,6 +78,22 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
       const dateFin = row.original.fechaFin;
       if(!dateFin) return "-"
       return format(dateFin, 'd/MM/yyyy');
+    },
+  },
+  {
+    accessorKey: "estado",
+    header: "Estado",
+    cell: ({ row }) => {
+      const { estados } = useAppContext() 
+      const estado = row.original.estado;
+      if (!estado || !estados) return "-";
+      if (estado instanceof Object){
+        return getBadgeByEstado(estado)
+      }else {
+        const estadoObj = estados.find(e => e.idEstado === estado)
+        if (!estadoObj) return "-"
+        return getBadgeByEstado(estadoObj)
+      }
     },
   },
   {

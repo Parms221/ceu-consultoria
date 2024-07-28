@@ -12,11 +12,9 @@ export default function Providers({
 }>) {
   return (
     <SessionProvider>
-      <AppProvider>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
-      </AppProvider>
+      <QueryClientProvider client={queryClient}>
+        <AppProvider>{children}</AppProvider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 }
