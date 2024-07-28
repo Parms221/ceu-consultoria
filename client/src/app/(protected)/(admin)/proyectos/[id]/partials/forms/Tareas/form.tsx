@@ -151,7 +151,7 @@ export default function TareaForm() {
                       <Calendar size={14} />
                       Fecha de inicio
                     </FormLabel>
-                    <DatePicker field={field} useOpenState />
+                    <DatePicker mode="single" field={field} useOpenState />
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -167,7 +167,7 @@ export default function TareaForm() {
                       <CalendarCheck size={14} />
                       Fecha de finalización
                     </FormLabel>
-                    <DatePicker field={field} 
+                    <DatePicker mode="single" field={field} 
                       useOpenState
                       disable = {
                         (value) => {

@@ -25,6 +25,8 @@ export default function HitoForm(
     const tareasInForm = form.getValues("tareas") as unknown as Tarea[] ?? []
 
     async function onSubmit(values: z.infer<typeof hitoSchema>){
+        if (!values.fechas.from || !values.fechas.to) return
+        
         const formatTareas : TareaDTO[] = values.tareas.map(tarea => ({
             ...tarea,
             participantesAsignados: tarea.participantesAsignados ?? [],
@@ -33,10 +35,11 @@ export default function HitoForm(
         
         const formattedData = {
             titulo: values.titulo,
-            fechaInicio: values.fechaInicio,
-            fechaFinalizacion: values.fechaFinalizacion,
+            fechaInicio: values.fechas.from,
+            fechaFinalizacion: values.fechas.to,
             tareas: formatTareas
         }
+
         await saveHito(projectId, formattedData)
         queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     }
@@ -64,7 +67,7 @@ export default function HitoForm(
                 />
                 <FormField 
                     control={form.control}
-                    name="fechaInicio"
+                    name="fechas.from"
                     render={({ field }) => (
                         <FormItem className="pl-1">
                             <div className="flex items-center justify-around gap-1.5">
@@ -73,6 +76,7 @@ export default function HitoForm(
                                     Fecha de inicio
                                 </FormLabel>
                                     <DatePicker
+                                        mode="single"
                                         field={field}
                                         useOpenState
                                     />
@@ -83,7 +87,7 @@ export default function HitoForm(
                 />
                 <FormField 
                     control={form.control}
-                    name="fechaFinalizacion"
+                    name="fechas.to"
                     render={({ field }) => (
                         <FormItem className="pl-1">
                             <div className="flex items-center gap-1.5">
@@ -92,6 +96,7 @@ export default function HitoForm(
                                     Fecha de finalización
                                 </FormLabel>
                                 <DatePicker
+                                    mode="single"
                                     field={field}
                                     useOpenState
                                 />
