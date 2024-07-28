@@ -1,6 +1,4 @@
 "use client";
-
-import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { projectDetailSchema } from "@/app/(protected)/(admin)/proyectos/nuevo/partials/schemas/project-detail.schema";
@@ -16,33 +14,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Check, PlusIcon, TrashIcon } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { fetcherLocal } from "@/server/fetch/client-side";
-import type { Servicio } from "@/types/servicio";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import { PlusIcon, TrashIcon } from "lucide-react";
 import {
   NavigationFooter,
   Next,
   Previous,
-} from "../multi-step-form/navigation";
+} from "../../multi-step-form/navigation";
 import DatePicker from "@/components/ui/datepicker/date-picker";
 import { toast } from "sonner";
 import { createProyectoIncompleto } from "@/services/proyecto";
 import { ProyectoIncompletoJsonResponse } from "@/types/proyecto/Response";
+import SelectServicio from "./select-servicio";
+import { useForm, UseFormReturn } from "react-hook-form";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -131,9 +114,10 @@ export default function ProjectFormPage2() {
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha de inicio</FormLabel>
                   <DatePicker
+                    mode="single"
                     field={field}
                     onChange={(date) => {
-                      if (!date) {
+                      if (!date || date instanceof Date === false) {
                         return;
                       }
 
@@ -161,6 +145,7 @@ export default function ProjectFormPage2() {
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha Límite</FormLabel>
                   <DatePicker
+                    mode="single"
                     field={field}
                     disable={(date) => {
                       return (
@@ -175,8 +160,8 @@ export default function ProjectFormPage2() {
             )}
           />
         </div>
-        <Objetivos form={formProjectDetail} />
         <SelectServicio form={formProjectDetail} />
+        <Objetivos form={formProjectDetail} />
       </div>
       <NavigationFooter>
         <Previous onClick={prev} />
@@ -255,132 +240,3 @@ function Objetivos({
   );
 }
 
-function SelectServicio({
-  form,
-}: {
-  form: UseFormReturn<z.infer<typeof projectDetailSchema>, any, undefined>;
-}) {
-  const dataQuery = useQuery<Servicio[]>({
-    queryKey: ["servicios"],
-    queryFn: async () => {
-      const response = await fetcherLocal("/servicios");
-
-      if (!response.ok) {
-        throw new Error("Error fetching services");
-      }
-
-      return response.json();
-    },
-  });
-  return (
-    <div className={"space-y-3"}>
-      <h3 className="text-xl font-bold text-primary">Servicio</h3>
-      <FormField
-        control={form.control}
-        name="servicioId"
-        render={({ field }) => (
-          <FormItem className="flex flex-row items-center gap-3">
-            <Popover>
-              {dataQuery.isLoading ? (
-                <Button
-                  variant="ghost"
-                  role="combobox"
-                  size={"sm"}
-                  disabled={true}
-                  className={cn("w-full justify-between border border-input")}
-                >
-                  Cargando...
-                </Button>
-              ) : dataQuery.isError || !dataQuery.data ? (
-                <Button
-                  variant="ghost"
-                  role="combobox"
-                  size={"sm"}
-                  disabled={true}
-                  className={cn("w-full justify-between border border-input")}
-                >
-                  Error!!
-                </Button>
-              ) : (
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="ghost"
-                      size={"sm"}
-                      role="combobox"
-                      className={cn(
-                        "w-full justify-between border border-input",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value
-                        ? (function () {
-                            const servicio = dataQuery.data.find(
-                              (servicio) => servicio.idServicio === field.value,
-                            );
-
-                            if (servicio) {
-                              return servicio.titulo;
-                            }
-
-                            return "algo";
-                          })()
-                        : "Selecciona un servicio"}
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-              )}
-              <PopoverContent className="w-[200px] p-0" align={"start"}>
-                <Command>
-                  <CommandInput placeholder="Buscar servicio..." />
-                  <CommandEmpty>Servicio no encontrado</CommandEmpty>
-                  <CommandGroup>
-                    {dataQuery.data && dataQuery.data.length == 0 ? (
-                      <CommandItem value={String(0)} key={0}>
-                        No hay servicios
-                      </CommandItem>
-                    ) : (
-                      dataQuery.data?.map((servicio) => (
-                        <CommandItem
-                          value={String(servicio.idServicio)}
-                          key={servicio.titulo}
-                          onSelect={() => {
-                            form.setValue("servicioId", servicio.idServicio);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              servicio.idServicio === field.value
-                                ? "opacity-100"
-                                : "opacity-0",
-                            )}
-                          />
-                          {servicio.titulo}
-                        </CommandItem>
-                      ))
-                    )}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            {field.value != 0 && (
-              <Button
-                type={"button"}
-                variant={"ghost"}
-                className={"h-6 w-6 p-0"}
-                onClick={() => {
-                  field.onChange(0);
-                }}
-              >
-                <Cross2Icon className={"h-4"} />
-              </Button>
-            )}
-
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
-  );
-}
