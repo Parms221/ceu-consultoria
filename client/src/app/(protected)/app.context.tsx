@@ -1,9 +1,13 @@
 "use client"
+import { fetcherLocal } from '@/server/fetch/client-side'
+import { Estado } from '@/types/estado'
 import { Rol } from '@/types/rol'
+import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 interface AppProviderProps {
-    roles: Rol[]
+    roles: Rol[],
+    estados: Estado[]
 }
 
 const AppContext = createContext<AppProviderProps>({} as AppProviderProps)
@@ -11,36 +15,24 @@ const AppContext = createContext<AppProviderProps>({} as AppProviderProps)
 export function AppProvider(
     {children} : { children: React.ReactNode }
 ){
-    const [roles, setRoles ] = useState<Rol[]>([])
+    const dataQuery = useQuery<AppProviderProps>({
+        queryKey: ["index"],
+        queryFn: async () => {
+          const response = await fetcherLocal("/index");
     
-    useEffect(() => {
-        /*
-            Por el momento se simula el fetch de los roles, aquí deberían cargarse
-            los datos de la aplicación que se usen después 
-            incluyendo los roles 
-        */
-        const roles: Rol[] = [
-            {
-                idRol: 1,
-                rol: "ROLE_ADMIN"
-            },
-            {
-                idRol: 2,
-                rol: "ROLE_CONSULTOR"
-            },
-            {
-                idRol: 3,
-                rol: "ROLE_CLIENTE"
-            }
-        ]
-        setRoles(roles)
-    }, [])
-
+          if (!response.ok) {
+            throw new Error("Error fetching data");
+          }
+    
+          return response.json();
+        },
+      });
 
     return (
         <AppContext.Provider
             value={{
-                roles
+                roles: dataQuery.data?.roles || [],
+                estados: dataQuery.data?.estados || []
             }}
         >
             {children}

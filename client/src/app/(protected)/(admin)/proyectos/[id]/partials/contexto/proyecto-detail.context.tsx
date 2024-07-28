@@ -45,27 +45,34 @@ export default function ProjectDetailProvider({
   const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);  
 
   // FORM SCHEMAS
+  const hitosDefaultValues = {
+    titulo: selectedHito ? selectedHito.titulo : "Nueva tarea",
+    fechas: {
+      from: selectedHito ? new Date(selectedHito.fechaInicio) : new Date(),
+      to: selectedHito ? new Date(selectedHito.fechaFinalizacion) : new Date
+    },
+    tareas : []
+  }
+
+  const tareasDefaultValues = {
+    titulo: "Nueva tarea",
+    fechaFin: new Date(),
+    fechaInicio: new Date(),
+    descripcion: "",
+    estado: 0,
+    participantesAsignados: [],
+    subtareas: []
+  }
+
+
   const tareaForm = useForm<z.infer<typeof tareaSchema>>({
     resolver: zodResolver(tareaSchema),
-    defaultValues: {
-        titulo: "Nueva tarea",
-        fechaFin: new Date(),
-        fechaInicio: new Date(),
-        descripcion: "",
-        estado: 0,
-        participantesAsignados: [],
-        subtareas: []
-      }
+    defaultValues: tareasDefaultValues
   })
   
   const hitoForm = useForm<z.infer<typeof hitoSchema>>({
     resolver: zodResolver(hitoSchema),
-    defaultValues: {
-        titulo: selectedHito ? selectedHito.titulo : "Nueva tarea",
-        fechaFinalizacion: selectedHito ? new Date(selectedHito.fechaFinalizacion) : new Date(),
-        fechaInicio: selectedHito ? new Date(selectedHito.fechaInicio) : new Date(),
-        tareas : []
-      }
+    defaultValues: hitosDefaultValues
   })
   
   // Array de subtareas
@@ -83,8 +90,8 @@ export default function ProjectDetailProvider({
     });
 
     function resetForms(){
-      tareaForm.reset()
-      hitoForm.reset()
+      tareaForm.reset(tareasDefaultValues)
+      hitoForm.reset(hitosDefaultValues)
     }
 
   // capturar el cambio de selected task para actualizar el formulario (Edit)
@@ -112,8 +119,12 @@ export default function ProjectDetailProvider({
     if (!selectedHito) return
     hitoForm.reset({
       titulo: selectedHito.titulo,
-      fechaFinalizacion: new Date(selectedHito.fechaFinalizacion),
-      fechaInicio: new Date(selectedHito.fechaInicio),
+      // fechaFinalizacion: new Date(selectedHito.fechaFinalizacion),
+      // fechaInicio: new Date(selectedHito.fechaInicio),
+      fechas: {
+        from: new Date(selectedHito.fechaInicio),
+        to: new Date(selectedHito.fechaFinalizacion)
+      },
       tareas : selectedHito.tareasDelHito.map(t =>{
         return {
           ...t, 

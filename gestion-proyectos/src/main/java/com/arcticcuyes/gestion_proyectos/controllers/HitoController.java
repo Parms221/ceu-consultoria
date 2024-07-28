@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.models.Hito;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
+import com.arcticcuyes.gestion_proyectos.services.EstadoService;
 import com.arcticcuyes.gestion_proyectos.services.HitoService;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
@@ -31,9 +32,17 @@ public class HitoController {
     @Autowired
     ProyectoService proyectoService;
 
+    @Autowired 
+    EstadoService estadoService;
+
     @GetMapping("/{id}")
     public Optional<Hito> getHitoByID(@PathVariable Long id){
         return hitoService.findHitoById(id);
+    }
+
+    @GetMapping("/estados")
+    public ResponseEntity<?> getEstados(){
+        return ResponseEntity.ok(estadoService.findEstadosTareas());
     }
 
     @PostMapping("{idProyecto}/save")

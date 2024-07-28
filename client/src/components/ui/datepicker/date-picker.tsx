@@ -65,7 +65,7 @@ export default function DatePicker({
           <Button
             variant={"outline"}
             className={cn(
-              "w-full min-w-[240px] pl-3 text-left font-normal",
+              "w-full min-w-[180px] pl-3 text-left font-normal",
               !field.value && "text-muted-foreground",
             )}
             onClick={() => useOpenState && setOpen(!open)}

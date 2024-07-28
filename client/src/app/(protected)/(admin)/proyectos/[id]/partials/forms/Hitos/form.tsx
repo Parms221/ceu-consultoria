@@ -13,7 +13,6 @@ import { tareasColumns } from "../Tareas/columns";
 import NewTaskModal from "../Tareas";
 import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { useQueryClient } from "@tanstack/react-query";
-import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
 import useHito from "@/hooks/Hito/useHito";
 
 export default function HitoForm(
@@ -41,6 +40,7 @@ export default function HitoForm(
         }
 
         await saveHito(projectId, formattedData)
+        resetForms()
         queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     }
     

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -23,9 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import Filters from './filters'
 import { Hito } from '@/types/proyecto/Hito'
-import Filter from '@/components/ui/DataTable/filters/default-filter'
 
 
 interface DataTableProps<TData, TSubRowsField extends keyof TData, TValue> {
@@ -74,7 +72,6 @@ export function HitosTable<
   return (
     <div>
       <div className="flex justify-between items-center px-2">
-        <Filters table={table} />
         {newTask}
       </div>
       <Table>
@@ -92,11 +89,11 @@ export function HitosTable<
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                          {header.column.getCanFilter() ? (
+                          {/* {header.column.getCanFilter() ? (
                             <div>
                               <Filter column={header.column} table={table} />
                             </div>
-                          ) : null}
+                          ) : null} */}
                         </div>
                       )
                     }
@@ -135,7 +132,6 @@ export function HitosTable<
           )}
         </TableBody>
       </Table>
-      {/* <DataTablePagination table={table} /> */}
     </div>
     
   )

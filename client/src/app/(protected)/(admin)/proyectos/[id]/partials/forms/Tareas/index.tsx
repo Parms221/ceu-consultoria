@@ -61,9 +61,9 @@ export default function NewTaskModal(
                 task ? `Editar tarea ${task.titulo}` : `Nueva tarea` 
             }
         </DialogTitle>
-        <DialogDescription>
-            {task && `En lista ${task.estado}`  }
-        </DialogDescription>
+        {/* <DialogDescription>
+            {task && `En lista ${task.estado.descripcion}`  }
+        </DialogDescription> */}
        <TareaForm />
       </DialogContent>
     </Dialog>

@@ -74,6 +74,12 @@ public class HitoService {
                 tarea.setDescripcion(tareaDTO.getDescripcion());
                 tarea.setFechaInicio(tareaDTO.getFechaInicio());
                 tarea.setFechaFin(tareaDTO.getFechaFin());
+                tarea.setEstado(estadoRepository
+                    .findById(tareaDTO.getEstado())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                        "Estado no encontrado con id: " + tareaDTO.getEstado()
+                    ))
+                );
                 tarea.setHito(hito);
 
                 tarea = tareaRepository.save(tarea); // Guardar tarea para obtener su ID
