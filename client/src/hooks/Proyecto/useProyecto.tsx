@@ -1,6 +1,8 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
+import { Estado } from "@/types/estado";
 import { Proyecto } from "@/types/proyecto";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -90,10 +92,45 @@ export default function useProyecto() {
     queryClient.invalidateQueries({ queryKey: ["proyectos"] });
   }
 
+
+  // Otras funciones
+  function getBadgeByStatus(status : Estado){
+    // 1	"Propuesto"
+    // 2	"En desarrollo"
+    // 3	"Finalizado"
+    // 4	"Cancelado"
+    // 5	"Rechazado"
+
+    return (
+      <Badge
+        className="flex justify-center"
+        variant={
+          status.idEstado === 1
+            ? "outline"
+            : status.idEstado === 2
+            ? "default"
+            : status.idEstado === 3
+            ? "success"
+            : status.idEstado === 4
+            ? "ghost"
+            : status.idEstado === 5
+            ? "destructive"
+            : "secondary"
+        }
+      >
+        {
+          status.descripcion
+        }
+      </Badge>
+    )
+  }
+
   return {
     getProyectoByIdQuery,
     getProyectosPropuestosQuery,
     actualizarEstadoProyecto,
-    deleteProyecto
+    deleteProyecto,
+
+    getBadgeByStatus
   };
 }

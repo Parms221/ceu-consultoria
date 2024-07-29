@@ -20,38 +20,33 @@ import Objetivos from "./partials/objetivos";
 import Participantes from "./partials/participantes";
 
 export default function VistaResumen() {
-  const { projectId } = useProjectDetail();
-  const { getProyectoByIdQuery } = useProyecto();
+  const { projectId, projectDetailForm : form } = useProjectDetail();
+  const { getProyectoByIdQuery, getBadgeByStatus } = useProyecto();
 
   const { data, isLoading, isError } = getProyectoByIdQuery(projectId);
 
-  
-
-  const formDefaultValues = data && {
-    project: {
-      ...data,
-      fechaInicio: new Date(data.fechaInicio),
-      fechaLimite: new Date(data.fechaLimite),
-      title: data.titulo,
-      description: data.descripcion,
-      servicioId: data.servicio.idServicio,
-    },
-    cliente: data.cliente,
-    participantes: data.participantes?.map((participante) => {
-      return {
-        idConsultor: participante.consultorParticipante.idConsultor,
-      };
-    }),
-  }
-
-  const form = useForm<z.infer<typeof projectCompleteSchema>>({
-    resolver: zodResolver(projectCompleteSchema),
-    defaultValues: {}
-  });
 
   useEffect(() => {
-    form.reset(formDefaultValues);
-  }, [data]);
+    if(!data) return
+    form.reset(
+      {
+        project: {
+          ...data,
+          fechaInicio: new Date(data.fechaInicio),
+          fechaLimite: new Date(data.fechaLimite),
+          title: data.titulo,
+          description: data.descripcion,
+          servicioId: data.servicio.idServicio,
+        },
+        cliente: data.cliente,
+        participantes: data.participantes?.map((participante) => {
+          return {
+            idConsultor: participante.consultorParticipante.idConsultor,
+          };
+        }),
+      }
+    );
+  }, [data, projectId]);
 
   async function onSubmit(values: z.infer<typeof projectCompleteSchema>) {
     console.log(values);
@@ -80,20 +75,26 @@ export default function VistaResumen() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 [&>div>div>label]:w-[200px]"
       >
+       <div className="flex  flex-col-reverse gap-y-4 sm:flex-row justify-between">
         <FormField
-          control={form.control}
-          name="project.title"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center gap-1.5">
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            control={form.control}
+            name="project.title"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center gap-1.5">
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex flex-col justify-center">
+            <h3 className="text-xs">Estado de proyecto</h3>
+            {getBadgeByStatus(data.estado)}
+          </div>
+       </div>
         <FormField
           control={form.control}
           name="project.description"
@@ -108,7 +109,7 @@ export default function VistaResumen() {
             </FormItem>
           )}
         />
-        <Participantes form={form}/>
+        <Participantes participantes={data.participantes ?? []} form={form}/>
         <Objetivos form={form}/>
       </form>
       <pre>
