@@ -1,20 +1,18 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { Proyecto } from "@/types/proyecto";
 import { Hito } from "@/types/proyecto/Hito";
 import { ParticipanteDTO, Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { FieldArrayWithId, useFieldArray, UseFieldArrayAppend, UseFieldArrayRemove, useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { hitoSchema, tareaSchema } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/schemas";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 interface IProjectDetailContext {
-    // proyecto: Proyecto,
     selectedHito: Hito | null,
     selectedTask: Tarea | null,
     projectId: number,
-    // setProyecto: (proyecto: Proyecto) => void
     setSelectedHito: (hito: Hito | null) => void
     setSelectedTask: (task: Tarea | null) => void 
     hitoForm : UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
@@ -24,6 +22,8 @@ interface IProjectDetailContext {
     subtareasFields: FieldArrayWithId<TareaDTO, "subtareas", "id">[];
     appendSubtarea: UseFieldArrayAppend<TareaDTO, "subtareas">;
     removeSubtarea: UseFieldArrayRemove;
+
+    queryClient: ReturnType<typeof useQueryClient>
 }
 
 export const ProjectDetailContext = createContext<IProjectDetailContext>(
@@ -32,17 +32,16 @@ export const ProjectDetailContext = createContext<IProjectDetailContext>(
 
 export default function ProjectDetailProvider({
   children, 
-  // selectedProject
   projectId
 }: {
   children: React.ReactNode,
-  // selectedProject : Proyecto
   projectId : number
 }) {
 
-  // const [proyecto, setProyecto] = useState<Proyecto>(selectedProject);
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
   const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);  
+  // Query client to invalidate queries
+  const queryClient = useQueryClient()
 
   // FORM SCHEMAS
   const hitosDefaultValues = {
@@ -119,8 +118,6 @@ export default function ProjectDetailProvider({
     if (!selectedHito) return
     hitoForm.reset({
       titulo: selectedHito.titulo,
-      // fechaFinalizacion: new Date(selectedHito.fechaFinalizacion),
-      // fechaInicio: new Date(selectedHito.fechaInicio),
       fechas: {
         from: new Date(selectedHito.fechaInicio),
         to: new Date(selectedHito.fechaFinalizacion)
@@ -128,6 +125,7 @@ export default function ProjectDetailProvider({
       tareas : selectedHito.tareasDelHito.map(t =>{
         return {
           ...t, 
+          idTarea: t.idTarea?.toString(),
           fechaFin : new Date(t.fechaFin), 
           fechaInicio: new Date(t.fechaInicio), 
           estado : t.estado?.idEstado,
@@ -141,8 +139,6 @@ export default function ProjectDetailProvider({
 
   return (
     <ProjectDetailContext.Provider value={{ 
-        // proyecto,
-        // setProyecto,
         projectId,
         selectedHito,
         setSelectedHito,
@@ -155,7 +151,9 @@ export default function ProjectDetailProvider({
 
         appendSubtarea,
         removeSubtarea,
-        subtareasFields
+        subtareasFields,
+
+        queryClient
     }}>
         {children}
     </ProjectDetailContext.Provider>

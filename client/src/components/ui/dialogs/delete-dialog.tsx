@@ -34,13 +34,15 @@ export default function DeleteDialog(
                 <DialogDescription slot="descripcion">
                     {description}
                 </DialogDescription>
-                <DialogFooter >
+                <DialogFooter className="gap-y-2">
                     <DialogClose
                         className={buttonVariants({variant: "destructive", size: "default"})}
                         onClick={onDelete}>
                         Eliminar
                     </DialogClose>
-                    <DialogClose className="h-full border rounded-md px-4 hover:bg-neutral-300">Cancelar</DialogClose>
+                    <DialogClose className="h-full border rounded-md px-4 hover:bg-neutral-300">
+                        Cancelar
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

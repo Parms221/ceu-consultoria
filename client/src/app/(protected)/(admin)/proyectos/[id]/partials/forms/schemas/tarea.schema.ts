@@ -1,8 +1,11 @@
 import { z } from "zod";
 
 export const tareaSchema = z.object({
+    idTarea: z.string().optional().default(
+      crypto.randomUUID()
+    ), 
     titulo: z.string().min(2).max(50),
-    descripcion: z.string().min(2).max(50),
+    descripcion: z.string().min(2).max(150),
     fechaInicio: z.date({
       required_error: "La fecha de inicio es requerida",
     }),
