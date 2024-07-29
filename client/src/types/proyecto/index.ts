@@ -11,7 +11,7 @@ export type Proyecto = {
     idProyecto: number;
     titulo : string;
     descripcion: string;
-    objetivos: string;
+    objetivos: string[];
     requerimientos: string;
     fechaInicio: string;
     fechaLimite: string;

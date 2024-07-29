@@ -12,7 +12,6 @@ import { HitosTable } from "../../vistas/lista/DataTable/data-table";
 import { tareasColumns } from "../Tareas/columns";
 import NewTaskModal from "../Tareas";
 import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
-import { useQueryClient } from "@tanstack/react-query";
 import useHito from "@/hooks/Hito/useHito";
 
 export default function HitoForm(
