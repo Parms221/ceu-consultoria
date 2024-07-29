@@ -14,9 +14,14 @@ interface IProps {
 export default function NewHitoModal(
   { asEdit, task } : IProps
 ) {
-  const { setSelectedHito } = useProjectDetail()
+  const { setSelectedHito, resetForms } = useProjectDetail()
   return (
-    <Drawer direction="right">
+    <Drawer direction="right"
+      onClose={() => {
+        setSelectedHito(null)
+        resetForms()
+      }}
+    >
       <DrawerTrigger
         asChild
       >
@@ -56,7 +61,7 @@ export default function NewHitoModal(
       >
         <div data-vaul-no-drag>
           <DrawerHeader className="px-2 py-1.5">
-              <DrawerClose>
+              <DrawerClose id="closeDrawer">
                 <ChevronsRightIcon size={18} />
                 <span className="sr-only">
                     Cerrar formulario de hitos

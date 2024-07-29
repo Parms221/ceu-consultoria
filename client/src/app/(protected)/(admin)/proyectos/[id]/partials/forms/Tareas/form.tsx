@@ -30,22 +30,61 @@ import { useState } from "react";
 import { ParticipanteDTO } from "@/types/proyecto/Tarea";
 import { toast } from "sonner";
 import SelectEstadoTarea from "./partials/estados";
+import useTarea from "@/hooks/Tarea/useTarea";
 
 export default function TareaForm() {
-  const { selectedTask, tareaForm: form, hitoForm, appendSubtarea } = useProjectDetail();
+  const { updateTarea } = useTarea()
+  const { 
+      selectedTask,
+      tareaForm: form, 
+      hitoForm, 
+      appendSubtarea,
+      projectId,
+      queryClient
+  } = useProjectDetail();
 
   const [responsables, setResponsables ] = useState<ParticipanteDTO[]>([])
 
-
-  async function onSubmit(values: z.infer<typeof tareaSchema>) {
+  function saveTarea(values : z.infer<typeof tareaSchema>){
     const currentTareas = hitoForm.getValues("tareas");
     if(currentTareas){
       hitoForm.setValue("tareas", [...currentTareas, values])
     }else {
       hitoForm.setValue("tareas", [values])
     }
-    toast.success("Tarea añadida")
+   
+  }
+
+  async function update(values : z.infer<typeof tareaSchema>){
+    const currentTareas = hitoForm.getValues("tareas");
+    if(currentTareas.length > 0){
+      // Editando tareas en memoria (cuando se crea un nuevo hito en el drawer)
+      console.log("Editando tarea en memoria", currentTareas)
+      const index = currentTareas.findIndex((t) => t.idTarea === selectedTask!.idTarea?.toString())
+      currentTareas[index] = values
+      hitoForm.setValue("tareas", currentTareas)
+      toast.success(`Tarea actualizada`)
+    }else {
+      // Editando tarea en la bd (cuando se seleccione en la tabla de hitos y tareas principal)
+      const idTarea = selectedTask?.idTarea
+      if(idTarea)
+        await updateTarea(values, idTarea)
+      queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
+    }
+  }
+
+  async function onSubmit(values: z.infer<typeof tareaSchema>) {
+    if (selectedTask){
+      await update(values)
+      // Close the modal
+      document.getElementById("closeDialog")?.click()
+
+    }else {
+      saveTarea(values)
+      toast.success(`Tarea guardada`)
+    }
     form.reset();
+    
   }
 
   return (

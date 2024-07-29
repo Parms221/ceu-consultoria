@@ -24,8 +24,6 @@ export default function HitoForm(
     const tareasInForm = form.getValues("tareas") as unknown as Tarea[] ?? []
 
     async function onSubmit(values: z.infer<typeof hitoSchema>){
-        if (!values.fechas.from || !values.fechas.to) return
-        
         const formatTareas : TareaDTO[] = values.tareas.map(tarea => ({
             ...tarea,
             participantesAsignados: tarea.participantesAsignados ?? [],
@@ -34,13 +32,18 @@ export default function HitoForm(
         
         const formattedData = {
             titulo: values.titulo,
-            fechaInicio: values.fechas.from,
-            fechaFinalizacion: values.fechas.to,
+            fechaInicio: values.fechas.from!,
+            fechaFinalizacion: values.fechas.to!,
             tareas: formatTareas
         }
-
-        await saveHito(projectId, formattedData)
+   
+        await saveHito(projectId, formattedData, selectedHito?.idHito)
+        
         resetForms()
+
+        // Close drawer
+        document.getElementById("closeDrawer")?.click()
+
         queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     }
     
@@ -108,7 +111,7 @@ export default function HitoForm(
                 {/* Tareas del hito */}
                 <HitosTable 
                     columns={tareasColumns}
-                    data={selectedHito?.tareasDelHito || tareasInForm}
+                    data={tareasInForm}
                     subRowsField="subTareas"
                     newTask = {<NewTaskModal />}
                 />

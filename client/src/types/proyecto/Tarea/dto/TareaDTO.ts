@@ -1,7 +1,5 @@
-import { Participante } from "@/types/proyecto/Participante"
-import { Consultor } from "@/types/consultor";
-
 export type TareaDTO = {
+    idTarea: string;
     titulo : string;
     descripcion : string;
     fechaInicio : Date;

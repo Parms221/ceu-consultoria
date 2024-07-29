@@ -18,6 +18,7 @@ import { Estado } from "@/types/estado";
 export function getBadgeByEstado(estado: Estado) {
   return (
     <Badge
+      className="text-nowrap"
       variant={
         estado.idEstado === 6 ? "ghost" : 
         estado.idEstado === 7 ? "default" :
@@ -137,15 +138,25 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     }
   },
   {
+    id: "retroalimentacion",
+    header: "Retroalimentación",
+    cell: ({ row } ) => {
+       const task = row.original;
+        return ( 
+          <div className="flex justify-center">
+            <FeedbackChat tarea={task as Tarea | Hito} />
+          </div>
+        )
+    }
+  },
+  {
     id: "actions",
     header: "Acciones",
     cell: ({ row }) => {
       const task = row.original;
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { setSelectedHito, setSelectedTask } = useProjectDetail();
+
       return (
         <div className="flex gap-2">
-          <FeedbackChat tarea={task as Tarea | Hito} />
           {/* Editar y eliminar */}
           {
             task.idTarea ?

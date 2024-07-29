@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/partials/contexto/proyecto-detail.context';
 import TareaForm from "./form";
 import { Tarea } from "@/types/proyecto/Tarea";
+import { useRef } from "react";
 
 interface IProps {
   asEdit? : boolean
@@ -20,12 +21,29 @@ interface IProps {
 export default function NewTaskModal(
   { asEdit, task} : IProps
 ) {
-  const { setSelectedTask } = useProjectDetail()
-
+  const { setSelectedTask, selectedTask, tareaForm } = useProjectDetail()
+  const dialogRef = useRef(null)
   return (
-    <Dialog>
+    <Dialog 
+      onOpenChange={(isOpen) => {
+        if(!isOpen && selectedTask){
+          // Reinicia los valores del formulario
+          setSelectedTask(null)
+          tareaForm.reset({
+            titulo: "Nueva tarea",
+            fechaFin: new Date(),
+            fechaInicio: new Date(),
+            descripcion: "",
+            estado: 0,
+            participantesAsignados: [],
+            subtareas: []
+          })
+        }
+      }}
+    >
       <DialogTrigger
         asChild
+        ref={dialogRef}
       >
         {
           !asEdit ? (
@@ -61,9 +79,6 @@ export default function NewTaskModal(
                 task ? `Editar tarea ${task.titulo}` : `Nueva tarea` 
             }
         </DialogTitle>
-        {/* <DialogDescription>
-            {task && `En lista ${task.estado.descripcion}`  }
-        </DialogDescription> */}
        <TareaForm />
       </DialogContent>
     </Dialog>

@@ -25,10 +25,12 @@ export default function useHito() {
     });
   }
 
-  async function saveHito(projectId: number, hito: HitoDTO): Promise<boolean> {
+  async function saveHito(projectId: number, hito: HitoDTO, idHito?:number): Promise<boolean> {
     const toastId = toast.loading("Guardando ...");
+    // Si el idHito existe, se actualiza el registro
+    const endpoint = idHito ? `/hitos/${projectId}/update/${idHito}` : `/hitos/${projectId}/save`;
     try {
-      const response = await fetcherLocal(`/hitos/${projectId}/save`, {
+      const response = await fetcherLocal(endpoint, {
         method: "POST",
         body: JSON.stringify(hito)
       });

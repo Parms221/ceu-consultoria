@@ -5,11 +5,13 @@ import { Edit, Trash2Icon, ChevronRight } from "lucide-react";
 import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getBadgeByEstado } from "../../vistas/lista/DataTable/columns";
-import { Tarea } from "@/types/proyecto/Tarea";
+import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { useQuery } from "@tanstack/react-query";
 import { Estado } from "@/types/estado";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { useAppContext } from "@/app/(protected)/app.context";
+import { useProjectDetail } from "../../contexto/proyecto-detail.context";
+import NewTaskModal from ".";
 
 
 function isExpandedChevron(isExpanded: boolean) {
@@ -114,20 +116,20 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
     header: "Acciones",
     cell: ({ row }) => {
       const tarea = row.original;
-
+      const { hitoForm } = useProjectDetail()
+      const tareasInForm = hitoForm.getValues("tareas") as unknown as TareaDTO[] ?? []
       return (
         <div className="flex gap-2">
+          <NewTaskModal asEdit task={tarea as Tarea} />
+
           <Button
             variant="ghost"
             className="p-0"
-            onClick={() => console.log("Editando tarea", tarea.idTarea)}
-          >
-            <Edit size={20} />
-          </Button>
-          <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => console.log("Eliminando tarea", tarea.idTarea)}
+            type="button"
+            onClick={() => {
+              const newTareas = tareasInForm.filter((t, index) => index !== row.index)
+              hitoForm.reset({...hitoForm.getValues(), tareas: newTareas})
+            }}
           >
             <Trash2Icon size={20} />
           </Button>  
