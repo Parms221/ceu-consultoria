@@ -1,5 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +22,6 @@ import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
 import com.arcticcuyes.gestion_proyectos.models.Hito;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
-import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
 import jakarta.validation.Valid;
@@ -43,6 +43,33 @@ public class ProyectoController {
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<Proyecto> proyectos = proyectoService.findProyectos(search, pageRequest);
         return ResponseEntity.ok(proyectos);
+    }
+
+    @GetMapping("/estadisticas")
+    public ResponseEntity<?> getEstadisticasProyectos(){
+
+        /*
+         * 
+         * 1 "Propuesto"
+         * 2 "En desarrollo"
+         * 3 "Finalizado"
+         * 4 "Cancelado"
+         * 5 "Rechazado"
+         */
+        System.out.println("Obteniendo estadísticas de proyecto");
+
+        Map<String, Object> mapConsultores  = new HashMap<>();
+        mapConsultores.put("current", 1);
+        mapConsultores.put("max", 5);
+
+        List<Proyecto> proyectosPropuestos = proyectoService.getProyectosByEstado((long) 1);
+        List<Proyecto> proyectosTerminados = proyectoService.getProyectosByEstado((long) 3);
+
+        Map<String, Object> response  = new HashMap<>();
+        response.put("terminados", proyectosTerminados.size());
+        response.put("propuestos", proyectosPropuestos.size());
+        response.put("consultores", mapConsultores);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/propuestos")
@@ -81,25 +108,6 @@ public class ProyectoController {
 
             Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
-
-
-
-        // if (bindingResult.hasErrors()) {
-        //     // Recopila todos los errores de validación en un mapa
-        //     Map<String, String> errors = bindingResult.getFieldErrors().stream().collect(Collectors.toMap(
-        //                     fieldError -> fieldError.getField(),
-        //                     fieldError -> fieldError.getDefaultMessage()
-        //             ));
-
-        //     // Devuelve la respuesta con los errores en formato JSON y estado 400 Bad Request
-        //     return ResponseEntity.badRequest().body(errors);
-        // }
-        // try {
-        //     Proyecto createdProyecto = proyectoService.saveProyecto(proyectoDTO);
-        //     return ResponseEntity.status(HttpStatus.CREATED).body(createdProyecto);
-        // } catch (Exception e) {
-        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el proyecto: " + e.getMessage());
-        // }
     }
 
 
