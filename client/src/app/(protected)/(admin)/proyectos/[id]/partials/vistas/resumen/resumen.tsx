@@ -37,6 +37,7 @@ export default function VistaResumen() {
           title: data.titulo,
           description: data.descripcion,
           servicioId: data.servicio.idServicio,
+          objetivos: data.objetivos.split("\n"),
         },
         cliente: data.cliente,
         participantes: data.participantes?.map((participante) => {

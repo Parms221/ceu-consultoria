@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
+import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
+import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.models.Consultor;
 import com.arcticcuyes.gestion_proyectos.repositories.ClienteRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
@@ -73,6 +75,33 @@ public class UsuarioService {
         }
 
         return createdUser;
+    }
+
+    public Usuario createUsuarioCliente(Cliente cliente) {
+        Cliente existingCliente = clienteRepository.findById(cliente.getIdCliente()).orElse(null);
+        Usuario usuario = new Usuario();
+        usuario.setEmail(cliente.getEmail());
+        if(cliente instanceof ClienteNatural){
+            ClienteNatural clienteNatural = (ClienteNatural) cliente;
+            usuario.setName(clienteNatural.getNombre()+ " " + clienteNatural.getApellido());
+            usuario.setPassword(passwordEncoder.encode(clienteNatural.getDni()));
+        }else{
+            ClienteJuridico clienteJuridico = (ClienteJuridico) cliente;
+            usuario.setName(clienteJuridico.getRazonSocial());
+            usuario.setPassword(passwordEncoder.encode(clienteJuridico.getRuc()));
+        }
+
+        Set<Rol> roles = new HashSet<>();
+        roles.add(roleRepository.findByRol("ROLE_CLIENTE"));
+        usuario.setRoles(roles);
+        
+        // asignar usuario al cliente
+        existingCliente.setUsuarioCliente(usuario);
+
+        clienteRepository.save(existingCliente);
+        uRepository.save(usuario);
+        System.out.println("Usuario creado para cliente: " + usuario.getName());
+        return usuario;
     }
 
     public void updatePassword(Usuario current, UpdatePasswordDto passwordDto) throws Exception {

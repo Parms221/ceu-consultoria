@@ -24,6 +24,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -87,4 +88,11 @@ public class Tarea {
 
     @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL)
     private List<SubTarea> subTareas;
+
+    // Feedbacks
+    @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL)
+    @OrderBy("createdAt DESC")
+    private List<FeedbackTarea> feedbacks;
+
+
 }

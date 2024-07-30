@@ -3,6 +3,7 @@ package com.arcticcuyes.gestion_proyectos.services;
 import com.arcticcuyes.gestion_proyectos.dto.Consultor.ConsultorDto;
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import com.arcticcuyes.gestion_proyectos.models.Consultor;
+import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public class ConsultorService {
     }
     public Consultor findConsultorById(Long id) {
         return consultorRepository.findById(id).orElse(null);
+    }
+
+    public Consultor findConsultorByUser(Usuario usuario) {
+        return consultorRepository.findByusuarioConsultor(usuario);
     }
 
     public Optional<Consultor> findById(Long id) {

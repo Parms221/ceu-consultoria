@@ -13,6 +13,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
 import com.arcticcuyes.gestion_proyectos.models.Hito;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
+import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 
 import jakarta.validation.Valid;

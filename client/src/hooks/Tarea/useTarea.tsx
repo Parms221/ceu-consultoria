@@ -2,6 +2,7 @@
 
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
+import { FeedbackTareaDTO } from "@/types/proyecto/Tarea/dto/FeedbackTareaDTO";
 import { TareaDTO } from "@/types/proyecto/Tarea/dto/TareaDTO";
 import { toast } from "sonner";
 
@@ -56,8 +57,34 @@ export default function useTarea() {
     }
   }
 
+  async function addFeedback(idTarea : number, feedback : FeedbackTareaDTO){
+    // const toastId = toast.loading("Guardando ...");
+    // Si el idHito existe, se actualiza el registro
+    try {
+      const response = await fetcherLocal(`/tareas/${idTarea}/feedback`, {
+        method: "POST",
+        body: JSON.stringify(feedback)
+      });
+      const ok = await HandleServerResponse(response, undefined, undefined);
+      if (!ok) {
+        throw new Error("Error al enviar feedback sobre esta tarea");
+      }
+      // toast.success("Tarea actualizada", {
+      //   id: toastId
+      // });
+      return ok;
+    } catch (e) {
+      console.error(e);
+      // toast.error("Error al enviar feedback sobre esta tarea", {
+      //   id: toastId
+      // });
+      throw new Error("Error al enviar feedback");
+    }
+  }
+
   return {
     updateTarea,
-    deleteTarea
+    deleteTarea,
+    addFeedback
   };
 }
