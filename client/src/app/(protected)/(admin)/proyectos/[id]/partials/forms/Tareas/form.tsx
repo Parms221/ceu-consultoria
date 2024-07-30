@@ -47,6 +47,7 @@ export default function TareaForm() {
 
   function saveTarea(values : z.infer<typeof tareaSchema>){
     const currentTareas = hitoForm.getValues("tareas");
+    values.idTarea = crypto.randomUUID()
     if(currentTareas){
       hitoForm.setValue("tareas", [...currentTareas, values])
     }else {
@@ -58,10 +59,14 @@ export default function TareaForm() {
   async function update(values : z.infer<typeof tareaSchema>){
     const currentTareas = hitoForm.getValues("tareas");
     if(currentTareas.length > 0){
-      // Editando tareas en memoria (cuando se crea un nuevo hito en el drawer)
+      // Editando tareas en memoria (cuando se crea un nuevo hito en el drawer) usando el id temporal
       console.log("Editando tarea en memoria", currentTareas)
-      const index = currentTareas.findIndex((t) => t.idTarea === selectedTask!.idTarea?.toString())
-      currentTareas[index] = values
+      const tareaIndex = currentTareas.findIndex(t => {
+        const id = selectedTask?.idTarea
+        if(id) 
+          return t.idTarea === id.toString()
+      })
+      currentTareas[tareaIndex] = values
       hitoForm.setValue("tareas", currentTareas)
       toast.success(`Tarea actualizada`)
     }else {

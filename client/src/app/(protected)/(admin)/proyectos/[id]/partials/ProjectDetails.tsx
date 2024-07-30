@@ -28,13 +28,13 @@ export default function ProjectDetails(
 
     const { data : proyecto, isLoading, isError } = getProyectoByIdQuery(id)
     
-      if (isLoading) {
-        return <div>Cargando ... </div>;
-      }
+      // if (isLoading) {
+      //   return <div>Cargando ... </div>;
+      // }
     
-      if (isError || !proyecto) {
-        return <div>Proyecto no encontrado</div>;
-      }
+      // if (isError || !proyecto) {
+      //   return <div>Proyecto no encontrado</div>;
+      // }
 
     return (
     <ProjectDetailProvider projectId={id}>
@@ -49,7 +49,7 @@ export default function ProjectDetails(
                 height={50}
                 />
                 <h1 className="text-2xl font-bold tracking-tighter">
-                {proyecto.titulo}
+                {proyecto && proyecto.titulo}
                 </h1>
             </div>
             </header>

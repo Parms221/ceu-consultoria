@@ -1,5 +1,5 @@
 import VistaGantt from "./gantt";
-import VistaResumen from "./resumen";
+import VistaResumen from "./resumen/resumen";
 import VistaLista from "./lista/lista";
 import VistaKanban from "./kanban";
 import { GanttChart, InfoIcon, Kanban, ListChecks } from "lucide-react";

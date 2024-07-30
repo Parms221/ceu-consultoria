@@ -46,9 +46,8 @@ public class Participante {
     private Proyecto proyectoIngresado;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_consultor", nullable = false)
-    @JsonIgnore
     private Consultor consultorParticipante;
 
 

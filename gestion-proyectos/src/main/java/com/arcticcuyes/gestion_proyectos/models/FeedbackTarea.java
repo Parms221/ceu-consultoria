@@ -1,7 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
@@ -9,7 +8,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,8 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,26 +25,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="CONSULTOR")
-public class Consultor {
+@Table(name="FEEDBACK_TAREA")
+public class FeedbackTarea {
     @Id
-    @Column(name="id_consultor")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long idConsultor;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = true, length = 50)
-    private String nombres;
-    @Column(nullable = true, length = 50)
-    private String apellidos;
-    @Column(nullable = true)
-    private char genero;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_consultor", referencedColumnName = "id_consultor", nullable = false)
+    private Consultor consultor;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="id_tarea", referencedColumnName = "id_tarea", nullable = false)
+    @JsonIgnore
+    private Tarea tarea;
 
     @Column(columnDefinition = "TEXT")
-    private String especialidades;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="id_usuario", unique = true, nullable = false)
-    private Usuario usuarioConsultor;
+    private String mensaje;
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
@@ -56,14 +50,4 @@ public class Consultor {
     @UpdateTimestamp(source = SourceType.DB)
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
-
-    @OneToMany(mappedBy = "consultor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<FeedbackTarea> feedbacks;
-
-    @Override
-    public String toString() {
-        return "Consultor{idConsultor=" + idConsultor + ", nombres='" + nombres + "'}";
-    }
-
 }

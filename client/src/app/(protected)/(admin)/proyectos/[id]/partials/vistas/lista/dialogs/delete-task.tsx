@@ -14,8 +14,7 @@ export default function DeleteTask(
     const { deleteHito } = useHito()
     const { deleteTarea } = useTarea()
 
-    const { projectId } = useProjectDetail()
-    const queryClient = useQueryClient()
+    const { projectId, queryClient } = useProjectDetail()
 
     function isHito(tarea: Hito | Tarea): tarea is Hito {
         return (tarea as Hito).idHito !== undefined;

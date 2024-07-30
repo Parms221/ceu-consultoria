@@ -1,11 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
-import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,9 +10,31 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.arcticcuyes.gestion_proyectos.dto.Proyecto.*;
-import com.arcticcuyes.gestion_proyectos.models.*;
-import com.arcticcuyes.gestion_proyectos.repositories.*;
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.SubtareaDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
+import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
+import com.arcticcuyes.gestion_proyectos.models.Cliente;
+import com.arcticcuyes.gestion_proyectos.models.Consultor;
+import com.arcticcuyes.gestion_proyectos.models.EntregableProyecto;
+import com.arcticcuyes.gestion_proyectos.models.EntregableServicio;
+import com.arcticcuyes.gestion_proyectos.models.Estado;
+import com.arcticcuyes.gestion_proyectos.models.Hito;
+import com.arcticcuyes.gestion_proyectos.models.Participante;
+import com.arcticcuyes.gestion_proyectos.models.Proyecto;
+import com.arcticcuyes.gestion_proyectos.models.Servicio;
+import com.arcticcuyes.gestion_proyectos.models.SubTarea;
+import com.arcticcuyes.gestion_proyectos.models.Tarea;
+import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.EntregableProyectoRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.EntregableServicioRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.EstadoRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.HitoRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.ParticipanteRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.ProyectoRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.SubtareaRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.TareaRepository;
 
 
 
@@ -34,7 +53,9 @@ public class ProyectoService {
     private ServicioService servicioService;
     @Autowired
     private EntregableServicioRepository entregableServicioRepository;
-    
+    @Autowired
+    private UsuarioService usuarioService;
+
     @Autowired
     private EntregableProyectoRepository entregableProyectoRepository;
 
@@ -63,10 +84,23 @@ public class ProyectoService {
     }
 
     public Proyecto cambiarEstadoProyecto(Long idProyecto, Long idEstado){
-        Proyecto obtenido = proyectoRepository.findById(idProyecto).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto));
-        Estado proyectoEstadoAnterior = estadoRepository.findById(idEstado).get();
-        obtenido.setEstado(proyectoEstadoAnterior);
-        Proyecto proyectoNuevoEstado = proyectoRepository.save(obtenido);
+        Proyecto proyecto = proyectoRepository.findById(idProyecto).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto));
+        Estado estadoAnterior = proyecto.getEstado();
+        Estado nuevoEstado = estadoRepository.findById(idEstado).get();
+        proyecto.setEstado(nuevoEstado);
+        Proyecto proyectoNuevoEstado = proyectoRepository.save(proyecto);
+        System.out.println("El estado anterior es: " + estadoAnterior.getDescripcion());
+        System.out.println("El nuevo estado es: " + nuevoEstado.getDescripcion());
+        // Si estado anterior es propuesto y el nuevo estado es en desarrollo, entonces se debe crear un usuario para el cliente si no lo tiene
+        if(estadoAnterior.getDescripcion().equals("Propuesto") && nuevoEstado.getDescripcion().equals("En desarrollo")){
+            System.out.println("El estado anterior es Propuesto y el nuevo estado es En desarrollo");
+            // Verificar si el cliente tiene un usuario
+            if(proyectoNuevoEstado.getCliente().getUsuarioCliente() == null){
+                System.out.println("El cliente no tiene usuario, se creará uno");
+               usuarioService.createUsuarioCliente(proyectoNuevoEstado.getCliente());
+            }
+        }
+
         return proyectoNuevoEstado;
     }
 

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { hitoSchema, tareaSchema } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/schemas";
 import { useQueryClient } from "@tanstack/react-query";
+import { projectCompleteSchema } from "../../../nuevo/partials/schemas/project.schema";
 
 
 interface IProjectDetailContext {
@@ -24,6 +25,8 @@ interface IProjectDetailContext {
     removeSubtarea: UseFieldArrayRemove;
 
     queryClient: ReturnType<typeof useQueryClient>
+
+    projectDetailForm: UseFormReturn<z.infer<typeof projectCompleteSchema>, any, undefined>;
 }
 
 export const ProjectDetailContext = createContext<IProjectDetailContext>(
@@ -63,6 +66,12 @@ export default function ProjectDetailProvider({
     subtareas: []
   }
 
+
+  // Forms
+  const projectDetailForm = useForm<z.infer<typeof projectCompleteSchema>>({
+    resolver: zodResolver(projectCompleteSchema),
+    defaultValues: {}
+  });
 
   const tareaForm = useForm<z.infer<typeof tareaSchema>>({
     resolver: zodResolver(tareaSchema),
@@ -153,6 +162,7 @@ export default function ProjectDetailProvider({
         removeSubtarea,
         subtareasFields,
 
+        projectDetailForm,
         queryClient
     }}>
         {children}
