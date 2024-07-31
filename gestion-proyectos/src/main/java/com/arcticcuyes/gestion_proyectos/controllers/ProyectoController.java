@@ -56,7 +56,6 @@ public class ProyectoController {
          * 4 "Cancelado"
          * 5 "Rechazado"
          */
-        System.out.println("Obteniendo estadísticas de proyecto");
 
         Map<String, Object> mapConsultores  = new HashMap<>();
         mapConsultores.put("current", 1);
