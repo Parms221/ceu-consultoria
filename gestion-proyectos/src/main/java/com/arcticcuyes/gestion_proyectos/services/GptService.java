@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.arcticcuyes.gestion_proyectos.controllers.dao.GptRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,30 +36,40 @@ public class GptService {
     Resource functionCronogramaJsonFile;
 
     private String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-
-    public String getOpenAiResponse(String titulo, String fechaInicio, String fechaFin){
+    
+    public JsonNode getOpenAiResponse(GptRequest gptRequest){
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("OpenAI-Organization", organizationId);
         headers.set("OpenAI-Project", projectId);
-        String request = buildRequest(titulo, fechaInicio, fechaFin);
-        if(request == null) return "Error al construir la petición";
+        String request = buildRequest(gptRequest);
+
+        // retornar { error : "error al construir la petición" }
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode errorNode = objectMapper.createObjectNode();
+        errorNode.put("error", "Error formateando la respuesta");
+        if(request == null) return errorNode;
+
         HttpEntity<String> entity = new HttpEntity<>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(OPENAI_URL, HttpMethod.POST, entity, String.class);
-        return response.getBody();
+    
+        // Parsear la respuesta para devolver solo lo que nos interesa
+        JsonNode parsedResponse = parseResponse(response.getBody());
+
+        return parsedResponse;
     }
 
-    private String buildRequest(String tituloProyecto, String fechaInicio, String fechaFin) {
+    private String buildRequest(GptRequest gptRequest) {
         ObjectMapper objectMapper = new ObjectMapper(); 
         ObjectNode jsonNode = objectMapper.createObjectNode();
         jsonNode.put("model", apiModel);
         jsonNode.putArray("messages")
             .addObject()
             .put("role", "user")
-            .put("content", "Planifica el cronograma de un proyecto. El título del proyecto es: " + tituloProyecto+ 
-                ". Plantea hitos, tareas y subtareas para el proyecto mencionado. El proyecto empieza en "+fechaInicio+" y termina en "+fechaFin);
+            .put("content", "Planifica el cronograma de un proyecto. El título del proyecto es: " + gptRequest.getTituloProyecto()+ 
+                ". Plantea hitos, tareas y subtareas para el proyecto mencionado. El proyecto empieza en "+gptRequest.getFechaInicio()+" y termina en "+gptRequest.getFechaFin());
         
         JsonNode jsonNodeFunction;
         try{
@@ -75,5 +86,24 @@ public class GptService {
         String jsonString = jsonNode.toString();
 
         return jsonString;
+    }
+
+
+    public JsonNode parseResponse(String body){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(body);
+            JsonNode argumentsNode = jsonNode.path("choices").get(0)
+                .path("message").path("tool_calls").get(0)
+                .path("function").path("arguments");
+            
+            JsonNode parsedString = objectMapper.readTree(argumentsNode.asText());
+            return parsedString;
+        } catch (Exception e) {
+            e.printStackTrace();
+            ObjectNode errorNode = objectMapper.createObjectNode();
+            errorNode.put("error", "Error formateando la respuesta");
+            return errorNode;
+        }
     }
 }

@@ -3,12 +3,26 @@ import { Badge } from "@/components/ui/badge";
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { Estado } from "@/types/estado";
-import { Proyecto } from "@/types/proyecto";
+import { EstadisticasProyecto, Proyecto } from "@/types/proyecto";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export default function useProyecto() {
   const queryClient = useQueryClient();
+  
+  function getEstadisticasQuery(){
+    return useQuery<EstadisticasProyecto>({
+      queryKey: ["proyectos", "estadisticas"],
+      queryFn: async () => {
+        const response = await fetcherLocal(`/proyectos/estadisticas`);
+        if (!response.ok) {
+          throw new Error("Error fetching projects");
+        }
+        const data = await response.json();
+        return data;
+      },
+    })
+  }
 
   function getProyectosPropuestosQuery() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -126,8 +140,10 @@ export default function useProyecto() {
   }
 
   return {
+    getEstadisticasQuery,
     getProyectoByIdQuery,
     getProyectosPropuestosQuery,
+    
     actualizarEstadoProyecto,
     deleteProyecto,
 

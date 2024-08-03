@@ -26,3 +26,12 @@ export type Proyecto = {
     hitos?: Hito[];
     entregables?: EntregableProyecto[]
 }
+
+export type EstadisticasProyecto = {
+    terminados : number;
+    propuestos : number;
+    consultores : {
+        current : number;
+        max : number;
+    }
+}

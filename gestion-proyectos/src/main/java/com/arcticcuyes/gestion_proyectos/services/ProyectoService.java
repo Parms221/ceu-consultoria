@@ -70,6 +70,9 @@ public class ProyectoService {
     @Autowired
     private ParticipanteRepository participanteRepository;
 
+    public List<Proyecto> findAll(){
+        return (List<Proyecto>) proyectoRepository.findAll();
+    }
 
     public Page<Proyecto> findProyectos(String titulo, PageRequest pageRequest) {
         return proyectoRepository.findProyectoByTituloContainingIgnoreCase(titulo, pageRequest);
