@@ -7,27 +7,30 @@ import { TareaDTO } from "@/types/proyecto/Tarea/dto/TareaDTO";
 import { toast } from "sonner";
 
 export default function useTarea() {
-
-  async function updateTarea(tarea: TareaDTO, idTarea:number): Promise<boolean> {
+  async function updateTarea(
+    tarea: TareaDTO,
+    idTarea: number,
+  ): Promise<boolean> {
     const toastId = toast.loading("Guardando ...");
     // Si el idHito existe, se actualiza el registro
     try {
+      console.log("tarea updating", tarea);
       const response = await fetcherLocal(`/tareas/${idTarea}`, {
         method: "PUT",
-        body: JSON.stringify(tarea)
+        body: JSON.stringify(tarea),
       });
       const ok = await HandleServerResponse(response, undefined, toastId);
       if (!ok) {
         throw new Error("Error al actualizar tarea");
       }
       toast.success("Tarea actualizada", {
-        id: toastId
+        id: toastId,
       });
       return ok;
     } catch (e) {
       console.error(e);
       toast.error("Error al actualizar la tarea", {
-        id: toastId
+        id: toastId,
       });
       throw new Error("Error al actualizar tarea");
     }
@@ -38,32 +41,32 @@ export default function useTarea() {
 
     try {
       const response = await fetcherLocal(`/tareas/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
       const ok = await HandleServerResponse(response, undefined, toastId);
       if (!ok) {
         throw new Error("Error al eliminar el registro");
       }
       toast.success("Tarea eliminada", {
-        id: toastId
+        id: toastId,
       });
       return ok;
     } catch (error) {
       console.error(error);
       toast.error("Error al eliminar el registro", {
-        id: toastId
+        id: toastId,
       });
       throw new Error("Error al eliminar tarea");
     }
   }
 
-  async function addFeedback(idTarea : number, feedback : FeedbackTareaDTO){
+  async function addFeedback(idTarea: number, feedback: FeedbackTareaDTO) {
     // const toastId = toast.loading("Guardando ...");
     // Si el idHito existe, se actualiza el registro
     try {
       const response = await fetcherLocal(`/tareas/${idTarea}/feedback`, {
         method: "POST",
-        body: JSON.stringify(feedback)
+        body: JSON.stringify(feedback),
       });
       const ok = await HandleServerResponse(response, undefined, undefined);
       if (!ok) {
@@ -85,6 +88,6 @@ export default function useTarea() {
   return {
     updateTarea,
     deleteTarea,
-    addFeedback
+    addFeedback,
   };
 }
