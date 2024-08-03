@@ -10,6 +10,8 @@ import { PlusCircle } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
+import useParticipante from "@/hooks/Partcipante/useParticipante";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface IParticipantesProps {
   form: UseFormReturn<z.infer<typeof projectCompleteSchema>, any, undefined>;
@@ -45,16 +47,35 @@ export function BoxParticipante({
 }) {
   const { getConsultoresQuery } = useConsultor();
   const { data: consultores } = getConsultoresQuery();
-  const { projectDetailForm } = useProjectDetail();
- 
-  const currentParticipantes =  projectDetailForm.watch("participantes");
+  const queryClient = useQueryClient();
+  const { projectDetailForm, projectId } = useProjectDetail();
+  const { mutate } = useMutation({
+    mutationFn: (consultorId: string | number) =>
+      añadirParticipante({
+        idProyecto: projectId,
+        idConsultor: consultorId,
+      }),
+    onSuccess: () => {
+      // invalidar el query de proyecto id para que se vuelva a cargar
+      queryClient.invalidateQueries({
+        queryKey: ["proyecto", projectId],
+      });
+    },
+  });
+
+  const currentParticipantes = projectDetailForm.watch("participantes") || [];
+  const { añadirParticipante } = useParticipante();
+
+  const handleAddParticipante = (consultorId: string | number) => {
+    mutate(consultorId);
+  };
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
-          className="flex w-46 items-center gap-x-2 py-6 px-0"
+          className="flex w-46 items-center gap-x-2 px-0 py-6"
         >
           {!participante ? (
             <>
@@ -72,7 +93,7 @@ export function BoxParticipante({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="z-99999 w-46 border border-neutral-300 bg-white py-1.5 px-1 shadow-xl"
+        className="z-99999 w-46 border border-neutral-300 bg-white px-1 py-1.5 shadow-xl"
         align="start"
       >
         <div>
@@ -80,25 +101,31 @@ export function BoxParticipante({
             <div>
               Combobox consultores a elegir
               <ul>
-                {consultores?.filter(
-                  (consultor) =>
-                    !currentParticipantes?.find(
-                      (p) => p.idConsultor === consultor.idConsultor,
-                    ),
-                ).map((consultor) => (
-                  <li key={consultor.idConsultor}>
-                    <Button
-                      variant="ghost"
-                      onClick={() => console.log(consultor)}
-                    >
-                      {consultor.nombres} {consultor.apellidos}
-                    </Button>
-                  </li>
-                ))}
+                {consultores
+                  ?.filter(
+                    (consultor) =>
+                      !currentParticipantes?.find(
+                        (p) => p.idConsultor === consultor.idConsultor,
+                      ),
+                  )
+                  .map((consultor) => (
+                    <li key={consultor.idConsultor}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          handleAddParticipante(consultor.idConsultor);
+                        }}
+                      >
+                        {consultor.nombres} {consultor.apellidos}
+                      </Button>
+                    </li>
+                  ))}
               </ul>
             </div>
           ) : (
-            <Button variant="destructive" className="w-full" size={"sm"}>Eliminar</Button>
+            <Button variant="destructive" className="w-full" size={"sm"}>
+              Eliminar
+            </Button>
           )}
         </div>
       </PopoverContent>
