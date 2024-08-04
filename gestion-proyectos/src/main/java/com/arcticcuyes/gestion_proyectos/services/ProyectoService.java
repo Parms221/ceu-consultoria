@@ -3,6 +3,7 @@ package com.arcticcuyes.gestion_proyectos.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -89,21 +90,7 @@ public class ProyectoService {
 
     public ResumenProyectoDTO getResumenProyecto(Proyecto proyecto) {
         ResumenProyectoDTO resumen = new ResumenProyectoDTO();
-        resumen.setIdProyecto(proyecto.getIdProyecto());
-        resumen.setTitulo(proyecto.getTitulo());
-        resumen.setDescripcion(proyecto.getDescripcion());
-        resumen.setObjetivos(proyecto.getObjetivos());
-        resumen.setRequerimientos(proyecto.getRequerimientos());
-        resumen.setIndicaciones(proyecto.getIndicaciones());
-        resumen.setFechaInicio(proyecto.getFechaInicio());
-        resumen.setFechaLimite(proyecto.getFechaLimite());
-        resumen.setPrecio(proyecto.getPrecio());
-        resumen.setCliente(proyecto.getCliente());
-        resumen.setServicio(proyecto.getServicio());
-        resumen.setEstado(proyecto.getEstado());
-        resumen.setCreatedAt(proyecto.getCreatedAt());
-        resumen.setUpdatedAt(proyecto.getUpdatedAt());
-        resumen.setHitos(proyecto.getHitos());
+        BeanUtils.copyProperties(proyecto, resumen);
         resumen.calcularProgreso();
         return resumen;
     }
