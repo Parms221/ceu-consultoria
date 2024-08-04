@@ -1,10 +1,9 @@
 import { isBefore } from "date-fns";
 import { z } from "zod";
 
-export const tareaSchema = z.object({
-    idTarea: z.string().optional().default(
-      crypto.randomUUID()
-    ), 
+export const tareaSchema = z
+  .object({
+    idTarea: z.string().optional().default(crypto.randomUUID()),
     titulo: z.string().min(2).max(50),
     descripcion: z.string().min(2).max(150),
     fechaInicio: z.date({
@@ -14,25 +13,25 @@ export const tareaSchema = z.object({
       required_error: "La fecha de finalización es requerida",
     }),
     estado: z.number(),
-    participantesAsignados: z.array(
-      z.object({
-        idConsultor: z.number(),
-      }),
-    ).optional(),
-    subtareas: z.array(
-      z.object({
-        descripcion: z.string().min(2).max(50),
-        completado: z.boolean(),
-      }),
-    ).optional(),
-  }).superRefine((data, ctx) => {
-    if(data.fechaInicio && data.fechaFin){
-      if(isBefore(data.fechaFin, data.fechaInicio)){
+    participantesAsignados: z.array(z.string()).optional(),
+    subtareas: z
+      .array(
+        z.object({
+          descripcion: z.string().min(2).max(50),
+          completado: z.boolean(),
+        }),
+      )
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fechaInicio && data.fechaFin) {
+      if (isBefore(data.fechaFin, data.fechaInicio)) {
         ctx.addIssue({
-          message: "La fecha de finalización no puede ser anterior a la de inicio",
+          message:
+            "La fecha de finalización no puede ser anterior a la de inicio",
           code: z.ZodIssueCode.custom,
           path: ["fechaInicio"],
-        })
+        });
       }
     }
-  });;
+  });

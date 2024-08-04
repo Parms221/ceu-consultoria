@@ -299,6 +299,32 @@ public class ProyectoService {
             throw e; // Re-throw the exception to be handled by the controller
         }
     }
+    // getParticipantesProyecto
+
+    // add participante
+    public void addParticipanteProyecto(Long idProyecto, Long idConsultor) {
+        Proyecto proyecto = proyectoRepository.findById(idProyecto)
+            .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto));
+        Consultor consultor = consultorRepository.findById(idConsultor)
+            .orElseThrow(() -> new ResourceNotFoundException("Consultor no encontrado con el id  " + idConsultor));
+        // primero verificar si el consultor ya está en el proyecto
+        List<Participante> participantes = proyecto.getParticipantes();
+        for (Participante participante : participantes) {
+            if (participante.getConsultorParticipante().getIdConsultor() == idConsultor) {
+                return; // El consultor ya está en el proyecto
+            }
+        }
+        Participante participante = new Participante();
+        participante.setProyectoIngresado(proyecto);
+        participante.setConsultorParticipante(consultor);
+        participanteRepository.save(participante);
+    }
+
+    public List<Participante> getParticipantesProyecto(Long idProyecto) {
+        return proyectoRepository.findById(idProyecto)
+            .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto))
+            .getParticipantes();
+    }
 
     public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO) {
         Proyecto existingProyecto = proyectoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + id));

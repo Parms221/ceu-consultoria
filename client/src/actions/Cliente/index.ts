@@ -5,19 +5,18 @@ import {
   CreateClienteJuridicoDto,
   CreateClienteNaturalDto,
   UpdateClienteJuridicoDto,
-  UpdateClienteNaturalDto
+  UpdateClienteNaturalDto,
 } from "@/types/cliente/ClienteDto";
 import { revalidateTag } from "next/cache";
 
 export async function getClientes(): Promise<Cliente[]> {
   try {
     const response = await fetcher("/clientes", {
-      method: "GET"
+      method: "GET",
     });
     let data;
     if (response.ok) {
       data = await response.json();
-      console.log(data);
       return data as Cliente[];
     } else {
       console.error("Error: ", response);
@@ -32,12 +31,11 @@ export async function getClientes(): Promise<Cliente[]> {
 export async function getCliente(id: string): Promise<Cliente> {
   try {
     const response = await fetcher("/clientes/" + id, {
-      method: "GET"
+      method: "GET",
     });
     let data;
     if (response.ok) {
       data = await response.json();
-      console.log(data);
       return data as Cliente;
     } else {
       console.error("Error: ", response);
@@ -50,30 +48,30 @@ export async function getCliente(id: string): Promise<Cliente> {
 }
 
 export async function createClienteJuridico(
-  data: CreateClienteJuridicoDto
+  data: CreateClienteJuridicoDto,
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher("/clientes/juridicos/create", {
       method: "POST",
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return returnResponse(
       response,
       "clientes",
       "Cliente creado exitosamente",
-      "Error al crear cliente jurídico"
+      "Error al crear cliente jurídico",
     );
   } catch (e) {
     console.log(e);
     return {
       status: "error",
-      message: "Error al crear cliente"
+      message: "Error al crear cliente",
     };
   }
 }
 
 export async function udpateClienteJuridico(
-  data: UpdateClienteJuridicoDto
+  data: UpdateClienteJuridicoDto,
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher(
@@ -82,27 +80,27 @@ export async function udpateClienteJuridico(
         method: "PUT",
         body: JSON.stringify({
           ...data,
-          idCliente: undefined
-        })
-      }
+          idCliente: undefined,
+        }),
+      },
     );
     return returnResponse(
       response,
       "clientes",
       "Cliente actualizado exitosamente",
-      "Error al actualizar el cliente"
+      "Error al actualizar el cliente",
     );
   } catch (e) {
     console.log(e);
     return {
       status: "error",
-      message: "Error al actualizar cliente"
+      message: "Error al actualizar cliente",
     };
   }
 }
 
 export async function udpateClienteNatural(
-  data: UpdateClienteNaturalDto
+  data: UpdateClienteNaturalDto,
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher(
@@ -111,66 +109,66 @@ export async function udpateClienteNatural(
         method: "PUT",
         body: JSON.stringify({
           ...data,
-          idCliente: undefined
-        })
-      }
+          idCliente: undefined,
+        }),
+      },
     );
     return returnResponse(
       response,
       "clientes",
       "Cliente actualizado exitosamente",
-      "Error al actualizar el cliente"
+      "Error al actualizar el cliente",
     );
   } catch (e) {
     console.log(e);
     return {
       status: "error",
-      message: "Error al actualizar cliente"
+      message: "Error al actualizar cliente",
     };
   }
 }
 
 export async function createClienteNatural(
-  data: CreateClienteNaturalDto
+  data: CreateClienteNaturalDto,
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher("/clientes/naturales/create", {
       method: "POST",
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return returnResponse(
       response,
       "clientes",
       "Cliente creado exitosamente",
-      "Error al crear cliente"
+      "Error al crear cliente",
     );
   } catch (e) {
     console.log(e);
     return {
       status: "error",
-      message: "Error al crear cliente"
+      message: "Error al crear cliente",
     };
   }
 }
 
 export async function deleteCliente(
-  id: number
+  id: number,
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher(`/clientes/delete/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
     return returnResponse(
       response,
       "clientes",
       "Cliente eliminado exitosamente",
-      "Error al eliminar cliente"
+      "Error al eliminar cliente",
     );
   } catch (error) {
     console.error(error);
     return {
       status: "error",
-      message: "Error al eliminar cliente"
+      message: "Error al eliminar cliente",
     };
   }
 }
@@ -179,17 +177,17 @@ function returnResponse(
   response: Response,
   tag: string,
   successMessage: string,
-  errorMessage: string
+  errorMessage: string,
 ) {
   if (response.ok) {
     revalidateTag(tag);
     return {
       status: "success",
-      message: successMessage
+      message: successMessage,
     };
   }
   return {
     status: "error",
-    message: errorMessage
+    message: errorMessage,
   };
 }
