@@ -31,7 +31,7 @@ import useTarea from "@/hooks/Tarea/useTarea";
 import SelectParticipantesTarea from "./partials/participantes";
 
 export default function TareaForm() {
-  const { updateTarea, getParticipantesDeProyectoQuery } = useTarea();
+  const { updateTarea } = useTarea();
   const {
     selectedTask,
     tareaForm: form,

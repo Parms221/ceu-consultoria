@@ -1,12 +1,12 @@
 import { MultiSelect } from "@/components/Multiselect/Multiselect";
 import { FormField, FormItem, FormLabel } from "@/components/ui/form";
-import useTarea from "@/hooks/Tarea/useTarea";
 
 import React from "react";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
+import useParticipante from "@/hooks/Partcipante/useParticipante";
 
 const SelectParticipantesTarea = () => {
-  const { getParticipantesDeProyectoQuery } = useTarea();
+  const { getParticipantesDeProyectoQuery } = useParticipante();
   const { projectId, tareaForm: form } = useProjectDetail();
 
   const res = getParticipantesDeProyectoQuery(projectId);

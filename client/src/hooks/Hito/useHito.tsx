@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export default function useHito() {
-
   function getHitosQuery(projectId: number) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Hito[]>({
@@ -21,31 +20,38 @@ export default function useHito() {
         }
         const hitos: Hito[] = await response.json();
         return hitos;
-      }
+      },
     });
   }
 
-  async function saveHito(projectId: number, hito: HitoDTO, idHito?:number): Promise<boolean> {
+  async function saveHito(
+    projectId: number,
+    hito: HitoDTO,
+    idHito?: number,
+  ): Promise<boolean> {
     const toastId = toast.loading("Guardando ...");
     // Si el idHito existe, se actualiza el registro
-    const endpoint = idHito ? `/hitos/${projectId}/update/${idHito}` : `/hitos/${projectId}/save`;
+    const endpoint = idHito
+      ? `/hitos/${projectId}/update/${idHito}`
+      : `/hitos/${projectId}/save`;
     try {
+      console.log("GUARDANDO HITO", hito);
       const response = await fetcherLocal(endpoint, {
         method: "POST",
-        body: JSON.stringify(hito)
+        body: JSON.stringify(hito),
       });
       const ok = await HandleServerResponse(response, undefined, toastId);
       if (!ok) {
         throw new Error("Error al guardar hito");
       }
       toast.success("Hito guardado", {
-        id: toastId
+        id: toastId,
       });
       return ok;
     } catch (e) {
       console.error(e);
       toast.error("Error al guardar el hito", {
-        id: toastId
+        id: toastId,
       });
       throw new Error("Error al guardar hito");
     }
@@ -56,20 +62,20 @@ export default function useHito() {
 
     try {
       const response = await fetcherLocal(`/hitos/deleteHito/${hitoId}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
       const ok = await HandleServerResponse(response, undefined, toastId);
       if (!ok) {
         throw new Error("Error al eliminar el registro");
       }
       toast.success("Hito eliminado", {
-        id: toastId
+        id: toastId,
       });
       return ok;
     } catch (error) {
       console.error(error);
       toast.error("Error al eliminar el registro", {
-        id: toastId
+        id: toastId,
       });
       throw new Error("Error al eliminar hito");
     }
@@ -78,6 +84,6 @@ export default function useHito() {
   return {
     getHitosQuery,
     saveHito,
-    deleteHito
+    deleteHito,
   };
 }
