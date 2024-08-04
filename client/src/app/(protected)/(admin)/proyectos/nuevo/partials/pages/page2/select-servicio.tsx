@@ -6,17 +6,16 @@ import { Servicio } from "@/types/servicio";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { z } from "zod";
 import { useEffect } from "react";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn, formatTime } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import DatePicker from "@/components/ui/datepicker/date-picker";
 import { Check, CheckCircle2 } from "lucide-react";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { format, isBefore, startOfDay } from "date-fns";
+import { format, formatDuration, intervalToDuration, isBefore, startOfDay } from "date-fns";
 import { es } from "date-fns/locale/es";
-import { Input } from "@/components/ui/input";
 import TimeInput from "@/components/ui/input-time";
 
 export default function SelectServicio({
@@ -74,19 +73,20 @@ export default function SelectServicio({
       watchServicio, dataQuery.data
     ])
     
-    // Para formatear las fechas de inicio y fin a date time 
+    // Para formatear las fechas de inicio y fin a date time y duración
     const formatDateTimeRange = (index : number) => {
         const fechas = form.watch(`hitos.${index}.fechas`) || {};
         const inicio = fechas.from;
         const fin = fechas.to;
         if (!inicio || !fin || !inicio.getTime() || !fin.getTime())
             return (
-                <span>Seleccione una fecha de inicio y fin para este entregable</span>
+                <span>{form.getFieldState(`hitos.${index}.fechas`).error?.message}</span>
             );
         
         const formato = "d 'de' MMMM 'del' yyyy";
         return (
             <>
+              <span className="text-red">{form.getFieldState(`hitos.${index}.fechas`).error?.message}</span>
               <div className="flex items-center gap-1.5">
                 <span>
                   Desde :
@@ -113,6 +113,14 @@ export default function SelectServicio({
                       form.setValue(`hitos.${index}.fechas.to`, date);
                     }}
                   />
+              </div>
+              <div>
+                <span>Duración: </span>
+                {`${formatDuration(
+                    intervalToDuration({start: new Date(inicio), end: new Date(fin)}),
+                    {locale: es}
+                  )}
+                `}
               </div>
             </>
         );
@@ -251,13 +259,12 @@ export default function SelectServicio({
                                   }}
                                 />
                             </FormControl>
-                            <FormMessage />
                             </FormItem>
                             )}
                         />
                     </div>
                     <div className="text-sm leading-none space-y-2">
-                        {formatDateTimeRange(index)}     
+                        {formatDateTimeRange(index)}    
                     </div>            
                 </div>
             )

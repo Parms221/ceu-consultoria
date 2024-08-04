@@ -27,7 +27,7 @@ import { ProyectoIncompletoJsonResponse } from "@/types/proyecto/Response";
 import SelectServicio from "./select-servicio";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { formatTime } from "@/lib/utils";
-import { isBefore, startOfDay } from "date-fns";
+import { endOfDay, isBefore, startOfDay } from "date-fns";
 import TimeInput from "@/components/ui/input-time";
 
 export default function ProjectFormPage2() {
@@ -39,11 +39,11 @@ export default function ProjectFormPage2() {
     defaultValues: formProject.getValues("project") || {
       title: "Proyecto 1",
       description: "Descripción de proyecto",
-      fechaInicio: new Date(),
+      fechaInicio: startOfDay(new Date()),
       fechaLimite: (function () {
         const date = new Date();
         date.setDate(new Date().getDate() + 1);
-        return date;
+        return endOfDay(date);
       })(),
       objetivos: ["Objetivo1"],
       servicioId: 1,
