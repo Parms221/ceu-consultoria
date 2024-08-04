@@ -18,5 +18,5 @@ public class TareaDTO {
     private Timestamp fechaFin;
     private List<SubtareaDTO> subtareas;
     private Long estado;
-    private Set<Long> participantesAsignados;
+    private List<Long> participantesAsignados;
 }

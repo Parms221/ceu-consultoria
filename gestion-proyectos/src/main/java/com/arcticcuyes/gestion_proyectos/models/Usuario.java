@@ -1,9 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
@@ -57,7 +56,7 @@ public class Usuario {
         joinColumns = @JoinColumn(name="id_usuario"),
         inverseJoinColumns = @JoinColumn(name="id_rol")
     )
-    private Set<Rol> roles = new HashSet<>();
+    private List<Rol> roles = new ArrayList<>();
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
