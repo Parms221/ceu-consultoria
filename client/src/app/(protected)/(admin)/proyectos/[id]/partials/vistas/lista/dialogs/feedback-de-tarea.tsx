@@ -25,6 +25,7 @@ import { formatDate, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";
 import { cn } from "@/lib/utils";
 import useHito from "@/hooks/Hito/useHito";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Props = {
   tarea : Tarea | Hito
@@ -53,6 +54,7 @@ export default function FeedbackChat({ tarea }: Props) {
   
 
   async function onSubmit(values: z.infer<typeof feedbackSchema>){
+    if(values.mensaje.trim() === "") return
     if(isHito(tarea)){
       if(!tarea.idHito) return
       await addFeedbackHito(tarea.idHito, values)
@@ -99,8 +101,16 @@ export default function FeedbackChat({ tarea }: Props) {
                         <FormItem>
                             <div className="flex items-center gap-1.5">
                                 <FormControl>
-                                <Textarea placeholder="Escriba aquí alguna observación o comentario sobre esta tarea" className="max-h-[200px]"
+                                <Textarea 
+                                  placeholder="Escriba aquí alguna observación o comentario sobre esta tarea" className="max-h-[200px]"
                                   {...field}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      if(e.shiftKey)
+                                        return
+                                      form.handleSubmit(onSubmit)()
+                                    }
+                                  }}
                                 />
                                 </FormControl>
                             </div>
@@ -108,7 +118,7 @@ export default function FeedbackChat({ tarea }: Props) {
                         </FormItem>
                     )}
                 />
-              <Button variant={"default"} size={"sm"} className="mt-2"
+              <Button variant={"default"} size={"sm"} className="mt-2" id="send-feedback"
                 disabled={form.formState.isSubmitting}
               >
                   <SendHorizonal />
@@ -134,36 +144,45 @@ export function FeedbackMessage({
 }) {
   const usuario = feedback.usuario;
   return (
-    <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-2 relative">
-      <div className={cn(
-        "flex items-center gap-2",
-        usuario.roles.some(rol => rol.rol === "ROLE_CLIENTE") && "flex-row-reverse"
-      )}>
-        <Image
-          src="/images/user/user-05.png"
-          alt={usuario.name}
-          width={64}
-          height={64}
-          className="rounded-full w-8.5 h-8.5"
-        />
-        <div className={
-          cn(
-            "rounded-md p-4 w-full text-ceu-azul bg-ceu-celeste",
-            usuario.roles.some(rol => rol.rol === "ROLE_ADMIN") && " text-white",
-            usuario.roles.some(rol => rol.rol === "ROLE_CLIENTE") && "bg-[#CDD6FD]"
-          )
-        }>
-          <div className="flex justify-between items-center">
-            <h4 className="text-sm font-semibold ">
-              {`${usuario.name}`}
-            </h4>
+    <div className="bg-gray-100 dark:bg-gray-800 relative rounded-md p-2">
+      <div
+        className={cn(
+          "flex  gap-2",
+          usuario.roles.some((rol) => rol.rol === "ROLE_CLIENTE") &&
+            "flex-row-reverse",
+        )}
+      >
+        <Avatar className="h-8.5 w-8.5 ">
+          <AvatarImage
+            src="/images/user/user-05.png"
+            className="h-full w-full object-cover object-center"
+            alt={usuario.name}
+            width={320}
+            height={320}
+          />
+          <AvatarFallback className="text-xl font-bold text-white bg-ceu-celeste/50">
+            {usuario.name.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div
+          className={cn(
+            "w-full rounded-md bg-ceu-celeste p-4 text-white",
+            usuario.roles.some((rol) => rol.rol === "ROLE_ADMIN") &&
+              " text-white",
+            usuario.roles.some((rol) => rol.rol === "ROLE_CLIENTE") &&
+              "bg-[#CDD6FD] text-ceu-azul",
+          )}
+        >
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold ">{`${usuario.name}`}</h4>
             <span className="text-xs">
-              { formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true, locale: es }) }
+              {formatDistanceToNow(new Date(feedback.createdAt), {
+                addSuffix: true,
+                locale: es,
+              })}
             </span>
           </div>
-          <p className="text-body-sm break-words pr-2">
-            {feedback.mensaje}
-          </p>
+          <p className="text-body-sm break-words pr-2">{feedback.mensaje}</p>
         </div>
       </div>
     </div>
