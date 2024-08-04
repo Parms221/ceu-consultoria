@@ -9,12 +9,10 @@ import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +43,7 @@ public class ProyectoController {
         return ResponseEntity.ok(proyectos);
     }
 
+    /* Muestra estadísticas para las cards en lista de proyectos (admin) */
     @GetMapping("/estadisticas")
     public ResponseEntity<?> getEstadisticasProyectos(){
 
@@ -71,6 +70,16 @@ public class ProyectoController {
         response.put("propuestos", proyectosPropuestos.size());
         response.put("consultores", mapConsultores);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/resumen")
+    public ResponseEntity<?> getResumenProyectoById(@PathVariable Long id) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(id);
+            return ResponseEntity.ok(proyectoService.getResumenProyecto(proyecto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener el resumen del proyecto: " + e.getMessage());
+        }
     }
 
     @GetMapping("/propuestos")

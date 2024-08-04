@@ -25,9 +25,9 @@ import { isBefore, startOfDay } from "date-fns";
 
 export default function VistaResumen() {
   const { projectId, projectDetailForm : form } = useProjectDetail();
-  const { getProyectoByIdQuery, getBadgeByStatus } = useProyecto();
+  const { getResumenByIdQuery, getBadgeByStatus } = useProyecto();
 
-  const { data, isLoading, isError } = getProyectoByIdQuery(projectId);
+  const { data, isLoading, isError } = getResumenByIdQuery(projectId);
 
 
   useEffect(() => {
