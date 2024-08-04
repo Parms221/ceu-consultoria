@@ -1,9 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
@@ -84,7 +83,7 @@ public class Tarea {
         joinColumns = @JoinColumn(name="id_tarea"), 
         inverseJoinColumns = @JoinColumn(name="id_participante")
     )
-    private Set<Participante> participantesAsignados = new HashSet<>();
+    private List<Participante> participantesAsignados = new ArrayList<>();
 
     @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL)
     private List<SubTarea> subTareas;

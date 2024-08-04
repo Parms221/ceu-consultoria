@@ -34,7 +34,7 @@ export default function HitoForm(
             fechaFinalizacion: values.fechas.to!,
             tareas: formatTareas
         }
-   
+
         await saveHito(projectId, formattedData, selectedHito?.idHito)
         
         resetForms()

@@ -32,13 +32,21 @@ public class FeedbackTarea {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_consultor", referencedColumnName = "id_consultor", nullable = false)
-    private Consultor consultor;
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id", nullable = false)
+    private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="id_tarea", referencedColumnName = "id_tarea", nullable = false)
+    @JoinColumn(name="id_tarea", referencedColumnName = "id_tarea", nullable = true)
     @JsonIgnore
     private Tarea tarea;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="id_hito", referencedColumnName = "id_hito", nullable = true)
+    @JsonIgnore
+    private Hito hito;
+
+    @Column(columnDefinition = "BOOLEAN", nullable = false)
+    private boolean leido = false;
 
     @Column(columnDefinition = "TEXT")
     private String mensaje;

@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -60,5 +61,8 @@ public class Hito {
     @OneToMany(mappedBy = "hito",cascade = CascadeType.ALL)
     private List<Tarea> tareasDelHito;
 
-   
+   // Feedbacks
+    @OneToMany(mappedBy = "hito",cascade = CascadeType.ALL)
+    @OrderBy("createdAt DESC")
+    private List<FeedbackTarea> feedbacks;
 }

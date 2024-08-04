@@ -4,6 +4,7 @@ import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { Hito } from "@/types/proyecto/Hito";
 import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
+import { FeedbackTareaDTO } from "@/types/proyecto/Tarea/dto/FeedbackTareaDTO";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -81,9 +82,29 @@ export default function useHito() {
     }
   }
 
+  async function addFeedback(idHito: number, feedback: FeedbackTareaDTO) {
+    try {
+      const response = await fetcherLocal(`/hitos/${idHito}/feedback`, {
+        method: "POST",
+        body: JSON.stringify(feedback),
+      });
+      const ok = await HandleServerResponse(response, undefined, undefined);
+      if (!ok) {
+        toast.error("Error al enviar feedback sobre esta tarea");
+        throw new Error("Error al enviar feedback sobre esta tarea");
+      }
+      return ok;
+    } catch (e) {
+      console.error(e);
+      throw new Error("Error al enviar feedback");
+    }
+  }
+
   return {
     getHitosQuery,
     saveHito,
     deleteHito,
+
+    addFeedback,
   };
 }

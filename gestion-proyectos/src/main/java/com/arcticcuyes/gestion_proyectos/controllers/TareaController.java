@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Tarea.FeedbackDTO;
 import com.arcticcuyes.gestion_proyectos.models.Consultor;
+import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 import com.arcticcuyes.gestion_proyectos.services.ConsultorService;
+import com.arcticcuyes.gestion_proyectos.services.FeedbackService;
 import com.arcticcuyes.gestion_proyectos.services.TareaService;
+import com.arcticcuyes.gestion_proyectos.services.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -26,8 +29,11 @@ import jakarta.validation.Valid;
 public class TareaController {
     @Autowired
     private TareaService tareaService;
+    @Autowired
+    private FeedbackService feedbackService;
+
     @Autowired 
-    private ConsultorService consultorService;
+    private UsuarioService usuarioService;
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTarea(@PathVariable Long id, @RequestBody @Valid TareaDTO tareaDTO) {
@@ -51,18 +57,15 @@ public class TareaController {
 
     // Endpoints de feedback para una tarea
     @PostMapping("/{id}/feedback")
-    @Secured({"ROLE_CONSULTOR"})
     public ResponseEntity<?> addFeedback(
         @AuthenticationPrincipal UsuarioAuth auth,
         @PathVariable Long id, 
         @RequestBody @Valid FeedbackDTO feedbackDTO
     ) {
         try {
-            // find consultor by user id
-            System.out.println("Buscando consultor por usuario: " + auth.getUsuario().getId());
-            Consultor consultor = consultorService.findConsultorByUser(auth.getUsuario());
-            System.out.println("Registrando feedback de consultor: " + consultor);
-            tareaService.addFeedback(id, feedbackDTO, consultor);
+            // find by user id
+            Usuario usuario = usuarioService.findById(auth.getUsuario().getId());
+            feedbackService.addFeedbackTarea(id, feedbackDTO, usuario);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al agregar feedback a la tarea: " + e.getMessage());

@@ -1,8 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
@@ -52,7 +52,7 @@ public class Participante {
 
 
     @ManyToMany(mappedBy = "participantesAsignados")
-    private Set<Tarea> tareas = new HashSet<>();
+    private List<Tarea> tareas = new ArrayList<>();
 
 
     @Override

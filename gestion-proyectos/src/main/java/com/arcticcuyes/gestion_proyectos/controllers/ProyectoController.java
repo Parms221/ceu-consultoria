@@ -60,6 +60,7 @@ public class ProyectoController {
         System.out.println("Obteniendo estadísticas de proyecto");
 
         Map<String, Object> mapConsultores  = new HashMap<>();
+        // TODO: Obtener el número de consultores asignados al menos a un proyecto / número total de consultores
         mapConsultores.put("current", 1);
         mapConsultores.put("max", 5);
 

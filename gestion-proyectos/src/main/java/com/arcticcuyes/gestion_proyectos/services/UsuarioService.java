@@ -1,8 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
 import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
@@ -51,7 +50,7 @@ public class UsuarioService {
         newUser.setName(usuarioDto.getName());
         newUser.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
 
-        Set<Rol> roles = new HashSet<>();
+        List<Rol> roles = new ArrayList<>();
         for (String rol : usuarioDto.getRoles()) {
             roles.add(roleRepository.findByRol(rol));
         }
@@ -91,7 +90,7 @@ public class UsuarioService {
             usuario.setPassword(passwordEncoder.encode(clienteJuridico.getRuc()));
         }
 
-        Set<Rol> roles = new HashSet<>();
+        List<Rol> roles = new ArrayList<>();
         roles.add(roleRepository.findByRol("ROLE_CLIENTE"));
         usuario.setRoles(roles);
         
@@ -119,7 +118,7 @@ public class UsuarioService {
         current.setEmail(newUsuarioDto.getEmail());
         current.setName(newUsuarioDto.getName());
         current.setEnabled(newUsuarioDto.isEnabled());
-        Set<Rol> roles = new HashSet<>();
+        List<Rol> roles = new ArrayList<>();
         for (String rol : newUsuarioDto.getRoles()) {
             Rol objRol = roleRepository.findByRol(rol);
             roles.add(objRol);
