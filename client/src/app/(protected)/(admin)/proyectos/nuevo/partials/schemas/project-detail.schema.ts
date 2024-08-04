@@ -11,6 +11,7 @@ export const projectDetailSchema = z.object({
     .min(3, { message: "La descripción debe tener al menos 3 caracteres" })
     .optional()
     .or(z.literal("")),
+  precio : z.union([z.string(), z.number()]).optional(),
   objetivos: z
     .array(
       z
@@ -36,6 +37,22 @@ export const projectDetailSchema = z.object({
       message: "La fecha de inicio debe ser menor a la fecha límite",
       code: z.ZodIssueCode.custom,
       path: ["fechaInicio"],
+    });
+  }
+
+  if(!data.precio || data.precio === ""){ 
+    ctx.addIssue({
+      message: "El precio es requerido",
+      code: z.ZodIssueCode.custom,
+      path: ["precio"],
+    });
+  }
+
+  if(data.precio && Number(data.precio) === 0){
+    ctx.addIssue({
+      message: "El precio debe ser mayor a 0",
+      code: z.ZodIssueCode.custom,
+      path: ["precio"],
     });
   }
 });

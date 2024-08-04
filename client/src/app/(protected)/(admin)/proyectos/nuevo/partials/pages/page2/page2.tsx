@@ -70,7 +70,7 @@ export default function ProjectFormPage2() {
           tareas: []
         })),
         indicaciones: "",
-        precio: 100.0,
+        precio: data.precio,
         requerimientos: "",
         idCliente: clientId as number,
       },
