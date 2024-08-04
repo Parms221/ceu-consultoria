@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
+import com.arcticcuyes.gestion_proyectos.models.Participante;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -189,6 +190,28 @@ public class ProyectoController {
             System.err.println("Error en el controlador: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar los participantes: " + e.getMessage());
+        }
+    }
+
+    // endpoint para añadir un participante a un proyecto
+    @PostMapping("{id}/participantes/add")
+    public ResponseEntity<?> addParticipanteProyecto(@PathVariable Long id, @RequestBody Long idConsultor) {
+        try {
+            proyectoService.addParticipanteProyecto( id, idConsultor);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al añadir el participante: " + e.getMessage());
+        }
+    }
+
+    // Endpoints para obtener los participantes de un proyecto
+    @GetMapping("{id}/participantes")
+    public ResponseEntity<?> getParticipantesProyecto(@PathVariable Long id) {
+        try {
+            List<Participante> participantes = proyectoService.getParticipantesProyecto(id);
+            return ResponseEntity.ok(participantes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener los participantes: " + e.getMessage());
         }
     }
 

@@ -52,6 +52,7 @@ public class Participante {
 
 
     @ManyToMany(mappedBy = "participantesAsignados")
+    @JsonIgnore
     private List<Tarea> tareas = new ArrayList<>();
 
 
