@@ -9,13 +9,15 @@ import { useEffect } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import DatePicker from "@/components/ui/datepicker/date-picker";
 import { Check, CheckCircle2 } from "lucide-react";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
+import { format, isBefore, startOfDay } from "date-fns";
 import { es } from "date-fns/locale/es";
+import { Input } from "@/components/ui/input";
+import TimeInput from "@/components/ui/input-time";
 
 export default function SelectServicio({
     form,
@@ -46,7 +48,6 @@ export default function SelectServicio({
     const watchServicio = form.watch("servicioId");
   
     useEffect(() =>{
-      console.log("Servicio seleccionado: "+watchServicio)
       // Clear hitos fields
       for (let index = hitosFields.length; index >= 0; index--) {
         removeHito(index);
@@ -72,22 +73,48 @@ export default function SelectServicio({
     }, [
       watchServicio, dataQuery.data
     ])
-  
+    
     // Para formatear las fechas de inicio y fin a date time 
     const formatDateTimeRange = (index : number) => {
         const fechas = form.watch(`hitos.${index}.fechas`) || {};
         const inicio = fechas.from;
         const fin = fechas.to;
-        if (!inicio || !fin) 
+        if (!inicio || !fin || !inicio.getTime() || !fin.getTime())
             return (
                 <span>Seleccione una fecha de inicio y fin para este entregable</span>
             );
         
-        const formato = "d 'de' MMMM 'del' yyyy h:mm a";
+        const formato = "d 'de' MMMM 'del' yyyy";
         return (
-            <span>
-                {`${format(new Date(inicio), formato, { locale: es })} - ${format(new Date(fin), formato, { locale: es })}`} 
-            </span>
+            <>
+              <div className="flex items-center gap-1.5">
+                <span>
+                  Desde :
+                </span>
+                {`${format(new Date(inicio), formato, { locale: es })}`} 
+                <TimeInput
+                  value={inicio}
+                  onChange={(date) => {
+                    form.setValue(`hitos.${index}.fechas.from`, date);
+                  }}
+                  className="w-fit h-fit px-0.5 py-0"
+                />
+                  
+              </div>
+              <div className="flex items-center gap-1.5">
+                  <span>
+                    Hasta :
+                  </span>
+                  {`${format(new Date(fin), formato, { locale: es })}`} 
+                  <TimeInput 
+                    className="w-fit h-fit px-0.5 py-0"
+                    value={fin} 
+                    onChange={(date) => {
+                      form.setValue(`hitos.${index}.fechas.to`, date);
+                    }}
+                  />
+              </div>
+            </>
         );
       };
 
@@ -216,14 +243,20 @@ export default function SelectServicio({
                         render={({field}) => (
                             <FormItem className="flex-1">
                             <FormControl>
-                                <DatePicker mode="range" field={field} asIcon/>
+                                <DatePicker mode="range" field={field} asIcon
+                                  disable={(date) =>{
+                                    return (
+                                      isBefore(startOfDay(date), startOfDay(new Date()))
+                                    )
+                                  }}
+                                />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
                             )}
                         />
                     </div>
-                    <div className="text-sm leading-none">
+                    <div className="text-sm leading-none space-y-2">
                         {formatDateTimeRange(index)}     
                     </div>            
                 </div>

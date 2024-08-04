@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "../button";
-import { FormControl } from "../form";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Calendar } from "../calendar";
 import { CalendarIcon, Clock } from "lucide-react";
@@ -10,7 +9,7 @@ import { ControllerRenderProps } from "react-hook-form";
 import { es } from "date-fns/locale/es";
 import { Matcher } from "react-day-picker";
 import { useEffect, useRef, useState } from "react";
-import { Input } from "../input";
+import useClickOutside from "@/hooks/useClickOutside";
 
 interface IDatePickerProps {
   field: ControllerRenderProps<any, any>;
@@ -42,7 +41,11 @@ export default function DatePicker({
   mode = "single",
   asIcon,
 }: IDatePickerProps) {
+  const ref = useRef<any>(null);
   const [open, setOpen] = useState(false);
+
+  // Detect click outside the calendar to close it
+  useClickOutside(ref, () => setOpen(false));
 
   function formatValue(date: Date | DateRange | undefined) {
     if (!date) return "";
@@ -79,7 +82,10 @@ export default function DatePicker({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="block h-[370px] w-auto p-0" align="start">
+      <PopoverContent className="block min-h-[370px] w-auto p-0 z-[500]" align="start"
+        ref={ref}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <Calendar
           mode={mode}
           fromDate={new Date(2024, 1)}
