@@ -104,6 +104,7 @@ public class ProyectoService {
         resumen.setCreatedAt(proyecto.getCreatedAt());
         resumen.setUpdatedAt(proyecto.getUpdatedAt());
         resumen.setHitos(proyecto.getHitos());
+        resumen.setParticipantes(proyecto.getParticipantes());
         resumen.calcularProgreso();
         return resumen;
     }
