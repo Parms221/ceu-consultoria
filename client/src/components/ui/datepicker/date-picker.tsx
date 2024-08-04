@@ -82,7 +82,7 @@ export default function DatePicker({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="block min-h-[370px] w-auto p-0 z-[500]" align="start"
+      <PopoverContent className="block min-h-[370px] w-auto p-0" align="start"
         ref={ref}
         onMouseDown={(e) => e.stopPropagation()}
       >

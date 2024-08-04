@@ -1,6 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.repositories;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,8 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, Lo
     List<Participante> findByConsultorParticipante_IdConsultorIn(Set<Long> consultorIds);
 
     List<Participante> findByConsultorParticipante_IdConsultorInAndProyectoIngresado_IdProyecto(Set<Long> consultorIds, Long proyectoId);
+
+    Optional<Participante> findByIdParticipanteAndProyectoIngresado_IdProyecto(Long id, Long proyectoId);
 
     // @Query("SELECT p FROM participante p WHERE p.id_consultor IN :consultorIds AND p.id_proyecto = :proyectoId")
     // List<Participante> findByConsultorIdInAndProyectoId(@Param("consultorIds") Set<Long> consultorIds, @Param("proyectoId") Long proyectoId);
