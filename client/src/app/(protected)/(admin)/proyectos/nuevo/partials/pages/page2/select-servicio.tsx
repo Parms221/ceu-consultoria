@@ -162,7 +162,7 @@ export default function SelectServicio({
                         dataQuery.data?.map((servicio) => (
                           <CommandItem
                             value={String(servicio.idServicio)}
-                            key={servicio.titulo}
+                            key={servicio.idServicio}
                             onSelect={() => {
                               form.setValue("servicioId", servicio.idServicio);
                             }}

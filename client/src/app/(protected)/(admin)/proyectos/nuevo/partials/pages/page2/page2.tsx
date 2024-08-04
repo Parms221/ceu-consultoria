@@ -60,6 +60,12 @@ export default function ProjectFormPage2() {
         fechaLimite: data.fechaLimite,
         objetivos: data.objetivos.join("\n"),
         servicio: data.servicioId,
+        hitos: data.hitos.map(hito => ({
+          titulo: hito.titulo,
+          fechaInicio: hito.fechas.from!,
+          fechaFinalizacion: hito.fechas.to!,
+          tareas: []
+        })),
         indicaciones: "",
         precio: 100.0,
         requerimientos: "",
