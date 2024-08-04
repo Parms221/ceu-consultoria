@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ResumenProyectoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.SubtareaDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
@@ -84,6 +85,27 @@ public class ProyectoService {
 
     public List<Proyecto> getProyectosByEstado(Long idEstado) {
         return proyectoRepository.findAllByEstadoIdEstado(idEstado);
+    }
+
+    public ResumenProyectoDTO getResumenProyecto(Proyecto proyecto) {
+        ResumenProyectoDTO resumen = new ResumenProyectoDTO();
+        resumen.setIdProyecto(proyecto.getIdProyecto());
+        resumen.setTitulo(proyecto.getTitulo());
+        resumen.setDescripcion(proyecto.getDescripcion());
+        resumen.setObjetivos(proyecto.getObjetivos());
+        resumen.setRequerimientos(proyecto.getRequerimientos());
+        resumen.setIndicaciones(proyecto.getIndicaciones());
+        resumen.setFechaInicio(proyecto.getFechaInicio());
+        resumen.setFechaLimite(proyecto.getFechaLimite());
+        resumen.setPrecio(proyecto.getPrecio());
+        resumen.setCliente(proyecto.getCliente());
+        resumen.setServicio(proyecto.getServicio());
+        resumen.setEstado(proyecto.getEstado());
+        resumen.setCreatedAt(proyecto.getCreatedAt());
+        resumen.setUpdatedAt(proyecto.getUpdatedAt());
+        resumen.setHitos(proyecto.getHitos());
+        resumen.calcularProgreso();
+        return resumen;
     }
 
     public Proyecto cambiarEstadoProyecto(Long idProyecto, Long idEstado){

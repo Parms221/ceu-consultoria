@@ -4,6 +4,7 @@ import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { Estado } from "@/types/estado";
 import { EstadisticasProyecto, Proyecto } from "@/types/proyecto";
+import { ProyectoResumen } from "@/types/proyecto/ProyectoResumen";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -41,7 +42,8 @@ export default function useProyecto() {
       }
     });
   }
-
+  
+  // Retorna proyecto completo (incluye hitos y lo demás)
   function getProyectoByIdQuery(id: number) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Proyecto>({
@@ -56,6 +58,25 @@ export default function useProyecto() {
         const data = await response.json();
 
         return data as Proyecto;
+      }
+    });
+  }
+
+  // Retorna solo el resumen del proyecto sin hitos ni otros detalles del hito
+  function getResumenByIdQuery(id: number) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useQuery<ProyectoResumen>({
+      queryKey: ["proyecto", id],
+      queryFn: async () => {
+        const response = await fetcherLocal(`/proyectos/${id}/resumen`);
+
+        if (!response.ok) {
+          throw new Error("Error fetching project");
+        }
+
+        const data = await response.json();
+
+        return data;
       }
     });
   }
@@ -143,6 +164,7 @@ export default function useProyecto() {
     getEstadisticasQuery,
     getProyectoByIdQuery,
     getProyectosPropuestosQuery,
+    getResumenByIdQuery,
     
     actualizarEstadoProyecto,
     deleteProyecto,
