@@ -7,11 +7,10 @@ import org.springframework.stereotype.Service;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.SubtareaDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Tarea.FeedbackDTO;
-import com.arcticcuyes.gestion_proyectos.models.Consultor;
 import com.arcticcuyes.gestion_proyectos.models.FeedbackTarea;
 import com.arcticcuyes.gestion_proyectos.models.SubTarea;
 import com.arcticcuyes.gestion_proyectos.models.Tarea;
-import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
+import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.repositories.EstadoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ParticipanteRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.TareaRepository;
@@ -29,9 +28,6 @@ public class TareaService {
 
     @Autowired
     private ParticipanteRepository participanteRepository;
-
-    @Autowired
-    private ConsultorRepository consultorRepository;
 
     public void delete(Long id) {
         Tarea tarea = tareaRepository.findById(id)
@@ -75,14 +71,14 @@ public class TareaService {
         return tarea;
     }
 
-    public void addFeedback(Long idTarea, FeedbackDTO feedbackDTO, Consultor consultor) {
-        Tarea tarea = tareaRepository.findById(idTarea)
-                .orElseThrow(() -> new ResourceNotFoundException("Tarea no encontrada con el id " + idTarea));
-        FeedbackTarea feedback = new FeedbackTarea();
-        feedback.setMensaje(feedbackDTO.getMensaje());
-        feedback.setConsultor(consultor);
-        feedback.setTarea(tarea);
-        tarea.getFeedbacks().add(feedback);
-        tareaRepository.save(tarea);    
-    }
+    // public void addFeedback(Long idTarea, FeedbackDTO feedbackDTO, Usuario usuario) {
+    //     Tarea tarea = tareaRepository.findById(idTarea)
+    //             .orElseThrow(() -> new ResourceNotFoundException("Tarea no encontrada con el id " + idTarea));
+    //     FeedbackTarea feedback = new FeedbackTarea();
+    //     feedback.setMensaje(feedbackDTO.getMensaje());
+    //     feedback.setUsuario(usuario);
+    //     feedback.setTarea(tarea);
+    //     tarea.getFeedbacks().add(feedback);
+    //     tareaRepository.save(tarea);    
+    // }
 }

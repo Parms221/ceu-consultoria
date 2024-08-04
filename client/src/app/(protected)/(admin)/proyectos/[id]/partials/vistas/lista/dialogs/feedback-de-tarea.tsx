@@ -23,6 +23,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDate, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";
+import { cn } from "@/lib/utils";
+import useHito from "@/hooks/Hito/useHito";
 
 type Props = {
   tarea : Tarea | Hito
@@ -30,6 +32,7 @@ type Props = {
 
 export default function FeedbackChat({ tarea }: Props) {
   const { addFeedback } = useTarea()
+  const { addFeedback: addFeedbackHito } = useHito()
   const { projectId } = useProjectDetail()
   const queryClient = useQueryClient()
 
@@ -50,8 +53,13 @@ export default function FeedbackChat({ tarea }: Props) {
   
 
   async function onSubmit(values: z.infer<typeof feedbackSchema>){
-    if(isHito(tarea) || !tarea.idTarea) return
-    await addFeedback(tarea.idTarea, values)
+    if(isHito(tarea)){
+      if(!tarea.idHito) return
+      await addFeedbackHito(tarea.idHito, values)
+    } else {
+      if(!tarea.idTarea) return;
+      await addFeedback(tarea.idTarea, values)
+    }
     queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     form.reset()
   } 
@@ -59,10 +67,17 @@ export default function FeedbackChat({ tarea }: Props) {
   return (
     <Dialog>
       <DialogTrigger
-        className="flex items-center gap-2 rounded-md bg-ceu-celeste px-2 py-1.5 text-sm text-white"
+        className="flex items-center gap-2 rounded-md bg-ceu-celeste px-2 py-1.5 text-sm text-white relative"
         type="button"
       >
         <MessageSquareTextIcon size={16} />
+        {
+          tarea.feedbacks && tarea.feedbacks.length> 0 && (
+              <span className="absolute -right-2 -top-2 bg-red text-white rounded-full w-4.5 h-4.5 text-xs flex items-center justify-center">
+                {tarea.feedbacks.length}
+              </span>
+          )
+        }
       </DialogTrigger>
       <DialogContent>
         <DialogTitle className="text-ceu-celeste">
@@ -101,8 +116,8 @@ export default function FeedbackChat({ tarea }: Props) {
           </form>
         </Form>
         <div className="h-[250px] overflow-hidden overflow-y-scroll">
-            { // Por el momento solo para tareas
-              !isHito(tarea) && tarea.feedbacks?.map((feedback) => (
+            {
+              tarea.feedbacks?.map((feedback) => (
                 <FeedbackMessage key={feedback.id} feedback={feedback} />
               ))
             }
@@ -117,27 +132,38 @@ export function FeedbackMessage({
 }: {
   feedback: FeedbackTarea;
 }) {
-  const consultor = feedback.consultor;
+  const usuario = feedback.usuario;
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-2 relative">
-      <div className="flex items-center gap-2">
+      <div className={cn(
+        "flex items-center gap-2",
+        usuario.roles.some(rol => rol.rol === "ROLE_CLIENTE") && "flex-row-reverse"
+      )}>
         <Image
           src="/images/user/user-05.png"
-          alt={consultor.nombres + " " + consultor.apellidos}
+          alt={usuario.name}
           width={64}
           height={64}
           className="rounded-full w-8.5 h-8.5"
         />
-        <div className="rounded-md bg-[#CDD6FD] p-4 w-full">
-          <h4 className="text-sm font-semibold text-ceu-azul">
-            {`${consultor.nombres} ${consultor.apellidos}`}
-          </h4>
-          <p className="text-body-sm text-black break-words pr-2">
+        <div className={
+          cn(
+            "rounded-md p-4 w-full text-ceu-azul bg-ceu-celeste",
+            usuario.roles.some(rol => rol.rol === "ROLE_ADMIN") && " text-white",
+            usuario.roles.some(rol => rol.rol === "ROLE_CLIENTE") && "bg-[#CDD6FD]"
+          )
+        }>
+          <div className="flex justify-between items-center">
+            <h4 className="text-sm font-semibold ">
+              {`${usuario.name}`}
+            </h4>
+            <span className="text-xs">
+              { formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true, locale: es }) }
+            </span>
+          </div>
+          <p className="text-body-sm break-words pr-2">
             {feedback.mensaje}
           </p>
-          <span className="absolute right-2.5 bottom-3 text-xs">
-            { formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true, locale: es }) }
-          </span>
         </div>
       </div>
     </div>
