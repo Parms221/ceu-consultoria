@@ -4,7 +4,5 @@ import lombok.Data;
 
 @Data
 public class GptRequest {
-    private String tituloProyecto;
-    private String fechaInicio;
-    private String fechaFin;
+    private long idProyecto;
 }
