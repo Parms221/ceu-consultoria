@@ -80,9 +80,26 @@ public class HitoService {
                         "Estado no encontrado con id: " + tareaDTO.getEstado()
                     ))
                 );
+
+                if (tareaDTO.getParticipantesAsignados()!= null) {
+                    Set<Participante> participantesAsignados = new HashSet<>();
+                    for (Long participanteId : tareaDTO.getParticipantesAsignados()) {
+                        Participante participante = participanteRepository
+                           .findByIdParticipanteAndProyectoIngresado_IdProyecto(participanteId, proyecto.getIdProyecto())
+                           .orElseThrow(() -> new ResourceNotFoundException(
+                                "Participante no encontrado con id: " + participanteId + " o no pertenece al proyecto"
+                            ));
+                        participantesAsignados.add(participante);
+                    }
+                    //System.out.println("Seteando participantes en tarea:" + tareaDTO.getTitulo() + "-" + participantesAsignados);
+                    tarea.setParticipantesAsignados(participantesAsignados);
+                }
+
                 tarea.setHito(hito);
 
                 tarea = tareaRepository.save(tarea); // Guardar tarea para obtener su ID
+
+                //System.out.println(tarea);
 
                 // List<SubTarea> subtareas = new ArrayList<>();
                 if (hitoDTO.getTareas() != null) {
