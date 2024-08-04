@@ -18,7 +18,7 @@ export default function useGPT() {
                 }
                 const data = await response.json()
                 return data
-            }
+            },
         })
     }
     

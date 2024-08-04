@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -18,6 +19,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect } from "react";
 import Objetivos from "./partials/objetivos";
 import Participantes from "./partials/participantes";
+import DatePicker from "@/components/ui/datepicker/date-picker";
+import TimeInput from "@/components/ui/input-time";
+import { isBefore, startOfDay } from "date-fns";
 
 export default function VistaResumen() {
   const { projectId, projectDetailForm : form } = useProjectDetail();
@@ -110,8 +114,75 @@ export default function VistaResumen() {
             </FormItem>
           )}
         />
+        {/* Fechas de inicio y fin */}
+        <div className="flex flex-wrap gap-4">
+          <FormField
+            control={form.control}
+            name="project.fechaInicio"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <div className="flex flex-col gap-2">
+                  <FormLabel>Fecha de inicio</FormLabel>
+                  <div className="flex gap-0.5">
+                    <DatePicker
+                        mode="single"
+                        field={field}
+                        disable={(date) => isBefore(startOfDay(date), startOfDay(new Date()))}
+                        onChange={(date) => {
+                          if (!date || date instanceof Date === false) {
+                            return;
+                          }
+
+                          if (
+                            date.getTime() >
+                            form.getValues("project.fechaLimite").getTime()
+                          ) {
+                            const dateCopy = date;
+                            dateCopy.setDate(date.getDate() + 1);
+
+                            form.setValue("project.fechaLimite", dateCopy);
+                          }
+                        }}
+                      />
+                          <TimeInput {...field} className="w-fit px-0.5 py-0"/>
+                  </div>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="project.fechaLimite"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <div className="flex flex-col gap-2">
+                  <FormLabel>Fecha Límite</FormLabel>
+                  <div className="flex gap-0.5">
+                    <DatePicker
+                        mode="single"
+                        field={field}
+                        disable={(date) => {
+                          return (
+                            date.getTime() <
+                            form.watch("project.fechaInicio").getTime()
+                          );
+                        }}
+                      />
+                      <TimeInput
+                        className="w-fit px-0.5 py-0"
+                        {...field}
+                      />
+                  </div>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <Participantes participantes={data.participantes ?? []} form={form}/>
         <Objetivos form={form}/>
+
       </form>
       <pre>
         <code>{JSON.stringify(data, null, 2)}</code>

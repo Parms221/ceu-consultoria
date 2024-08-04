@@ -61,7 +61,7 @@ export default function ProjectDetailProvider({
     fechaFin: new Date(),
     fechaInicio: new Date(),
     descripcion: "",
-    estado: 0,
+    estado: undefined,
     participantesAsignados: [],
     subtareas: []
   }

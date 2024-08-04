@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   value? : string
@@ -34,7 +34,11 @@ export function Combobox(
   { options, onSelect, isDisabled, placeholder, value }: Props
 ) {
   const [open, setOpen] = useState(false);
-  const [newValue, setValue] = useState(value);
+  const [newValue, setValue] = useState(value || "");
+
+  useEffect(() => {
+    setValue(value || "");
+  }, [value])
 
   return (
     <Popover
