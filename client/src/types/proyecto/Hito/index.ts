@@ -1,4 +1,4 @@
-import { Tarea } from "../Tarea";
+import { FeedbackTarea, Tarea } from "../Tarea";
 
 export type Hito = {
     idHito: number;
@@ -7,4 +7,5 @@ export type Hito = {
     fechaFinalizacion : string
     createdAt?: string;
     tareasDelHito: Tarea[]
+    feedbacks? : FeedbackTarea[]
 }
