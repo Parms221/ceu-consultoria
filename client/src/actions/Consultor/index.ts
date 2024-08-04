@@ -4,7 +4,6 @@ import { Consultor } from "@/types/consultor";
 
 export async function getConsultores(): Promise<Consultor[]> {
   try {
-    console.log("getConsultores");
     const response = await fetcher("/consultores", {
       method: "GET",
     });

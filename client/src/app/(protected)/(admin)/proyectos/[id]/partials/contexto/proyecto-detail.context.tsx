@@ -118,7 +118,6 @@ export default function ProjectDetailProvider({
   useEffect(() => {
     if (!selectedTask) return;
 
-    console.log("USE EFFECT", selectedTask.participantesAsignados);
     tareaForm.reset({
       titulo: selectedTask.titulo,
       fechaFin: new Date(selectedTask.fechaFin),

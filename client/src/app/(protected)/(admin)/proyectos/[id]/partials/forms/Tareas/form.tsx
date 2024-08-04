@@ -54,7 +54,6 @@ export default function TareaForm() {
     const currentTareas = hitoForm.getValues("tareas");
     if (currentTareas.length > 0) {
       // Editando tareas en memoria (cuando se crea un nuevo hito en el drawer) usando el id temporal
-      console.log("Editando tarea en memoria", currentTareas);
       const tareaIndex = currentTareas.findIndex((t) => {
         const id = selectedTask?.idTarea;
         if (id) return t.idTarea === id.toString();
@@ -64,7 +63,6 @@ export default function TareaForm() {
       toast.success(`Tarea actualizada`);
     } else {
       // Editando tarea en la bd (cuando se seleccione en la tabla de hitos y tareas principal)
-      console.log("Editando tarea en la bd", values);
       const idTarea = selectedTask?.idTarea;
       if (idTarea) await updateTarea(values, idTarea);
       queryClient.invalidateQueries({ queryKey: [projectId, "hitos"] });
