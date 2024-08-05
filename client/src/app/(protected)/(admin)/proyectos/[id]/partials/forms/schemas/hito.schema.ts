@@ -4,7 +4,7 @@ import { isBefore } from "date-fns";
 
 export const hitoSchema = z.object({
     idHito: z.string().optional(),
-    titulo: z.string().min(2).max(50),
+    titulo: z.string().min(2).max(100),
     fechas : z.object(
       {
         from: z.date().optional(),
