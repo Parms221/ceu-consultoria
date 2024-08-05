@@ -34,9 +34,12 @@ export default function HitoForm(
             fechaFinalizacion: values.fechas.to!,
             tareas: formatTareas
         }
-
-        await saveHito(projectId, formattedData, selectedHito?.idHito)
-        
+        if (!selectedHito) {
+            await saveHito(projectId, formattedData, undefined)
+        }else {
+            const parsedId = parseInt(selectedHito.idHito.toString())
+            await saveHito(projectId, formattedData, parsedId)
+        }
         resetForms()
 
         // Close drawer
