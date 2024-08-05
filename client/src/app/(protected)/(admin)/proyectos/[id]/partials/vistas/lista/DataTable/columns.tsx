@@ -122,7 +122,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
         start: new Date(inicio),
         end: new Date(final)
       });
-      return <span>{formatDuration(duracion, { locale : es, format: ["days", "hours"]})}</span>;
+      return <span>{formatDuration(duracion, { locale : es})}</span>;
     }
   },
   {
