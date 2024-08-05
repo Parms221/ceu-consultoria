@@ -46,19 +46,19 @@ public class Recurso {
     @Column(name="created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_usuario")
     private Usuario propietario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_proyecto")
     private Proyecto proyectoAsociado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_entregable_proyecto")
     private EntregableProyecto entregableAsociado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_cliente")
     private Cliente clienteAsociado;
 
