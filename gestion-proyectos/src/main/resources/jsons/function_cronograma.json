@@ -102,5 +102,5 @@
             }
         }
     },
-    "required": ["fecha_inicio", "fecha_fin", "hitos"]
+    "required": ["fechaInicio", "fechaFin", "hitos"]
 }
