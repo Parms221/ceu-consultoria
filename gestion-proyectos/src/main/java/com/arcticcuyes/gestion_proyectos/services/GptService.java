@@ -36,7 +36,7 @@ public class GptService {
     private String projectId;
 
     @Value("classpath:jsons/function_cronograma.json")
-    Resource functionCronogramaJsonFile;
+    private Resource functionCronogramaJsonFile;
 
     private String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     

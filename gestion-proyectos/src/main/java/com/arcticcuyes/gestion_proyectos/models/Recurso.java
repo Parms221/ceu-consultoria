@@ -58,4 +58,35 @@ public class Recurso {
     @JoinColumn(name="id_entregable_proyecto")
     private EntregableProyecto entregableAsociado;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_cliente")
+    private Cliente clienteAsociado;
+
+    public Recurso(String titulo, String enlace, boolean activo, boolean esArchivo, Usuario propietario,
+            Proyecto proyectoAsociado, EntregableProyecto entregableAsociado) {
+        this.titulo = titulo;
+        this.enlace = enlace;
+        this.activo = activo;
+        this.esArchivo = esArchivo;
+        this.propietario = propietario;
+        this.proyectoAsociado = proyectoAsociado;
+        this.entregableAsociado = entregableAsociado;
+    }
+
+    public Recurso(String titulo, String enlace, boolean activo, boolean esArchivo,
+            Usuario propietario, Cliente clienteAsociado) {
+        this.titulo = titulo;
+        this.enlace = enlace;
+        this.activo = activo;
+        this.esArchivo = esArchivo;
+        this.propietario = propietario;
+        this.clienteAsociado = clienteAsociado;
+    }
+
+    
+
+
+
+    
+
 }
