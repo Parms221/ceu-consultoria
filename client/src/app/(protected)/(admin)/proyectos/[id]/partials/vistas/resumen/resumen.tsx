@@ -80,15 +80,15 @@ export default function VistaResumen() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 [&>div>div>label]:w-[200px]"
       >
-       <div className="flex  flex-col-reverse gap-y-4 sm:flex-row justify-between">
+       <div className="flex flex-col-reverse gap-y-4 sm:flex-row justify-between">
         <FormField
             control={form.control}
             name="project.title"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1 sm:pr-10 font-medium">
                 <div className="flex items-center gap-1.5">
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} className="text-lg"/>
                   </FormControl>
                 </div>
                 <FormMessage />
