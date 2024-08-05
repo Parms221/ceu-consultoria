@@ -168,7 +168,7 @@ public class ProyectoService {
         proyecto.setFechaLimite(proyectoDTO.getFechaLimite());
         proyecto.setPrecio(proyectoDTO.getPrecio());
 
-        //Guardar proyecto para luego poder con los entregables
+        //Guardar proyecto para luego poder con los entregables e hitos
         proyecto = proyectoRepository.save(proyecto);
 
         List<EntregableServicio> entregableServicios = entregableServicioRepository.findByServicio(servicio);
@@ -182,6 +182,15 @@ public class ProyectoService {
 
             // Guardar cada entregable
             entregableProyectoRepository.save(entregable);
+        }
+
+        for (HitoDTO hitoDto : proyectoDTO.getHitos()){
+            Hito newHito = new Hito();
+            newHito.setTitulo(hitoDto.getTitulo());
+            newHito.setFechaInicio(hitoDto.getFechaInicio());
+            newHito.setFechaFinalizacion(hitoDto.getFechaFinalizacion());
+            newHito.setProyecto(proyecto);
+            hitoService.saveHito(hitoDto, proyecto);
         }
 
         // proyecto.setEntregables(entregablesProyecto);

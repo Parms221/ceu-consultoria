@@ -54,6 +54,7 @@ public class GptService {
         ObjectNode errorNode = objectMapper.createObjectNode();
         if(request == null) {
             errorNode.put("error", "No se pudo construir la petición");
+            System.out.println("ERROR: No se pudo construir la petición");
             return errorNode;
         };
 
@@ -66,6 +67,7 @@ public class GptService {
         try {
             GptResponseValidator.validateApiResponse(parsedResponse);
         } catch (InvalidApiResponseException e){
+            System.out.println("ERROR: Error al validar la respuesta de OpenAI");
             errorNode.put("error", e.getMessage());
             return errorNode;
         }
@@ -87,7 +89,7 @@ public class GptService {
                     entregable -> entregable.getTitulo()).collect(Collectors.joining(", "))
                 + ". Los consultores del proyecto son: "+ proyecto.getParticipantes().stream().map(
                     participante -> participante.getConsultorParticipante().getNombres() + " (id: "+participante.getIdParticipante()+")" +" (especialidad: " + participante.getConsultorParticipante().getEspecialidades()+ ")").collect(Collectors.joining(", "))
-                +"."
+                +". Importante : Todos los entregables del servicio deben incluirse como hitos en el cronograma del proyecto."
                 );
                 
         System.out.println("jsonNode: "+jsonNode.get("messages").get(0).get("content").asText());

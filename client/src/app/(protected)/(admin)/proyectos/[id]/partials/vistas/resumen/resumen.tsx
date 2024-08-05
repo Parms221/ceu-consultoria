@@ -46,7 +46,7 @@ export default function VistaResumen() {
         cliente: data.cliente,
         participantes: data.participantes?.map((participante) => {
           return {
-            idConsultor: participante.consultorParticipante.idConsultor,
+            idConsultor: participante.consultorParticipante?.idConsultor,
           };
         }),
       }
@@ -184,9 +184,9 @@ export default function VistaResumen() {
         <Objetivos form={form}/>
 
       </form>
-      <pre>
+      {/* <pre>
         <code>{JSON.stringify(data, null, 2)}</code>
-      </pre>
+      </pre> */}
     </Form>
   );
 }
