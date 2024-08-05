@@ -110,7 +110,6 @@ export default function HitoForm(
                 <HitosTable 
                     columns={tareasColumns}
                     data={tareasInForm}
-                    subRowsField="subTareas"
                     newTask = {<NewTaskModal />}
                 />
                 <DrawerFooter>

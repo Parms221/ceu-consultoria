@@ -5,18 +5,44 @@ import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import NewHitoModal from "../../forms/Hitos";
 import useHito from "@/hooks/Hito/useHito";
 import { Button } from "@/components/ui/button";
-import { LoaderIcon, Sparkles } from "lucide-react";
+import { CheckCheckIcon, RefreshCw, Sparkles, X } from "lucide-react";
 import useGPT from "@/hooks/Gpt/useGPT";
 import BouncingDotsLoader from "@/components/common/Loader/loading-dots";
+import { useEffect, useState } from "react";
+import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
 
 
 export default function VistaLista() {
+    const [visibleOptions, setVisibleOptions] = useState(false)
+    const { projectId, gptHitos, setGptHitos, queryClient } = useProjectDetail()
 
-    const { projectId } = useProjectDetail()
-    const { getHitosQuery } = useHito()
+    const { getHitosQuery, updateAllHitosByProject } = useHito()
     const { data : hitos, isLoading, isError } = getHitosQuery(projectId)   
-    const { testIaMutation } = useGPT()    
-    const { data: gptData, isPending, isError : isErrorGPT, mutate: testIa } = testIaMutation()
+    const { isPending: updatingHitos, mutate: updateHitos, isSuccess : updatedHitos } = updateAllHitosByProject()
+   
+    const { gptHitosMutation } = useGPT()    
+    const { data: gptData, isPending, mutate: gptMutation, reset, isSuccess } = gptHitosMutation(projectId)
+    
+    function resetState(){
+      setGptHitos(null)
+      setVisibleOptions(false)
+      reset()
+    }
+
+    useEffect(() => {
+      if (isSuccess && gptData) {
+        setGptHitos(gptData.hitos)
+        setVisibleOptions(true)
+      }
+    }, [gptData, isSuccess])
+
+    // Escuchar al evento aceptar actualización de cronograma 
+    useEffect(() => {
+      if(updatedHitos){
+        resetState()
+        queryClient.invalidateQueries({queryKey: ["hitos", projectId]})
+      }
+    }, [updatedHitos])
 
     if (isLoading) {
       return <div>Cargando ... </div>;
@@ -25,25 +51,91 @@ export default function VistaLista() {
     if (isError || !hitos) {
       return <div>Error al cargar la lista de hitos</div>;
     }
-    
+
     return (
       <article>
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             Lista de tareas
           </h2>
-          <div className="space-x-2 flex items-center">
+          <div className="space-x-2 flex items-center [&>div>button]:mb-4">
+            {
+              gptData && 
+                (
+                  <div className="space-x-1 transition-transform duration-500 ease-in-out transform translate-x-full opacity-0 animate-slide-in"
+                    style={{
+                      transform: visibleOptions ? "translateX(0)" : "translateX(100%)",
+                      opacity: visibleOptions ? "1" : "0",
+                    }}
+                  >
+                    <Button
+                      size={"sm"}
+                      onClick={() =>{
+                        if(!gptHitos) return 
+                        const newCronograma : HitoDTO[] = gptHitos.map(hito => {
+                          return {
+                            titulo : hito.titulo,
+                            fechaInicio: new Date(hito.fechaInicio),
+                            fechaFinalizacion: new Date(hito.fechaFinalizacion),
+                            tareas: hito.tareasDelHito.map(t => {
+                              return{
+                                titulo: t.titulo,
+                                fechaInicio: new Date(t.fechaInicio),
+                                fechaFin: new Date(t.fechaFin),
+                                descripcion: t.descripcion,
+                                estado: 6,
+                                participantesAsignados: t.participantesAsignados.map(p  => p.idParticipante),
+                                subtareas : t.subTareas.map(st =>{
+                                  return {
+                                    descripcion : st.descripcion,
+                                    completado : false,
+                                  }
+                                })
+                              }
+                            })
+                          }
+                        })
+                        
+                        updateHitos({
+                          projectId: projectId,
+                          hitos: newCronograma
+                        })
+                      }}
+                    >
+                      <CheckCheckIcon size={20} />
+                      <span className="sr-only">Aceptar cronograma propuesto por IA</span>
+                    </Button>
+                    <Button
+                      size={"sm"}
+                      onClick={() => {
+                        resetState()
+                      }}
+                      disabled={updatingHitos}
+                    >
+                      <X size={20} />
+                      <span className="sr-only">Descartar cronograma propuesto por IA</span>
+                    </Button>
+                    <Button
+                      variant={"outline"}
+                      onClick={() => {
+                        gptHitos === null ? setGptHitos(gptData.hitos) : setGptHitos(null)
+                      }}
+                      size={"sm"}
+                    >
+                      <RefreshCw size={20} />
+                      <span className="sr-only">Cambiar cronograma a sugerido por IA</span>
+                    </Button>
+                  </div>
+                )
+            }
             <Button
               variant={"outline"}
               size={"sm"}
               className="mb-4"
               onClick={() =>
-                testIa({
-                    tituloProyecto: "Proyecto de prueba",
-                    fechaInicio: new Date().toDateString(),
-                    fechaFin: new Date().toDateString(),
-                })
+                gptMutation(projectId)
               }
+              disabled={updatingHitos}
             >
                 {
                     isPending ? <BouncingDotsLoader className="[&>div]:h-2 [&>div]:w-2 [&>div]:mx-0"/>  : <Sparkles />
@@ -53,13 +145,10 @@ export default function VistaLista() {
             <NewHitoModal />
           </div>
         </div>
-        {
-            gptData ? <pre>GPT: {JSON.stringify(gptData, null, 2)}</pre> : null
-        }
         <HitosTable
-          columns={hitosColumns}
-          data={hitos}
-          subRowsField="tareasDelHito"
+            columns={hitosColumns}
+            data={gptHitos ? gptHitos : hitos}
+            subRowsField="tareasDelHito"
         />
       </article>
     );

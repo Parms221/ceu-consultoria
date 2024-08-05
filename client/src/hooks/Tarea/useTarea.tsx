@@ -9,7 +9,7 @@ import { toast } from "sonner";
 export default function useTarea() {
   async function updateTarea(
     tarea: TareaDTO,
-    idTarea: number,
+    idTarea: number | string,
   ): Promise<boolean> {
     const toastId = toast.loading("Guardando ...");
     // Si el idHito existe, se actualiza el registro
@@ -36,7 +36,7 @@ export default function useTarea() {
     }
   }
 
-  async function deleteTarea(id: number) {
+  async function deleteTarea(id: number | string) {
     const toastId = toast.loading("Eliminado ...");
 
     try {

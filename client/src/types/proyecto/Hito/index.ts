@@ -1,7 +1,7 @@
 import { FeedbackTarea, Tarea } from "../Tarea";
 
 export type Hito = {
-    idHito: number;
+    idHito: number | string;
     titulo: string
     fechaInicio : string
     fechaFinalizacion : string

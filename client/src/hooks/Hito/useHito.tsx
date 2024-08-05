@@ -5,7 +5,7 @@ import { fetcherLocal } from "@/server/fetch/client-side";
 import { Hito } from "@/types/proyecto/Hito";
 import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
 import { FeedbackTareaDTO } from "@/types/proyecto/Tarea/dto/FeedbackTareaDTO";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export default function useHito() {
@@ -58,7 +58,7 @@ export default function useHito() {
     }
   }
 
-  async function deleteHito(hitoId: number) {
+  async function deleteHito(hitoId: number | string) {
     const toastId = toast.loading("Eliminado ...");
 
     try {
@@ -82,7 +82,7 @@ export default function useHito() {
     }
   }
 
-  async function addFeedback(idHito: number, feedback: FeedbackTareaDTO) {
+  async function addFeedback(idHito: number | string, feedback: FeedbackTareaDTO) {
     try {
       const response = await fetcherLocal(`/hitos/${idHito}/feedback`, {
         method: "POST",
@@ -100,11 +100,34 @@ export default function useHito() {
     }
   }
 
+  function updateAllHitosByProject() {
+    return useMutation({
+      mutationFn: async ({ projectId, hitos } : { projectId: number, hitos: HitoDTO[] }) => {
+         const response = await fetcherLocal(`/proyectos/${projectId}/hitos/updateAll`, {
+            method: "POST",
+            body: JSON.stringify(hitos),
+          })
+          const ok = await HandleServerResponse(response, undefined, undefined);
+          if (!ok) {
+            throw new Error("Error al actualizar hitos");
+          }
+          return ok;
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: (data) => {
+        toast.success("Cronograma actualizado");
+      },
+    })
+  }
+
   return {
     getHitosQuery,
     saveHito,
     deleteHito,
 
+    updateAllHitosByProject,
     addFeedback,
   };
 }

@@ -19,6 +19,10 @@
                     "items":{
                         "type":"object",
                         "properties":{
+                            "idHito" : {
+                                "type": "number",
+                                "description": "Un número auto-incrementado que identifica el hito"
+                            },
                             "titulo":{
                                 "type":"string",
                                 "description":"Título del hito"
@@ -36,6 +40,10 @@
                                 "items":{
                                     "type":"object",
                                     "properties":{
+                                        "idTarea":{
+                                            "type": "number",
+                                            "description": "Un número auto-incrementado que identifica la tarea"
+                                        },
                                         "titulo":{
                                             "type":"string",
                                             "description":"Título de la tarea"
@@ -59,7 +67,7 @@
                                                 "properties":{
                                                     "idParticipante":{
                                                         "type": "number",
-                                                        "description": "Id del consultor que está entre paréntesis"
+                                                        "description": "El id de consultor participante que está entre paréntesis"
                                                     },
                                                     "consultorParticipante":{
                                                         "type":"object",

@@ -18,6 +18,7 @@ import {
 } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/schemas";
 import { useQueryClient } from "@tanstack/react-query";
 import { projectCompleteSchema } from "../../../nuevo/partials/schemas/project.schema";
+import { temporalCronogramaSchema } from "../forms/schemas/temporal-cronograma.schema";
 
 interface IProjectDetailContext {
   selectedHito: Hito | null;
@@ -40,6 +41,9 @@ interface IProjectDetailContext {
     any,
     undefined
   >;
+
+  setGptHitos: (hitos: Hito[] | null) => void;
+  gptHitos: Hito[] | null;
 }
 
 export const ProjectDetailContext = createContext<IProjectDetailContext>(
@@ -55,6 +59,9 @@ export default function ProjectDetailProvider({
 }) {
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
   const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
+  // Guardar hitos propuestos por la IA en memoria para poder editarlos
+  const [gptHitos, setGptHitos] = useState<Hito[] | null>(null);
+
   // Query client to invalidate queries
   const queryClient = useQueryClient();
 
@@ -174,6 +181,9 @@ export default function ProjectDetailProvider({
 
         projectDetailForm,
         queryClient,
+
+        setGptHitos,
+        gptHitos,
       }}
     >
       {children}

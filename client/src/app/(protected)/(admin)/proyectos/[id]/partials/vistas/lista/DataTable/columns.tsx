@@ -1,15 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2Icon, ChevronRight, Diamond, Circle, Pen } from "lucide-react";
+import { ChevronRight, Diamond, Circle } from "lucide-react";
 import { Hito } from "@/types/proyecto/Hito";
 import { es } from "date-fns/locale/es";
 import { format, formatDuration, intervalToDuration } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Tarea } from "@/types/proyecto/Tarea";
 import { DeleteTask, FeedbackChat } from "../dialogs";
-import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import NewTaskModal from "../../../forms/Tareas";
 import NewHitoModal from "../../../forms/Hitos";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +28,7 @@ export function getBadgeByEstado(estado: Estado) {
   )
 }
 
-function isExpandedChevron(isExpanded: boolean) {
+export function isExpandedChevron(isExpanded: boolean) {
   return (
     <ChevronRight
       className={cn(
@@ -98,7 +96,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
       const fechaInicio = row.original.fechaInicio;
       if (!fechaInicio) return "-";
       const date = new Date(fechaInicio);
-      return format(date, "d/MM/yyyy");
+      return format(date, "d/MM/yyyy hh:mm a");
     }
   },
   {
@@ -107,12 +105,12 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     cell: ({ row }) => {
       const dateFin = row.original.fechaFinalizacion || row.original.fechaFin;
       if (!dateFin) return "-";
-      return format(dateFin, "d/MM/yyyy");
+      return format(dateFin, "d/MM/yyyy hh:mm a");
     }
   },
   {
     id: "duracion",
-    header: "Duración (días)",
+    header: "Duración",
     enableColumnFilter: true,
     cell: ({ row }) => {
       const inicio = row.original.fechaInicio;
@@ -124,7 +122,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
         start: new Date(inicio),
         end: new Date(final)
       });
-      return Number(duracion.days ?? 0);
+      return <span>{formatDuration(duracion, { locale : es, format: ["days", "hours"]})}</span>;
     }
   },
   {

@@ -7,11 +7,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
 
 import com.arcticcuyes.gestion_proyectos.controllers.dao.GptRequest;
+import com.arcticcuyes.gestion_proyectos.exception.NotFoundException;
 import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
 import com.arcticcuyes.gestion_proyectos.models.Consultor;
 import com.arcticcuyes.gestion_proyectos.models.EntregableServicio;
@@ -21,9 +24,10 @@ import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.models.Servicio;
 import com.arcticcuyes.gestion_proyectos.services.GptService;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
-import com.arcticcuyes.gestion_proyectos.services.ServicioService;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -36,6 +40,25 @@ public class GptContoller {
 
     @Autowired
     private ProyectoService proyectoService;
+
+    @GetMapping({"/generateHitos/{idProyecto}"})
+    public ResponseEntity<?> generateHitos(@PathVariable Long idProyecto) {
+        try{
+            Proyecto proyecto = proyectoService.findProyectoById(idProyecto);
+            JsonNode res = gptService.getOpenAiResponse(proyecto);
+            if(res.has("error")){
+                return ResponseEntity.internalServerError().body(res);
+            }else {
+                return ResponseEntity.ok(res);
+            }
+        }catch(NotFoundException e){
+            // Proyecto no encontrado
+            return new ResponseEntity<>("No se encontro el proyecto", HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            return new ResponseEntity<>("Error al procesar la petición", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     
     @PostMapping(path = "/test", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> postMethodName(@RequestBody GptRequest gptRequest) {

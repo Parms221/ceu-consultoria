@@ -5,7 +5,7 @@ import { Participante } from "../Participante";
 import { Usuario } from '@/types/usuario';
 
 export type Tarea = {
-    idTarea?: number;
+    idTarea?: number | string;
     titulo : string;
     descripcion : string;
     fechaInicio : string;
@@ -20,7 +20,7 @@ export type Tarea = {
 }
 
 export type SubTarea = {
-    idSubTarea: number
+    idSubTarea: number | string
     descripcion: string
     completado: boolean
 }

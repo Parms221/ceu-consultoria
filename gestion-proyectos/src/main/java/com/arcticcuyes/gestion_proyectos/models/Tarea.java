@@ -42,7 +42,7 @@ public class Tarea {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idTarea;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String titulo;
 
     @Column(columnDefinition = "TEXT")

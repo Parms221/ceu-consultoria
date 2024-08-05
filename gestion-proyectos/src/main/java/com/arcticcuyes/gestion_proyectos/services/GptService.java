@@ -13,7 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.arcticcuyes.gestion_proyectos.controllers.dao.GptRequest;
+import com.arcticcuyes.gestion_proyectos.exception.InvalidApiResponseException;
+import com.arcticcuyes.gestion_proyectos.exception.gpt.GptResponseValidator;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,14 +52,23 @@ public class GptService {
         // retornar { error : "error al construir la petición" }
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode errorNode = objectMapper.createObjectNode();
-        errorNode.put("error", "Error formateando la respuesta");
-        if(request == null) return errorNode;
+        if(request == null) {
+            errorNode.put("error", "No se pudo construir la petición");
+            return errorNode;
+        };
 
         HttpEntity<String> entity = new HttpEntity<>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(OPENAI_URL, HttpMethod.POST, entity, String.class);
     
         // Parsear la respuesta para devolver solo lo que nos interesa
         JsonNode parsedResponse = parseResponse(response.getBody());
+
+        try {
+            GptResponseValidator.validateApiResponse(parsedResponse);
+        } catch (InvalidApiResponseException e){
+            errorNode.put("error", e.getMessage());
+            return errorNode;
+        }
 
         return parsedResponse;
     }

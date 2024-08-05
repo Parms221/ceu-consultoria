@@ -57,6 +57,8 @@ public class ProyectoService {
     private EntregableServicioRepository entregableServicioRepository;
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private HitoService hitoService;
 
     @Autowired
     private EntregableProyectoRepository entregableProyectoRepository;
@@ -255,6 +257,18 @@ public class ProyectoService {
         
         } 
     // }
+
+    public void updateAllHitos(List<HitoDTO> hitos, Proyecto proyecto) {
+        // Limpiar los hitos existentes en el proyecto
+        List<Hito> existingHitos = proyecto.getHitos();
+        for (Hito hito : existingHitos) {
+            hitoService.deleteHitoById(hito.getIdHito());
+        }
+
+        for (HitoDTO hitoDto : hitos){
+            hitoService.saveHito(hitoDto, proyecto);
+        }
+    }
 
     @Transactional
     public void saveParticipantesProyecto(List<Long> consultores, Proyecto proyecto) {

@@ -75,6 +75,7 @@ public class ProyectoController {
 
     @GetMapping("/{id}/resumen")
     public ResponseEntity<?> getResumenProyectoById(@PathVariable Long id) {
+        System.out.println("Obteniendo resumen del proyecto *********");
         try {
             Proyecto proyecto = proyectoService.findProyectoById(id);
             return ResponseEntity.ok(proyectoService.getResumenProyecto(proyecto));
@@ -184,6 +185,17 @@ public class ProyectoController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el cronograma: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("{idProyecto}/hitos/updateAll")
+    public ResponseEntity<?> updateAllHitos(@PathVariable Long idProyecto, @RequestBody List<HitoDTO> hitos) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(idProyecto);
+            proyectoService.updateAllHitos(hitos, proyecto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar los hitos: " + e.getMessage());
         }
     }
 
