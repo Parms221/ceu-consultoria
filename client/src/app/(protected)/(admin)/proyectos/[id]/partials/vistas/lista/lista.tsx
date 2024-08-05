@@ -17,13 +17,13 @@ export default function VistaLista() {
     const { projectId, gptHitos, setGptHitos, queryClient } = useProjectDetail()
 
     const { getHitosQuery, updateAllHitosByProject } = useHito()
-    const { data : hitos, isLoading, isError } = getHitosQuery(projectId)   
+    const { data : hitos, isLoading, isError, refetch: refetchHitos } = getHitosQuery(projectId)   
     const { isPending: updatingHitos, mutate: updateHitos, isSuccess : updatedHitos } = updateAllHitosByProject()
    
     const { gptHitosMutation } = useGPT()    
     const { data: gptData, isPending, mutate: gptMutation, reset, isSuccess } = gptHitosMutation(projectId)
     
-    function resetState(){
+    async function resetState(){
       setGptHitos(null)
       setVisibleOptions(false)
       reset()
@@ -38,10 +38,13 @@ export default function VistaLista() {
 
     // Escuchar al evento aceptar actualización de cronograma 
     useEffect(() => {
-      if(updatedHitos){
-        resetState()
-        queryClient.invalidateQueries({queryKey: ["hitos", projectId]})
+      const resetStateAndInvalidate = async() => {
+        if(updatedHitos){
+          await resetState()
+          await refetchHitos()
+        }
       }
+      resetStateAndInvalidate()
     }, [updatedHitos])
 
     if (isLoading) {
