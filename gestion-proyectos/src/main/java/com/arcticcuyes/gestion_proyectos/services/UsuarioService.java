@@ -1,11 +1,14 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.arcticcuyes.gestion_proyectos.models.Cliente;
+import com.arcticcuyes.gestion_proyectos.models.ClienteJuridico;
+import com.arcticcuyes.gestion_proyectos.models.ClienteNatural;
+import com.arcticcuyes.gestion_proyectos.models.Consultor;
 import com.arcticcuyes.gestion_proyectos.repositories.ClienteRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,8 @@ public class UsuarioService {
     private RolRepository roleRepository;
     @Autowired
     private ClienteRepository clienteRepository;
+    @Autowired
+    private ConsultorRepository consultorRepository;
 
     public List<Usuario> getUsuarios() {
         return (List<Usuario>) uRepository.findAll();
@@ -45,7 +50,7 @@ public class UsuarioService {
         newUser.setName(usuarioDto.getName());
         newUser.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
 
-        Set<Rol> roles = new HashSet<>();
+        List<Rol> roles = new ArrayList<>();
         for (String rol : usuarioDto.getRoles()) {
             roles.add(roleRepository.findByRol(rol));
         }
@@ -57,7 +62,45 @@ public class UsuarioService {
             clienteRepository.save(cliente);
         }
 
+        // si el rol es Consultor, se crea un nuevo Consultor
+        if (roles.contains(roleRepository.findByRol("ROLE_CONSULTOR"))) {
+            Consultor consultor = new Consultor();
+            consultor.setNombres(usuarioDto.getName());
+            consultor.setApellidos("");
+            consultor.setGenero('M');
+            consultor.setEspecialidades("");
+            consultor.setUsuarioConsultor(createdUser);
+            consultorRepository.save(consultor);
+        }
+
         return createdUser;
+    }
+
+    public Usuario createUsuarioCliente(Cliente cliente) {
+        Cliente existingCliente = clienteRepository.findById(cliente.getIdCliente()).orElse(null);
+        Usuario usuario = new Usuario();
+        usuario.setEmail(cliente.getEmail());
+        if(cliente instanceof ClienteNatural){
+            ClienteNatural clienteNatural = (ClienteNatural) cliente;
+            usuario.setName(clienteNatural.getNombre()+ " " + clienteNatural.getApellido());
+            usuario.setPassword(passwordEncoder.encode(clienteNatural.getDni()));
+        }else{
+            ClienteJuridico clienteJuridico = (ClienteJuridico) cliente;
+            usuario.setName(clienteJuridico.getRazonSocial());
+            usuario.setPassword(passwordEncoder.encode(clienteJuridico.getRuc()));
+        }
+
+        List<Rol> roles = new ArrayList<>();
+        roles.add(roleRepository.findByRol("ROLE_CLIENTE"));
+        usuario.setRoles(roles);
+        
+        // asignar usuario al cliente
+        existingCliente.setUsuarioCliente(usuario);
+
+        clienteRepository.save(existingCliente);
+        uRepository.save(usuario);
+        System.out.println("Usuario creado para cliente: " + usuario.getName());
+        return usuario;
     }
 
     public void updatePassword(Usuario current, UpdatePasswordDto passwordDto) throws Exception {
@@ -75,7 +118,7 @@ public class UsuarioService {
         current.setEmail(newUsuarioDto.getEmail());
         current.setName(newUsuarioDto.getName());
         current.setEnabled(newUsuarioDto.isEnabled());
-        Set<Rol> roles = new HashSet<>();
+        List<Rol> roles = new ArrayList<>();
         for (String rol : newUsuarioDto.getRoles()) {
             Rol objRol = roleRepository.findByRol(rol);
             roles.add(objRol);

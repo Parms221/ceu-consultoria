@@ -1,8 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,9 +21,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -55,7 +56,7 @@ public class Usuario {
         joinColumns = @JoinColumn(name="id_usuario"),
         inverseJoinColumns = @JoinColumn(name="id_rol")
     )
-    private Set<Rol> roles = new HashSet<>();
+    private List<Rol> roles = new ArrayList<>();
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name="created_at", nullable = false, updatable = false)
@@ -65,4 +66,7 @@ public class Usuario {
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
     
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<FeedbackTarea> feedbacks;
 }

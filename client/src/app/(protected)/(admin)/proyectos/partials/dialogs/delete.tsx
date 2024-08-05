@@ -1,4 +1,4 @@
-import { deleteUsuario } from "@/actions/Usuario";
+"use client"
 import { buttonVariants } from "@/components/ui/button";
 // import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
     DialogTrigger,
     DialogFooter
   } from "@/components/ui/dialog"
+import useProyecto from "@/hooks/Proyecto/useProyecto";
 import { Proyecto } from "@/types/proyecto";
 import { Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
@@ -17,20 +18,7 @@ import { toast } from "sonner";
 export default function DeleteProjectDialog(
     { proyecto } : { proyecto: Proyecto}
 ) {
-    async function deleteUser(id: number, name: string){
-        try {
-            const response = await deleteUsuario(id)
-            if(response.status === "success"){
-                toast.success(`Usuario ${name} eliminado exitosamente`)
-            }else {
-                toast.error(response.message)
-            }
-        
-        }catch(e){
-            console.log(e)
-        }
-    }
-
+    const { deleteProyecto } = useProyecto()
     return (
         <Dialog>
             <DialogTrigger className="py-1.5 h-fit">
@@ -44,7 +32,7 @@ export default function DeleteProjectDialog(
                 <DialogFooter >
                     <DialogClose
                         className={buttonVariants({variant: "destructive", size: "default"})}
-                        onClick={() => console.log("borrar proyecto")}>
+                        onClick={() => deleteProyecto(proyecto.idProyecto)}>
                         Eliminar
                     </DialogClose>
                     <DialogClose className="h-full border rounded-md px-4 hover:bg-neutral-300">Cancelar</DialogClose>

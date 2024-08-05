@@ -4,7 +4,7 @@ import { useProjectForm } from "@/app/(protected)/(admin)/proyectos/nuevo/partia
 import ProjectFormPage1 from "@/app/(protected)/(admin)/proyectos/nuevo/partials/pages/page1";
 import { ChevronLeft, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ProjectFormPage2 from "@/app/(protected)/(admin)/proyectos/nuevo/partials/pages/page2";
+import ProjectFormPage2 from "@/app/(protected)/(admin)/proyectos/nuevo/partials/pages/page2/page2";
 import ProjectFormPage3 from "./page3/page3";
 
 export default function CurrentPage() {
@@ -15,7 +15,7 @@ export default function CurrentPage() {
     case 1:
       return <ProjectFormPage2 />;
     case 2:
-      return <ProjectFormPage3 />
+      return <ProjectFormPage3 />;
     case 3:
       return (
         <div>

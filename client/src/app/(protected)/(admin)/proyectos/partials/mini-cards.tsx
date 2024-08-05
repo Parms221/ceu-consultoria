@@ -1,4 +1,6 @@
+"use client"
 import PendingDot from "@/components/ui/pending-dot";
+import useProyecto from "@/hooks/Proyecto/useProyecto";
 import {
   Inbox,
   CircleCheckIcon,
@@ -7,50 +9,47 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-function GetProyectoTerminados() {
-  return {
-    total: 24,
-    time: 6 * 30,
+function getEstadisticas<EstadisticasProyecto>() {
+  const { getEstadisticasQuery } = useProyecto()
+  const { data } = getEstadisticasQuery()
+  return data ? data : {
+    terminados: 0,
+    propuestos: 0,
+    consultores: {
+      current: 0,
+      max: 0
+    }
   };
 }
 
 export function ProyectosTerminados() {
-  const data = GetProyectoTerminados();
+  const data = getEstadisticas();
   return (
     <DefaultMiniCard
       title="Proyectos terminados"
       TitleIcons={CircleCheckIcon}
-      description={`En los últimos ${data.time / 30} meses`}
-      main={String(data.total)}
+      description={`En los últimos ${6 / 30} meses`}
+      main={String(data.terminados)}
     />
   );
 }
 
-function GetConsultoresAsignados() {
-  return {
-    curr: 3,
-    max: 5,
-  };
-}
 export function ConsultoresAsignados() {
-  const data = GetConsultoresAsignados();
+  const data = getEstadisticas();
+  
   return (
     <DefaultMiniCard
       title="Consultores asignados"
       TitleIcons={SquareUserIcon}
       description={`Consultores asignados en algún proyecto`}
-      main={`${data.curr} / ${data.max}`}
+      main={`${data.consultores.current} / ${data.consultores.max}`}
     />
   );
 }
 
-function GetProyectosPorConfirmar() {
-  return {
-    total: 1,
-  };
-}
 export function ProyectosPorConfirmar() {
-  const data = GetProyectosPorConfirmar();
+  const data = getEstadisticas();
+  
   return (
     <Link
       href={"/proyectos/pendientes"}
@@ -62,12 +61,12 @@ export function ProyectosPorConfirmar() {
           Icon={Inbox}
           title="Proyectos por confirmar"
         >
-          {data.total > 0 && (
+          {data && data.propuestos > 0 && (
             // Punto rojo pulsante
             <PendingDot />
           )}
         </MiniCardTitle>
-        <MiniCardValue>{data.total}</MiniCardValue>
+        <MiniCardValue>{data?.propuestos}</MiniCardValue>
         <MiniCardDescription>
           Proyectos que están en espera de confirmación
         </MiniCardDescription>

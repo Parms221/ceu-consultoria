@@ -1,11 +1,15 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,16 +35,17 @@ public class Consultor {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idConsultor;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = true, length = 50)
     private String nombres;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = true, length = 50)
     private String apellidos;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private char genero;
-    @Column(length = 50)
-    private String cargo;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "TEXT")
+    private String especialidades;
+
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_usuario", unique = true, nullable = false)
     private Usuario usuarioConsultor;
 
@@ -50,5 +56,10 @@ public class Consultor {
     @UpdateTimestamp(source = SourceType.DB)
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
+
+    @Override
+    public String toString() {
+        return "Consultor{idConsultor=" + idConsultor + ", nombres='" + nombres + "'}";
+    }
 
 }

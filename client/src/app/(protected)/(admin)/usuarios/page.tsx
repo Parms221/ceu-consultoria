@@ -6,8 +6,10 @@ import AddUserDialog from "./partials/Dialogs/AddUserDialog";
 import { getUsuarios } from "@/actions/Usuario";
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Usuarios",
+  title: "Usuarios"
 };
 
 export default async function Usuarios() {

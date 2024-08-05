@@ -16,24 +16,29 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
+  value? : string
   options: {
     label: string
     value: string
     id?: number | string
   }[]
-
+  placeholder?: string
   onSelect?: (value: string, id?: number | string) => void
   isDisabled?: boolean
 }
 
 export function Combobox(
-  { options, onSelect, isDisabled }: Props
+  { options, onSelect, isDisabled, placeholder, value }: Props
 ) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [newValue, setValue] = useState(value || "");
+
+  useEffect(() => {
+    setValue(value || "");
+  }, [value])
 
   return (
     <Popover
@@ -46,9 +51,9 @@ export function Combobox(
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? options.find((option) => option.value.toLowerCase() === value.toLowerCase())?.label
-            : "Seleccione una opción"}
+          {newValue
+            ? options.find((option) => option.value.toLowerCase() === newValue.toLowerCase())?.label
+            : placeholder || "Seleccione una opción"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -63,15 +68,15 @@ export function Combobox(
                 key={option.value}
                 value={option.value}
                 onSelect={(currentValue: string) => {
-                  onSelect?.(currentValue == value ? "" : currentValue, option.id);
-                  setValue(currentValue == value ? "" : currentValue);
+                  onSelect?.(currentValue == newValue ? "" : currentValue, option.id);
+                  setValue(currentValue == newValue ? "" : currentValue);
                   setOpen(false);
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === option.value ? "opacity-100" : "opacity-0"
+                    newValue === option.value ? "opacity-100" : "opacity-0"
                   )}
                 />
                 {option.label}

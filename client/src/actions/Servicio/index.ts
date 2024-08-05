@@ -3,14 +3,14 @@ import { fetcher } from "@/server/fetch/server-side";
 import { Servicio } from "@/types/servicio";
 import {
   CreateServicioDto,
-  UpdateServicioDto,
+  UpdateServicioDto
 } from "@/types/servicio/ServicioDto";
 import { revalidateTag } from "next/cache";
 
 export async function getServicios(): Promise<Servicio[]> {
   try {
     const response = await fetcher("/servicios", {
-      method: "GET",
+      method: "GET"
     });
     let data;
     if (response.ok) {
@@ -28,30 +28,30 @@ export async function getServicios(): Promise<Servicio[]> {
 }
 
 export async function createServicio(
-  data: CreateServicioDto,
+  data: CreateServicioDto
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher("/servicios/create", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
     return returnResponse(
       response,
       "servicios",
       "Servicio creado exitosamente",
-      "Error al crear un nuevo servicio",
+      "Error al crear un nuevo servicio"
     );
   } catch (e) {
     console.log(e);
     return {
       status: "error",
-      message: "Error al crear servicio",
+      message: "Error al crear servicio"
     };
   }
 }
 
 export async function udpateServicio(
-  data: UpdateServicioDto,
+  data: UpdateServicioDto
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher(
@@ -60,42 +60,43 @@ export async function udpateServicio(
         method: "PUT",
         body: JSON.stringify({
           ...data,
-          idServicio: undefined,
-        }),
-      },
+          idServicio: undefined
+        })
+      }
     );
     return returnResponse(
       response,
       "servicios",
       "Servicio actualizado exitosamente",
-      "Error al actualizar el servicio",
+      "Error al actualizar el servicio"
     );
   } catch (e) {
     console.log(e);
     return {
       status: "error",
-      message: "Error al actualizar servicio",
+      message: "Error al actualizar servicio"
     };
   }
 }
+
 export async function deleteServicio(
-  id: number,
+  id: number
 ): Promise<{ status: string; message: string }> {
   try {
     const response = await fetcher(`/servicios/delete/${id}`, {
-      method: "DELETE",
+      method: "DELETE"
     });
     return returnResponse(
       response,
       "servicios",
       "Servicio eliminado exitosamente",
-      "Error al eliminar servicio",
+      "Error al eliminar servicio"
     );
   } catch (error) {
     console.error(error);
     return {
       status: "error",
-      message: "Error al eliminar servicio",
+      message: "Error al eliminar servicio"
     };
   }
 }
@@ -104,17 +105,17 @@ function returnResponse(
   response: Response,
   tag: string,
   successMessage: string,
-  errorMessage: string,
+  errorMessage: string
 ) {
   if (response.ok) {
     revalidateTag(tag);
     return {
       status: "success",
-      message: successMessage,
+      message: successMessage
     };
   }
   return {
     status: "error",
-    message: errorMessage,
+    message: errorMessage
   };
 }

@@ -1,9 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
@@ -11,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,6 +23,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -67,12 +68,12 @@ public class Tarea {
     @JoinColumn(name="id_tarea_anterior")
     private Tarea tareaAnterior;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     //@JoinColumn(name="id_estado", nullable = false)
     @JoinColumn(name="id_estado", nullable = true)
     private Estado estado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_hito", nullable = false)
     @JsonIgnore
     private Hito hito;
@@ -82,8 +83,15 @@ public class Tarea {
         joinColumns = @JoinColumn(name="id_tarea"), 
         inverseJoinColumns = @JoinColumn(name="id_participante")
     )
-    private Set<Participante> participantesAsignados = new HashSet<>();
+    private List<Participante> participantesAsignados = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tarea")
+    @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL)
     private List<SubTarea> subTareas;
+
+    // Feedbacks
+    @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL)
+    @OrderBy("createdAt DESC")
+    private List<FeedbackTarea> feedbacks;
+
+
 }

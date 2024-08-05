@@ -4,12 +4,6 @@ package com.arcticcuyes.gestion_proyectos.dto.Proyecto;
 import java.sql.Timestamp;
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.integration.IntegrationProperties.RSocket.Client;
-
-import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteJuridicoDto;
-import com.arcticcuyes.gestion_proyectos.dto.Cliente.ClienteNaturalDto;
-import com.arcticcuyes.gestion_proyectos.models.Hito;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -57,7 +51,8 @@ public class ProyectoDTO {
     private Long servicio;
 
     private Long estado = 1l;
-    // private List<Participante> participantes;
+    
+    private List<Long> participantes;
 
     // private List<Reunion> reuniones;
 
