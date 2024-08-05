@@ -27,7 +27,7 @@ public class RecursoController {
     @PostMapping(produces = "application/json")
     public ResponseEntity<?> subirRecurso(@AuthenticationPrincipal UsuarioAuth auth,  @RequestPart("file") MultipartFile file, @RequestPart("body") StorageRequest body){    
         System.out.println(body.getIdProyecto());
-        Recurso recurso = storageService.uploadFile(file,body.getIdProyecto() , null, auth.getUsuario() );
+        Recurso recurso = storageService.uploadFilesRelatedToProject(file,body.getIdProyecto() , null, auth.getUsuario() );
         if(recurso == null){
             return ResponseEntity.badRequest().build();
         }
