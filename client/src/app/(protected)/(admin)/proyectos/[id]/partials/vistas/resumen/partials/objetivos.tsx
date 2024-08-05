@@ -17,7 +17,7 @@ export default function Objetivos(
         <div>
             <h2>Objetivos</h2>
             <div className="border rounded-md p-2 sm:p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {objetivos.map((objetivo, index) => (
+                {objetivos?.map((objetivo, index) => (
                     <div className="flex flex-col items-center justify-center">
                         <img
                             className="w-16 h-16"
