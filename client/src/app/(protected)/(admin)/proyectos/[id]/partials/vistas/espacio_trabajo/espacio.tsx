@@ -4,6 +4,8 @@ import useRecurso from "@/hooks/Recurso/useRecurso";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import NewRecursoModal from "./partials/recurso";
 import { File, Link } from "lucide-react";
+import { DataTable } from "./DataTable/data-table";
+import { columns } from "./DataTable/columns";
 
 export default function VistaEspacio() {
     const { projectId } = useProjectDetail();
@@ -29,7 +31,12 @@ export default function VistaEspacio() {
                     <NewRecursoModal/>
                 </div>
             </div>
-            <div className="w-full p-10">
+            <section className="flex flex-col gap-8">
+                <article className="rounded-md border-stroke bg-white px-2 pb-4 dark:border-strokedark dark:bg-boxdark">
+                    <DataTable columns={columns} data={recursos ?? []} />
+                </article>
+            </section>
+            {/* <div className="w-full p-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
                     {recursos?.map((recurso, index) => (
                         <div key={`rs-${index}`} className="flex flex-col border-2 rounded-2xl p-2 items-center gap-1 justify-center">
@@ -39,7 +46,7 @@ export default function VistaEspacio() {
                         </div>
                     ))}
                 </div>
-            </div>
+            </div> */}
         </article>
     );
     
