@@ -343,4 +343,8 @@ public class ProyectoService {
     public void deleteProyecto(Long id) {
         proyectoRepository.deleteById(id);
     }
+
+    public EntregableProyecto getEntregableProyectoById(Long idEntregableProyecto) {
+        return entregableProyectoRepository.findById(idEntregableProyecto).orElse(null);    
+    }
 }

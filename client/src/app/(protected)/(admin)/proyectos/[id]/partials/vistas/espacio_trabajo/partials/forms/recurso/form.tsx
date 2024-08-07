@@ -29,7 +29,7 @@ type TipoRecurso = {
 export default function RecursoForm(
 ) {
     const { projectId } = useProjectDetail()
-    const { saveRecursoEspacio } = useRecurso()
+    const { saveRecursoFileEspacio, saveRecursoLinkEspacio } = useRecurso()
     const tiposRecurso = [{id: "1", description: "Archivo"}, {id: "2", description:"Enlace"}]
     const [tipoActual, setTipoActual] = useState<TipoRecurso>(tiposRecurso[0]);
     const recursoSchemaFinal = recursoSchema(tipoActual.id == "1");
@@ -41,12 +41,16 @@ export default function RecursoForm(
             idProyecto: projectId,
             titulo: values.titulo,
             enlace: values.enlace,
-            esArchivo: values.tipo === "1"
+            esArchivo: values.tipo === "1",
         } as RecursoDTO
 
-        let file = values.tipo === "1" ? values.file : "";
+        console.log("Entregable proyecto ID: "+formattedData.idEntregableProyecto);
 
-        await saveRecursoEspacio(formattedData, file);
+        if(values.tipo === "1"){
+            await saveRecursoFileEspacio(formattedData, values.file);
+        }else{
+            await saveRecursoLinkEspacio(formattedData);
+        }
         
         form.reset();
 

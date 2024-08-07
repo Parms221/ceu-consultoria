@@ -1,10 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.controllers;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -12,15 +10,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.arcticcuyes.gestion_proyectos.controllers.dao.RecursoEnlaceRequest;
 import com.arcticcuyes.gestion_proyectos.controllers.dao.StorageRequest;
 import com.arcticcuyes.gestion_proyectos.models.Recurso;
 import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
+import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 import com.arcticcuyes.gestion_proyectos.services.RecursoService;
 import com.arcticcuyes.gestion_proyectos.services.StorageService;
 
@@ -44,10 +44,23 @@ public class RecursoController {
     @Autowired
     RecursoService recursoService;
 
-    @PostMapping(produces = "application/json")
-    public ResponseEntity<?> subirRecurso(@AuthenticationPrincipal UsuarioAuth auth,  @RequestPart("file") MultipartFile file, @RequestPart("body") StorageRequest body){    
-        System.out.println(body.getIdProyecto());
-        Recurso recurso = storageService.uploadFilesRelatedToProject(file,body.getIdProyecto() , null, auth.getUsuario() );
+    @Autowired
+    ProyectoService proyectoService;
+
+    @PostMapping(path = "/file" , produces = "application/json")
+    public ResponseEntity<?> subirRecursoFile(@AuthenticationPrincipal UsuarioAuth auth,  @RequestPart("file") MultipartFile file, @RequestPart("body") StorageRequest body){
+        Recurso recurso = recursoService.crearRecursoFile(file, body.getIdProyecto(), body.getIdEntregableProyecto(), auth.getUsuario());
+        if(recurso == null){
+            System.out.println("Error en recurso");
+            return ResponseEntity.badRequest().body("Recurso no subido por límite de tamaño");
+        }
+        return ResponseEntity.ok(recurso);
+    }
+
+    @PostMapping("/link")
+    public ResponseEntity<?> subirRecurso(@AuthenticationPrincipal UsuarioAuth auth,  @RequestBody RecursoEnlaceRequest body){    
+        System.out.println(body);
+        Recurso recurso = recursoService.crearRecursoLink(body, auth.getUsuario());
         if(recurso == null){
             return ResponseEntity.badRequest().body("Recurso no subido por límite de tamaño");
         }
@@ -55,11 +68,10 @@ public class RecursoController {
     }
 
     @GetMapping("/project/{id}")
-    public List<Recurso> getRecursosDeProyecto(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, HttpServletRequest request) {
+    public List<Recurso> getRecursosDeProyecto(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
         List<Recurso> recursos = recursoService.getAllRecursosByIdProyecto(id, auth.getUsuario());
         List<Recurso> recursos2 = recursos.stream().map(recurso -> {
             if(recurso.isEsArchivo()){
-                // final String base = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null).build().toUriString();
                 recurso.setEnlace(null);
             }
             recurso.setProyectoAsociado(null);

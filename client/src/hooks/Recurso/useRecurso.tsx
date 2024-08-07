@@ -24,27 +24,29 @@ export default function useRecurso() {
         })
     }
 
-    async function saveRecursoEspacio(
+    async function saveRecursoFileEspacio(
         recurso: RecursoDTO,
         file: File | string
     ): Promise<boolean>{
-        const toastId = toast.loading("Descargando ...");
+        const toastId = toast.loading("Guardando ...");
 
         try{
             const json = JSON.stringify(recurso);
+            console.log(json);
             const formData = new FormData();
             const jsonBlob = new Blob([json], {
                 type: 'application/json'
             });
+            console.log(jsonBlob);
             formData.append("body", jsonBlob);
             formData.append("file", file);
-            const response = await fetcherMultiPartLocal('/recursos', {
+            const response = await fetcherMultiPartLocal('/recursos/file', {
                 method: "POST",
                 body: formData,
             });
 
             if(!response.ok){
-                throw new Error("Error al guardar recurso");
+                throw new Error("Error al guardar recurso archivo");
             }
 
             toast.success("Recurso guardado", {
@@ -54,7 +56,36 @@ export default function useRecurso() {
 
         }catch(e){
             console.error(e);
-            toast.error("Error al guardar el recurso", {
+            toast.error("Error al guardar el recurso archivo", {
+                id: toastId,
+            });
+            throw new Error("Error al guardar el recurso");
+        }
+    }
+
+    async function saveRecursoLinkEspacio(
+        recurso: RecursoDTO,
+    ): Promise<boolean> {
+        const toastId = toast.loading("Guardando ...");
+        console.log(recurso);
+        try {
+            const response = await fetcherLocal('/recursos/link', {
+                method: "POST",
+                body: JSON.stringify(recurso),
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al guardar recurso enlace");
+            }
+
+            toast.success("Recurso guardado", {
+                id: toastId,
+            });
+            return true;
+
+        } catch (e) {
+            console.error(e);
+            toast.error("Error al guardar el recurso enlace", {
                 id: toastId,
             });
             throw new Error("Error al guardar el recurso");
@@ -95,6 +126,7 @@ export default function useRecurso() {
     return {
         getRecursosEspacio,
         descargarRecurso,
-        saveRecursoEspacio
+        saveRecursoFileEspacio,
+        saveRecursoLinkEspacio,
     }
 }

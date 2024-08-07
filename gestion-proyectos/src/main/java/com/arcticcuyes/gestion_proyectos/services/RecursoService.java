@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.arcticcuyes.gestion_proyectos.controllers.dao.RecursoEnlaceRequest;
+import com.arcticcuyes.gestion_proyectos.models.EntregableProyecto;
 import com.arcticcuyes.gestion_proyectos.models.Participante;
 import com.arcticcuyes.gestion_proyectos.models.Recurso;
 import com.arcticcuyes.gestion_proyectos.models.Usuario;
@@ -27,18 +29,31 @@ public class RecursoService {
     @Autowired
     private StorageService storageService;
 
-    public Recurso crearRecurso(MultipartFile multipartFile, Recurso recurso){
-        if(recurso.isEsArchivo() && multipartFile != null){
-            Recurso recurso2 = storageService.uploadFilesRelatedToProject(
+    public Recurso crearRecursoFile(MultipartFile multipartFile, Long idProyecto, Long idEntregableProyecto, Usuario user){
+        System.out.println("idEntregableProyecto: " + idEntregableProyecto);
+        Recurso recurso2 = storageService.uploadFilesRelatedToProject(
             multipartFile, 
-            recurso.getProyectoAsociado().getIdProyecto(), 
-            recurso.getEntregableAsociado().getIdEntregableProyecto(),
-            recurso.getPropietario());
-            return recurso2;
-        }
-        
-        Recurso recursoEnlace = recursoRepository.save(recurso);
-        return recursoEnlace;
+            idProyecto, 
+            idEntregableProyecto,
+            user
+        );
+        return recurso2;
+    }
+
+    public Recurso crearRecursoLink(RecursoEnlaceRequest recursoEnlaceRequest, Usuario user){
+        final EntregableProyecto entregable = recursoEnlaceRequest.getIdEntregableProyecto() == null ? null : proyectoService.getEntregableProyectoById(recursoEnlaceRequest.getIdEntregableProyecto());
+        Recurso recurso = new Recurso(
+                recursoEnlaceRequest.getTitulo(),
+                recursoEnlaceRequest.getEnlace(),
+                true,
+                false,
+                user,
+                proyectoService.findProyectoById(recursoEnlaceRequest.getIdProyecto()),
+                entregable
+            );
+
+        Recurso recurso2 = recursoRepository.save(recurso);
+        return recurso2;
     }
 
     public List<Recurso> getAllRecursosByIdProyecto(Long idProyecto, Usuario user){
