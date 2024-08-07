@@ -10,8 +10,7 @@ import { columns } from "./DataTable/columns";
 export default function VistaEspacio() {
     const { projectId } = useProjectDetail();
     const { getRecursosEspacio } = useRecurso();
-    const { data: recursos, isLoading, isError, refetch: refetchRecursos} = getRecursosEspacio(projectId);
-
+    const { data: recursos, isLoading, isError, refetch: refetchRecursos } = getRecursosEspacio(projectId);
 
     if(isLoading){
         return (
@@ -28,7 +27,7 @@ export default function VistaEspacio() {
                     Espacio de trabajo
                 </h2>
                 <div className="space-x-2 flex items-center [&>div>button]:mb-4">
-                    <NewRecursoModal/>
+                    <NewRecursoModal refetch={refetchRecursos}/>
                 </div>
             </div>
             <section className="flex flex-col gap-8">

@@ -10,16 +10,18 @@ import RecursoForm from "./form";
 interface IProps {
     asEdit?: boolean,
     task?: Recurso
+    refetch: Function
 }
 
 export default function NewRecursoModal(
-    { asEdit, task }: IProps
+    { asEdit, task, refetch }: IProps
 ) {
     const { resetForms} = useProjectDetail()
     return (
         <Drawer direction="right"
             onClose={() => {
                 // setSelectedHito(null)
+                refetch();
                 resetForms()
             }}
         >
