@@ -35,17 +35,6 @@ export default function VistaEspacio() {
                     <DataTable columns={columns} data={recursos ?? []} />
                 </article>
             </section>
-            {/* <div className="w-full p-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
-                    {recursos?.map((recurso, index) => (
-                        <div key={`rs-${index}`} className="flex flex-col border-2 rounded-2xl p-2 items-center gap-1 justify-center">
-                            <div></div>
-                            {recurso.esArchivo ? <File size={48}/> : <Link size={48} />}
-                            <p className="text-center text-sm">{recurso.titulo}</p>
-                        </div>
-                    ))}
-                </div>
-            </div> */}
         </article>
     );
     

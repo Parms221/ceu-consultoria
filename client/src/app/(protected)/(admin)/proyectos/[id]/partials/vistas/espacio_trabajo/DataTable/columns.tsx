@@ -1,15 +1,14 @@
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2Icon } from "lucide-react";
-import { Badge, badgeVariants } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 // import DeleteUserDialog from "../Dialogs/DeleteUserDialog";
 import { File, Link as LinkIcon, Download, SquareArrowOutUpRight} from "lucide-react";
 import { Recurso } from "@/types/proyecto/Recurso";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import useRecurso from "@/hooks/Recurso/useRecurso";
+import DeleteRecursoDialog from "../partials/dialog/delete_recurso_dialog";
 
 function getBadgeByTipoRecurso(esArchivo: boolean) {
   if(esArchivo){
@@ -26,7 +25,7 @@ function getBadgeAcceso(recurso: Recurso) {
       <Download className="mr-2 w-4" /> Descargar
     </Button>  
   }
-  return <Link href={recurso.enlace!} className={buttonVariants({ variant: "outline" })}>
+  return <Link href={recurso.enlace!} className={buttonVariants({ variant: "outline" })} target="_blank">
     <SquareArrowOutUpRight className="mr-2 w-4" /> Abrir
   </Link >
   
@@ -55,10 +54,6 @@ export const columns: ColumnDef<Recurso>[] = [
       return getBadgeAcceso(row.original);
     }
   },
-  // {
-  //   accessorKey: "email",
-  //   header: "Correo electrónico",
-  // },
   // {
   //   accessorKey: "esArchivo",
   //   id: "roles",
@@ -129,12 +124,12 @@ export const columns: ColumnDef<Recurso>[] = [
 
       return (
         <div className="flex gap-2">
-          <Link href={`/recursos/${recurso.idRecurso}`}>
+          {/* <Link href={`/recursos/${recurso.idRecurso}`}>
             <Button className="h-fit py-1.5" variant="link" size={"sm"}>
               <Edit size={16} />
             </Button>
-          </Link>
-          {/* <DeleteUserDialog user={user} /> */}
+          </Link> */}
+          <DeleteRecursoDialog recurso={recurso} />
           {/* {user.roles[0].rol !== "ROLE_ADMIN" && (
             <DeleteUserDialog user={user} />
           )} */}
