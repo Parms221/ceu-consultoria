@@ -1,6 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,6 +10,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,7 +53,8 @@ public class StorageService {
         "application/vnd.ms-powerpoint",
         "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PowerPoint pptx
         "application/zip",
-        "application/x-rar-compressed",
+        "x-zip-compressed",
+        "application/vnd.rar",
         "application/x-7z-compressed"
     );
 
@@ -60,7 +64,7 @@ public class StorageService {
             return null;
         }
 
-        if(file.getSize() > 10_000_000){
+        if(file.getSize() > 20_000_000){
             return null;
         }
 
@@ -114,8 +118,35 @@ public class StorageService {
         return recursoNuevo;
     }
 
-    public File obtenerArchivoPorPath(Recurso recurso){
-        return new File(recurso.getEnlace());
+    public Resource descargarRecurso(Recurso recurso){
+        Path filePath = Paths.get(recurso.getEnlace()).normalize();
+        System.out.println("Filepath: "+filePath);
+        Resource resource;
+
+        try {
+            resource = new UrlResource(filePath.toUri());    
+            if (!resource.exists()) {
+                System.out.println("Recurso no encontrado");
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+        System.out.println("Recurso encontrado y url asignado");
+        return resource;
+    }
+
+    public String getContentType(Recurso recurso){
+        Path filePath = Paths.get(recurso.getEnlace()).normalize();
+        String contentType;
+        try {
+            contentType = Files.probeContentType(filePath);
+        } catch (IOException e) {
+            contentType = "application/octet-stream";
+        }
+
+        return contentType;
     }
 
     private boolean isSupportedContentType(String contentType) {
