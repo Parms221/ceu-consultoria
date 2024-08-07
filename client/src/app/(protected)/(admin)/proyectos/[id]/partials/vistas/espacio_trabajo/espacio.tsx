@@ -2,7 +2,7 @@
 
 import useRecurso from "@/hooks/Recurso/useRecurso";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
-import NewRecursoModal from "./partials/recurso";
+import NewRecursoModal from "./partials/forms/recurso";
 import { File, Link } from "lucide-react";
 import { DataTable } from "./DataTable/data-table";
 import { columns } from "./DataTable/columns";

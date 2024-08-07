@@ -3,7 +3,7 @@ import { PlusIcon, ChevronsRightIcon, PenBox } from "lucide-react";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTrigger } from "@/components/ui/drawer";
 import { Hito } from "@/types/proyecto/Hito";
 import { Button } from "@/components/ui/button";
-import {useProjectDetail} from "../../../../contexto/proyecto-detail.context";
+import {useProjectDetail} from "../../../../../contexto/proyecto-detail.context";
 import { Recurso } from "@/types/proyecto/Recurso";
 
 interface IProps {

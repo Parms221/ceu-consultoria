@@ -9,7 +9,7 @@ import Link from "next/link";
 import { File, Link as LinkIcon, Download, SquareArrowOutUpRight} from "lucide-react";
 import { Recurso } from "@/types/proyecto/Recurso";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
-import { fetcherLocal } from "@/server/fetch/client-side";
+import useRecurso from "@/hooks/Recurso/useRecurso";
 
 function getBadgeByTipoRecurso(esArchivo: boolean) {
   if(esArchivo){
@@ -20,8 +20,9 @@ function getBadgeByTipoRecurso(esArchivo: boolean) {
 
 function getBadgeAcceso(recurso: Recurso) {
   const { projectId } = useProjectDetail();
+  const { descargarRecurso } = useRecurso();
   if (recurso.esArchivo) {
-    return <Button className="py-0 px-3" variant="outline" onClick={() => download(recurso, projectId)}>
+    return <Button className="py-0 px-3" variant="outline" onClick={() => descargarRecurso(recurso, projectId)}>
       <Download className="mr-2 w-4" /> Descargar
     </Button>  
   }
@@ -142,22 +143,3 @@ export const columns: ColumnDef<Recurso>[] = [
     },
   },
 ];
-
-
-const download = async (recurso: Recurso, projectId: number) => {
-  const response = await fetcherLocal(`/recursos/download/${projectId}/${recurso.idRecurso!}`);
-
-  if (response.ok) {
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = recurso.titulo;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  } else {
-    console.error('Error downloading file');
-  }
-}

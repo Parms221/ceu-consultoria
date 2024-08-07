@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 
-//ES SOLO DE PRUEBA, NO IRA EN PRODUCCION
 @RestController
 @RequestMapping("/recursos")
 public class RecursoController {
@@ -50,15 +49,14 @@ public class RecursoController {
         System.out.println(body.getIdProyecto());
         Recurso recurso = storageService.uploadFilesRelatedToProject(file,body.getIdProyecto() , null, auth.getUsuario() );
         if(recurso == null){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Recurso no subido por límite de tamaño");
         }
         return ResponseEntity.ok(recurso);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/project/{id}")
     public List<Recurso> getRecursosDeProyecto(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, HttpServletRequest request) {
         List<Recurso> recursos = recursoService.getAllRecursosByIdProyecto(id, auth.getUsuario());
-        System.out.println("Correcto");
         List<Recurso> recursos2 = recursos.stream().map(recurso -> {
             if(recurso.isEsArchivo()){
                 // final String base = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null).build().toUriString();
@@ -67,16 +65,15 @@ public class RecursoController {
             recurso.setProyectoAsociado(null);
             return recurso;
         }).collect(Collectors.toList());
-        System.out.println("Enviado");
         return recursos2;
     }
 
-    @GetMapping("/{id}/{idRecurso}")
+    @GetMapping("/{idRecurso}/project/{id}")
     public Recurso getRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, @PathVariable Long idRecurso) {
         return recursoService.getRecursoById(idRecurso, id, auth.getUsuario());
     }
 
-    @GetMapping("/download/{id}/{idRecurso}")
+    @GetMapping("/download/{idRecurso}/project/{id}")
     public ResponseEntity<?> descargarRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, @PathVariable Long idRecurso) {
         Recurso recurso = recursoService.getRecursoById(idRecurso, id, auth.getUsuario());
         if(recurso == null){
