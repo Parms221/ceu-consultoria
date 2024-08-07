@@ -5,6 +5,7 @@ import { Hito } from "@/types/proyecto/Hito";
 import { Button } from "@/components/ui/button";
 import {useProjectDetail} from "../../../../../contexto/proyecto-detail.context";
 import { Recurso } from "@/types/proyecto/Recurso";
+import RecursoForm from "./form";
 
 interface IProps {
     asEdit?: boolean,
@@ -14,7 +15,7 @@ interface IProps {
 export default function NewRecursoModal(
     { asEdit, task }: IProps
 ) {
-    const { resetForms } = useProjectDetail()
+    const { resetForms} = useProjectDetail()
     return (
         <Drawer direction="right"
             onClose={() => {
@@ -70,6 +71,7 @@ export default function NewRecursoModal(
                     </DrawerHeader>
                     <div className="px-4 py-2">
                         {/* <HitoForm /> */}
+                        <RecursoForm/>
                     </div>
 
                 </div>

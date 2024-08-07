@@ -19,6 +19,7 @@ import {
 import { useEffect, useState } from "react";
 
 type Props = {
+  alwaysSelected?: boolean
   value? : string
   options: {
     label: string
@@ -31,7 +32,7 @@ type Props = {
 }
 
 export function Combobox(
-  { options, onSelect, isDisabled, placeholder, value }: Props
+  { options, onSelect, isDisabled, placeholder, value, alwaysSelected = false }: Props
 ) {
   const [open, setOpen] = useState(false);
   const [newValue, setValue] = useState(value || "");
@@ -68,8 +69,8 @@ export function Combobox(
                 key={option.value}
                 value={option.value}
                 onSelect={(currentValue: string) => {
-                  onSelect?.(currentValue == newValue ? "" : currentValue, option.id);
-                  setValue(currentValue == newValue ? "" : currentValue);
+                  onSelect?.(currentValue == newValue ? (alwaysSelected ? currentValue : "") : currentValue, option.id);
+                  setValue(currentValue == newValue ? (alwaysSelected ? currentValue : "") : currentValue);
                   setOpen(false);
                 }}
               >

@@ -1,7 +1,9 @@
 "use client"
 
 import { fetcherLocal } from "@/server/fetch/client-side";
+import { fetcherMultiPartLocal } from "@/server/fetch/multi-part-client-side";
 import { Recurso } from "@/types/proyecto/Recurso";
+import { RecursoDTO } from "@/types/proyecto/Recurso/Dto/recurso.dto";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -23,15 +25,22 @@ export default function useRecurso() {
     }
 
     async function saveRecursoEspacio(
-        projectId: number,
-        recurso: Recurso,
+        recurso: RecursoDTO,
+        file: File | string
     ): Promise<boolean>{
-        const toastId = toast.loading("Guardando ...");
+        const toastId = toast.loading("Descargando ...");
 
         try{
-            const response = await fetcherLocal('recursos', {
+            const json = JSON.stringify(recurso);
+            const formData = new FormData();
+            const jsonBlob = new Blob([json], {
+                type: 'application/json'
+            });
+            formData.append("body", jsonBlob);
+            formData.append("file", file);
+            const response = await fetcherMultiPartLocal('/recursos', {
                 method: "POST",
-                body: JSON.stringify(recurso),
+                body: formData,
             });
 
             if(!response.ok){
@@ -86,5 +95,6 @@ export default function useRecurso() {
     return {
         getRecursosEspacio,
         descargarRecurso,
+        saveRecursoEspacio
     }
 }
