@@ -64,7 +64,7 @@ public class StorageService {
             return null;
         }
 
-        if(file.getSize() > 10_000_000){
+        if(file.getSize() > 20_000_000){
             return null;
         }
 
