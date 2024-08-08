@@ -177,4 +177,14 @@ public class StorageService {
             return null;
         }
     }
+
+    public boolean eliminarArchivo(String enlace){
+        Path filePath = Paths.get(enlace).normalize();
+        try {
+            Files.delete(filePath);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

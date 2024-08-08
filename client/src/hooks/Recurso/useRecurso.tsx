@@ -95,9 +95,9 @@ export default function useRecurso() {
         }
     }
 
-    async function descargarRecurso(recurso: Recurso, projectId: number){
+    async function descargarRecurso(recurso: Recurso){
         const toastId = toast.loading("Descargando ...");
-        const response = await fetcherLocal(`/recursos/download/${recurso.idRecurso!}/project/${projectId}`);
+        const response = await fetcherLocal(`/recursos/download/${recurso.idRecurso!}`);
 
         if (response.ok) {
             const blob = await response.blob();

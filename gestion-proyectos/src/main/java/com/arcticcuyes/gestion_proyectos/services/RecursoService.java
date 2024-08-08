@@ -71,17 +71,41 @@ public class RecursoService {
         return null;
     }
 
-    public Recurso getRecursoById(Long idRecurso, Long idProyecto, Usuario user){
-        if(user.getRoles().stream().map(rol -> rol.getRol()).toList().contains("ROLE_ADMIN")){
-            return recursoRepository.findById(idRecurso).orElse(null);
+    public Recurso getRecursoById(Long idRecurso, Usuario user){
+        Recurso recurso = recursoRepository.findById(idRecurso).orElse(null);
+        if(recurso == null){
+            return null;
         }
 
-        List<Participante> participantes = proyectoService.getParticipantesProyecto(idProyecto);
+        if(user.getRoles().stream().map(rol -> rol.getRol()).toList().contains("ROLE_ADMIN")){
+            return recurso;
+        }
+
+        List<Participante> participantes = proyectoService.getParticipantesProyecto(recurso.getProyectoAsociado().getIdProyecto());
         for (Participante part : participantes) {
             if(part.getConsultorParticipante().getUsuarioConsultor().getId() == user.getId()){
-                return recursoRepository.findById(idRecurso).orElse(null);
+                return recurso;
             }
         }
         return null;
+    }
+
+    public boolean eliminarRecurso(Recurso recurso, Usuario user){
+        if(user.getRoles().stream().map(rol -> rol.getRol()).toList().contains("ROLE_ADMIN")){
+            recursoRepository.deleteById(recurso.getIdRecurso());
+            storageService.eliminarArchivo(recurso.getEnlace());
+            return true;
+        }
+
+        List<Participante> participantes = proyectoService.getParticipantesProyecto(recurso.getProyectoAsociado().getIdProyecto());
+        for (Participante part : participantes) {
+            if(part.getConsultorParticipante().getUsuarioConsultor().getId() == user.getId()){
+                recursoRepository.deleteById(recurso.getIdRecurso());
+                storageService.eliminarArchivo(recurso.getEnlace());
+                return true;
+            }
+        }
+
+        return false;
     }
 }

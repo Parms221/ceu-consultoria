@@ -23,15 +23,10 @@ import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 import com.arcticcuyes.gestion_proyectos.services.RecursoService;
 import com.arcticcuyes.gestion_proyectos.services.StorageService;
-import com.arcticcuyes.gestion_proyectos.services.errors.ArchivoYaExisteException;
-
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -87,14 +82,14 @@ public class RecursoController {
         return recursos2;
     }
 
-    @GetMapping("/{idRecurso}/project/{id}")
-    public Recurso getRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, @PathVariable Long idRecurso) {
-        return recursoService.getRecursoById(idRecurso, id, auth.getUsuario());
+    @GetMapping("/{id}")
+    public Recurso getRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
+        return recursoService.getRecursoById(id, auth.getUsuario());
     }
 
-    @GetMapping("/download/{idRecurso}/project/{id}")
-    public ResponseEntity<?> descargarRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, @PathVariable Long idRecurso) {
-        Recurso recurso = recursoService.getRecursoById(idRecurso, id, auth.getUsuario());
+    @GetMapping("/download/{id}")
+    public ResponseEntity<?> descargarRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
+        Recurso recurso = recursoService.getRecursoById(id, auth.getUsuario());
         if(recurso == null){
             return ResponseEntity.notFound().build();
         }
@@ -109,6 +104,20 @@ public class RecursoController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
+        Recurso recurso = recursoService.getRecursoById(id, auth.getUsuario());
+        if(recurso == null){
+            return ResponseEntity.notFound().build();
+        }
+        final boolean eliminadoDb = recursoService.eliminarRecurso(recurso, auth.getUsuario());
+        if(!eliminadoDb){
+            return ResponseEntity.badRequest().build();
+        }
+        
+        return ResponseEntity.noContent().build();
     }
     
 }
