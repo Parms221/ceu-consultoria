@@ -46,7 +46,8 @@ export default function useRecurso() {
             });
 
             if(!response.ok){
-                throw new Error("Error al guardar recurso archivo");
+                const mensajeError = await response.text();
+                throw new Error(mensajeError);
             }
 
             toast.success("Recurso guardado", {
@@ -56,9 +57,11 @@ export default function useRecurso() {
 
         }catch(e){
             console.error(e);
-            toast.error("Error al guardar el recurso archivo", {
-                id: toastId,
-            });
+            if(e instanceof Error){
+                toast.error(e.message, {
+                    id: toastId,
+                });
+            }
             throw new Error("Error al guardar el recurso");
         }
     }

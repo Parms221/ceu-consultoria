@@ -23,6 +23,7 @@ import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 import com.arcticcuyes.gestion_proyectos.services.RecursoService;
 import com.arcticcuyes.gestion_proyectos.services.StorageService;
+import com.arcticcuyes.gestion_proyectos.services.errors.ArchivoYaExisteException;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,10 +50,16 @@ public class RecursoController {
 
     @PostMapping(path = "/file" , produces = "application/json")
     public ResponseEntity<?> subirRecursoFile(@AuthenticationPrincipal UsuarioAuth auth,  @RequestPart("file") MultipartFile file, @RequestPart("body") StorageRequest body){
-        Recurso recurso = recursoService.crearRecursoFile(file, body.getIdProyecto(), body.getIdEntregableProyecto(), auth.getUsuario());
+        Recurso recurso = null;
+        try {
+            recurso = recursoService.crearRecursoFile(file, body.getIdProyecto(), body.getIdEntregableProyecto(), auth.getUsuario());    
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        
         if(recurso == null){
             System.out.println("Error en recurso");
-            return ResponseEntity.badRequest().body("Recurso no subido por límite de tamaño");
+            return ResponseEntity.badRequest().body("Error al crear recurso");
         }
         return ResponseEntity.ok(recurso);
     }
@@ -62,7 +69,7 @@ public class RecursoController {
         System.out.println(body);
         Recurso recurso = recursoService.crearRecursoLink(body, auth.getUsuario());
         if(recurso == null){
-            return ResponseEntity.badRequest().body("Recurso no subido por límite de tamaño");
+            return ResponseEntity.badRequest().body("Error al crear recurso");
         }
         return ResponseEntity.ok(recurso);
     }

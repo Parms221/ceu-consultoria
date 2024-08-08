@@ -155,6 +155,7 @@ export default function RecursoForm(
                                         } />
                                     </FormControl>
                                 </div>
+                                <p className="text-sm">Tamaño máximo de archivo: 20MB</p>
                                 <FormMessage />
                             </FormItem>
                         )}
