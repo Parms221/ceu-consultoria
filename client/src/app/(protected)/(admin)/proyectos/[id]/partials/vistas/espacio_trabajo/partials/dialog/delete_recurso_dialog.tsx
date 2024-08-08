@@ -1,4 +1,4 @@
-import { deleteUsuario } from "@/actions/Usuario";
+import { deleteRecursoServer } from "@/actions/Proyecto/EspacioTrabajo";
 import { buttonVariants } from "@/components/ui/button";
 // import { Button } from "@/components/ui/button";
 import {
@@ -18,17 +18,18 @@ export default function DeleteRecursoDialog(
     { recurso }: { recurso: Recurso }
 ) {
     async function deleteRecurso(id: number, name: string) {
-        // try {
-        //     const response = await deleteUsuario(id)
-        //     if (response.status === "success") {
-        //         toast.success(`Usuario ${name} eliminado exitosamente`)
-        //     } else {
-        //         toast.error(response.message)
-        //     }
+        try {
+            const response = await deleteRecursoServer(id)
+            console.log(response);
+            if (response.status === "success") {
+                toast.success(`Recurso ${name} eliminado exitosamente`)
+            } else {
+                toast.error(response.message)
+            }
 
-        // } catch (e) {
-        //     console.log(e)
-        // }
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     return (

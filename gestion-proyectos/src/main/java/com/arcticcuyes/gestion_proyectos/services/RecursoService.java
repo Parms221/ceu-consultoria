@@ -93,7 +93,9 @@ public class RecursoService {
     public boolean eliminarRecurso(Recurso recurso, Usuario user){
         if(user.getRoles().stream().map(rol -> rol.getRol()).toList().contains("ROLE_ADMIN")){
             recursoRepository.deleteById(recurso.getIdRecurso());
-            storageService.eliminarArchivo(recurso.getEnlace());
+            if(recurso.isEsArchivo()){
+                storageService.eliminarArchivo(recurso.getEnlace());
+            }
             return true;
         }
 
@@ -101,7 +103,9 @@ public class RecursoService {
         for (Participante part : participantes) {
             if(part.getConsultorParticipante().getUsuarioConsultor().getId() == user.getId()){
                 recursoRepository.deleteById(recurso.getIdRecurso());
-                storageService.eliminarArchivo(recurso.getEnlace());
+                if(recurso.isEsArchivo()){
+                    storageService.eliminarArchivo(recurso.getEnlace());
+                }
                 return true;
             }
         }
