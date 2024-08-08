@@ -9,6 +9,8 @@ import { Recurso } from "@/types/proyecto/Recurso";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import useRecurso from "@/hooks/Recurso/useRecurso";
 import DeleteRecursoDialog from "../partials/dialog/delete_recurso_dialog";
+import { useSession } from "next-auth/react";
+import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 
 function getBadgeByTipoRecurso(esArchivo: boolean) {
   if(esArchivo){
@@ -18,10 +20,9 @@ function getBadgeByTipoRecurso(esArchivo: boolean) {
 }
 
 function getBadgeAcceso(recurso: Recurso) {
-  const { projectId } = useProjectDetail();
   const { descargarRecurso } = useRecurso();
   if (recurso.esArchivo) {
-    return <Button className="py-0 px-3" variant="outline" onClick={() => descargarRecurso(recurso, projectId)}>
+    return <Button className="py-0 px-3" variant="outline" onClick={() => descargarRecurso(recurso)}>
       <Download className="mr-2 w-4" /> Descargar
     </Button>  
   }
@@ -45,6 +46,11 @@ export const columns: ColumnDef<Recurso>[] = [
       const tipo = row.original.esArchivo
       return getBadgeByTipoRecurso(tipo ?? true);
     }
+  },
+  {
+    accessorKey: "propietario.name",
+    id: "usuario",
+    header: "Propietario",
   },
   {
     accessorKey: "enlace",
@@ -106,16 +112,16 @@ export const columns: ColumnDef<Recurso>[] = [
   //     );
   //   },
   // },
-  // {
-  //   accessorKey: "createdAt",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Fecha de creación" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const date = new Date(row.original.createdAt);
-  //     return <div>{date.toLocaleString()}</div>;
-  //   },
-  // },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha de subida" />
+    ),
+    cell: ({ row }) => {
+      const date = new Date(row.original.createdAt!);
+      return <div>{date.toLocaleString()}</div>;
+    },
+  },
   {
     id: "actions",
     header: "Acciones",
@@ -129,7 +135,7 @@ export const columns: ColumnDef<Recurso>[] = [
               <Edit size={16} />
             </Button>
           </Link> */}
-          <DeleteRecursoDialog recurso={recurso} />
+          <DeleteRecursoDialog recurso={recurso}/>
           {/* {user.roles[0].rol !== "ROLE_ADMIN" && (
             <DeleteUserDialog user={user} />
           )} */}

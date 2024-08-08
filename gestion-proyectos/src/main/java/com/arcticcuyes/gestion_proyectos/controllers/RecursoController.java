@@ -24,13 +24,9 @@ import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 import com.arcticcuyes.gestion_proyectos.services.RecursoService;
 import com.arcticcuyes.gestion_proyectos.services.StorageService;
 
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -49,10 +45,16 @@ public class RecursoController {
 
     @PostMapping(path = "/file" , produces = "application/json")
     public ResponseEntity<?> subirRecursoFile(@AuthenticationPrincipal UsuarioAuth auth,  @RequestPart("file") MultipartFile file, @RequestPart("body") StorageRequest body){
-        Recurso recurso = recursoService.crearRecursoFile(file, body.getIdProyecto(), body.getIdEntregableProyecto(), auth.getUsuario());
+        Recurso recurso = null;
+        try {
+            recurso = recursoService.crearRecursoFile(file, body.getIdProyecto(), body.getIdEntregableProyecto(), auth.getUsuario());    
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        
         if(recurso == null){
             System.out.println("Error en recurso");
-            return ResponseEntity.badRequest().body("Recurso no subido por límite de tamaño");
+            return ResponseEntity.badRequest().body("Error al crear recurso");
         }
         return ResponseEntity.ok(recurso);
     }
@@ -62,7 +64,7 @@ public class RecursoController {
         System.out.println(body);
         Recurso recurso = recursoService.crearRecursoLink(body, auth.getUsuario());
         if(recurso == null){
-            return ResponseEntity.badRequest().body("Recurso no subido por límite de tamaño");
+            return ResponseEntity.badRequest().body("Error al crear recurso");
         }
         return ResponseEntity.ok(recurso);
     }
@@ -80,14 +82,14 @@ public class RecursoController {
         return recursos2;
     }
 
-    @GetMapping("/{idRecurso}/project/{id}")
-    public Recurso getRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, @PathVariable Long idRecurso) {
-        return recursoService.getRecursoById(idRecurso, id, auth.getUsuario());
+    @GetMapping("/{id}")
+    public Recurso getRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
+        return recursoService.getRecursoById(id, auth.getUsuario());
     }
 
-    @GetMapping("/download/{idRecurso}/project/{id}")
-    public ResponseEntity<?> descargarRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id, @PathVariable Long idRecurso) {
-        Recurso recurso = recursoService.getRecursoById(idRecurso, id, auth.getUsuario());
+    @GetMapping("/download/{id}")
+    public ResponseEntity<?> descargarRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
+        Recurso recurso = recursoService.getRecursoById(id, auth.getUsuario());
         if(recurso == null){
             return ResponseEntity.notFound().build();
         }
@@ -102,6 +104,20 @@ public class RecursoController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarRecurso(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
+        Recurso recurso = recursoService.getRecursoById(id, auth.getUsuario());
+        if(recurso == null){
+            return ResponseEntity.notFound().build();
+        }
+        final boolean eliminadoDb = recursoService.eliminarRecurso(recurso, auth.getUsuario());
+        if(!eliminadoDb){
+            return ResponseEntity.badRequest().build();
+        }
+        
+        return ResponseEntity.noContent().build();
     }
     
 }

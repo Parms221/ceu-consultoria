@@ -23,6 +23,7 @@ import com.arcticcuyes.gestion_proyectos.models.Usuario;
 import com.arcticcuyes.gestion_proyectos.repositories.EntregableProyectoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ProyectoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.RecursoRepository;
+import com.arcticcuyes.gestion_proyectos.services.errors.ArchivoYaExisteException;
 
 
 @Service
@@ -61,11 +62,11 @@ public class StorageService {
     //Zona de trabajo y entregables
     public Recurso uploadFilesRelatedToProject(MultipartFile file, Long idProyecto, Long idEntregableProyecto, Usuario usuario) {
         if(!isSupportedContentType(file.getContentType())){
-            return null;
+            throw new RuntimeException("Tipo de archivo no soportado");
         }
 
         if(file.getSize() > 20_000_000){
-            return null;
+            throw new RuntimeException("Tamaño de archivo es superior a los 20Mb");
         }
 
         String dirPath;
@@ -158,13 +159,32 @@ public class StorageService {
             Files.createDirectories(Paths.get(dirPath));
             String filePath = dirPath + "/" + file.getOriginalFilename();
             System.out.println(filePath);
+
+            if(Files.exists(Paths.get(filePath))){
+                throw new Exception("Archivo ya existe");
+            }
+
             file.transferTo(new File(filePath));
 
             return filePath;
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             System.out.println("Error al guardar archivo: "+ex.getMessage());
             System.out.println(ex.getStackTrace());
+            if(ex.getMessage() == "Archivo ya existe"){
+                throw new ArchivoYaExisteException("El archivo ya existe", ex.getCause());
+            }
             return null;
+        }
+    }
+
+    public boolean eliminarArchivo(String enlace){
+        Path filePath = Paths.get(enlace).normalize();
+        try {
+            Files.delete(filePath);
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 }
