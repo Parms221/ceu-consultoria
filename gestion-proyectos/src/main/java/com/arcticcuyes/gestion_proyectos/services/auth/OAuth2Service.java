@@ -19,8 +19,6 @@ public class OAuth2Service {
     public void AuthorizeUser(String code, Long userId) throws IOException {
         // Intercambiar código por tokens
         GoogleTokenResponse tokenResponse = flow.newTokenRequest(code).setRedirectUri(redirectUri).execute();
-        System.out.println("Autorización Access token: " + tokenResponse.getAccessToken());
-        System.out.println("Autorización Refresh token: " + tokenResponse.getRefreshToken());
         saveTokens(tokenResponse, userId);
     }
 

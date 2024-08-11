@@ -15,7 +15,7 @@ export default function ProjectCard(
 ) {
   return (
     <Link href={`/my/proyectos/${id}`}>
-      <Card className="p-0 sm:p-0 w-80 h-70 overflow-hidden bg-ceu-celeste rounded-xl">
+      <Card className="p-0 sm:p-0 w-80 h-70 overflow-hidden rounded-xl">
         <CardHeader className="p-0">
           <Image
               src={"/images/cover/cover-01.png"}
@@ -26,14 +26,14 @@ export default function ProjectCard(
           />
         </CardHeader>
         <CardContent className="p-2">
-          <h3 className="text-title-md font-semibold text-white">
+          <h3 className="text-title-sm font-semibold text-black line-clamp-1">
             {title}
           </h3>
-          <p className="text-xs text-white line-clamp-2">
+          <p className="text-xs text-ceu-azul line-clamp-2">
             {description} Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores sequi reiciendis officiis, laborum error minus, provident et quis fuga in consequuntur dolor veniam odit aspernatur exercitationem dignissimos, distinctio voluptatem unde!
           </p>
         </CardContent>
-        <CardFooter className="px-2 py-0 pb-1.5 flex flex-col gap-2 text-xs text-white">
+        <CardFooter className="px-2 py-0 pb-1.5 flex flex-col gap-2 text-xs text-ceu-azul">
           <Progress value={progress} className="h-1 bg-neutral-300" indicatorClassname="bg-ceu-azul"/>
           <span className="self-start pl-1.5">{progress}% completado</span>
         </CardFooter>

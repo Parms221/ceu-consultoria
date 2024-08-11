@@ -12,6 +12,7 @@ import { fetcherLocal } from "@/server/fetch/client-side";
 import { useAppContext } from "@/app/(protected)/app.context";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import NewTaskModal from ".";
+import { es } from "date-fns/locale/es";
 
 
 function isExpandedChevron(isExpanded: boolean) {
@@ -100,15 +101,15 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
   },
   {
     id: "duracion",
-    header: "Duración (días)",
+    header: "Duración",
     cell: ({ row }) => {
       const inicio = row.original.fechaInicio;
       const final = row.original.fechaFin
       if (!inicio || !final) return "-";
     
       // get diff time in days using date-fns
-      const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)}).days
-      return Number(duracion ?? 0);
+      const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)})
+      return formatDuration(duracion, { locale: es});
     },
   },
   {

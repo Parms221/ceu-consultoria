@@ -1,33 +1,71 @@
 package com.arcticcuyes.gestion_proyectos.controllers.google;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.arcticcuyes.gestion_proyectos.dto.Google.EventDTO;
 import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
-import com.arcticcuyes.gestion_proyectos.services.google.GoogleApiService;
+import com.arcticcuyes.gestion_proyectos.services.google.GoogleCalendarService;
+import com.google.api.services.calendar.model.Event;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/calendar")
+@RequestMapping("/calendars")
 public class CalendarController {
     @Autowired
-    private GoogleApiService googleApiService;
+    private GoogleCalendarService gcalendarService;
+
+    @GetMapping
+    public ResponseEntity<?> listCalendars(@AuthenticationPrincipal UsuarioAuth user) {
+        // Por el momento no está permitido el acceso a través de este método
+        try {
+            Long userId = user.getUsuario().getId();  
+            return ResponseEntity.ok(gcalendarService.getCalendars(userId.toString()));
+        } catch (Exception e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.SC_FORBIDDEN).body(errors);
+        }
+    }
 
     @GetMapping("/events")
     public ResponseEntity<?> listEvents(@AuthenticationPrincipal UsuarioAuth user) {
         try {
             Long userId = user.getUsuario().getId();  
-            return ResponseEntity.ok(googleApiService.getEvents(userId.toString()));
+            return ResponseEntity.ok(gcalendarService.getEvents(userId.toString()));
         } catch (Exception e) {
-            return ResponseEntity.status(401).body(e.getMessage());
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body(errors);
         }
     }
-    
+
+    @PostMapping("/events")
+    public ResponseEntity<?> insertEvent(@AuthenticationPrincipal UsuarioAuth user, @RequestBody @Valid EventDTO event) {
+        Map<String, String> errors = new HashMap<>();
+        try {
+            Long userId = user.getUsuario().getId();  
+            Event newEvent = gcalendarService.insertEvent(userId.toString(), event);
+            return ResponseEntity.ok(newEvent);
+        } catch (Exception e) {
+            errors.put("error", "Ocurrió un error inesperado al insertar el evento");
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+      
+    }
 }

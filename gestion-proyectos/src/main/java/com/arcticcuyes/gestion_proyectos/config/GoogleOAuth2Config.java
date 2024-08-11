@@ -53,7 +53,7 @@ public class GoogleOAuth2Config {
                     GsonFactory.getDefaultInstance(),
                     clientSecrets,
                     Arrays.asList(scopes.split(",")))
-                    .setDataStoreFactory(new FileDataStoreFactory(new File("tokens")))
+                    .setDataStoreFactory(new FileDataStoreFactory(new File("stores")))
                     .setAccessType("offline")
                     .build();
         } catch (EntityNotFoundException e) {
