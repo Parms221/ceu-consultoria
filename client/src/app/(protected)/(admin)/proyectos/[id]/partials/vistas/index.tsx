@@ -2,7 +2,8 @@ import VistaGantt from "./gantt";
 import VistaResumen from "./resumen/resumen";
 import VistaLista from "./lista/lista";
 import VistaKanban from "./kanban";
-import { GanttChart, InfoIcon, Kanban, ListChecks } from "lucide-react";
+import { GanttChart, InfoIcon, Kanban, ListChecks, FolderOpen } from "lucide-react";
+import VistaEspacio from "./espacio_trabajo/espacio";
 
 
 export const PROJECT_VIEWS = [
@@ -30,6 +31,12 @@ export const PROJECT_VIEWS = [
       icon: <GanttChart />,
       content: VistaGantt,
     },
+    {
+      id: "espacio",
+      label: "Espacio de trabajo",
+      icon: <FolderOpen/>,
+      content: VistaEspacio,
+    }
   ];
 
 export {
