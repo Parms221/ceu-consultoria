@@ -18,8 +18,12 @@ public class OAuth2Service {
 
     public void AuthorizeUser(String code, Long userId) throws IOException {
         // Intercambiar código por tokens
+       try{
         GoogleTokenResponse tokenResponse = flow.newTokenRequest(code).setRedirectUri(redirectUri).execute();
         saveTokens(tokenResponse, userId);
+       }catch(Exception e){
+           System.out.println("Error al intercambiar el código por tokens" + e.getMessage());
+       }
     }
 
     private void saveTokens(GoogleTokenResponse tokenResponse, Long userId) throws IOException {
