@@ -43,11 +43,26 @@ public class CalendarController {
         }
     }
 
+
+    // Devuelve solo eventos de google calendar
     @GetMapping("/events")
     public ResponseEntity<?> listEvents(@AuthenticationPrincipal UsuarioAuth user) {
         try {
             Long userId = user.getUsuario().getId();  
             return ResponseEntity.ok(gcalendarService.getEvents(userId));
+        } catch (Exception e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body(errors);
+        }
+    }
+
+    // devuelve eventos de google calendar y de la aplicación (reuniones meet)
+    @GetMapping("/events/all")
+    public ResponseEntity<?> listAllEvents(@AuthenticationPrincipal UsuarioAuth user) {
+        try {
+            Long userId = user.getUsuario().getId();  
+            return ResponseEntity.ok(gcalendarService.getAllEvents(userId));
         } catch (Exception e) {
             Map<String, String> errors = new HashMap<>();
             errors.put("error", e.getMessage());

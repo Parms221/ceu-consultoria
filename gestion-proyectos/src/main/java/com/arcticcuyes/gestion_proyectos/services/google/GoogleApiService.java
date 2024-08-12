@@ -37,6 +37,20 @@ public class GoogleApiService {
         return userinfo.getEmail();
     }
 
+    public Userinfo getGoogleAuthorizedAccount(String userId) throws Exception {
+        Credential credential = flow.loadCredential(userId); 
+        if (credential == null || credential.getAccessToken() == null) {
+            return null;
+        }
+        Oauth2 oauth2 = new Oauth2.Builder(
+            GoogleNetHttpTransport.newTrustedTransport(), 
+            GsonFactory.getDefaultInstance(), 
+            credential
+        ).setApplicationName(clientName).build();
+        Userinfo userinfo = oauth2.userinfo().get().execute();
+        return userinfo;
+    }
+
     /* Método para remover la autorización de un usuario */
     public void revokeGoogleAccount(String userId) throws Exception{
         try {
