@@ -74,4 +74,9 @@ public class Reunion {
 
     @OneToMany(mappedBy = "reunion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvitadoReunion> invitados;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario",  referencedColumnName = "id", nullable = false)
+    private Usuario usuario;
+
 }

@@ -47,6 +47,7 @@ public class ReunionService {
     public Reunion create(Proyecto proyecto, ReunionDTO reunionDTO, UsuarioAuth currentUser) throws Exception {
        // https://developers.google.com/meet/api/reference/rest/v2
             Reunion reunion = new Reunion();
+            reunion.setUsuario(currentUser.getUsuario());
             reunion.setTitulo(reunionDTO.getTitulo());
             reunion.setDescripcion(reunionDTO.getDescripcion());
             reunion.setFechaInicio(reunionDTO.getFechaInicio());
@@ -81,6 +82,7 @@ public class ReunionService {
                     // Creación de google meet space si no se crea el evento
                     Space meetingSpace = gMeetService.createSpace(currentUser.getUsuario().getId());
                     reunion.setEnlace(meetingSpace.getMeetingUri());
+                    reunion.setEventOrganizer(currentUser.getUsuario().getEmail());
      
                 }
             }catch (Exception e){
