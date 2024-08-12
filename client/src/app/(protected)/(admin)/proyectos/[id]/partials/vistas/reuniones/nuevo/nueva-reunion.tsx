@@ -13,32 +13,23 @@ import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/parti
 import { Tarea } from "@/types/proyecto/Tarea";
 import { useRef } from "react";
 import NewReunionForm from "./form";
+import { Reunion } from "@/types/proyecto/Reunion";
 
 interface IProps {
-  task? : Tarea
+  reunion? : Reunion
 }
 
 export default function AddReunionDialog(
-  { task} : IProps
+  { reunion } : IProps
 ) {
-  const { setSelectedTask, selectedTask, tareaForm } = useProjectDetail()
   const dialogRef = useRef(null)
   
   return (
     <Dialog 
       onOpenChange={(isOpen) => {
-        if(!isOpen && selectedTask){
+        if(!isOpen){
           // Reinicia los valores del formulario
-          setSelectedTask(null)
-          tareaForm.reset({
-            titulo: "Nueva tarea",
-            fechaFin: new Date(),
-            fechaInicio: new Date(),
-            descripcion: "",
-            estado: 0,
-            participantesAsignados: [],
-            subtareas: []
-          })
+         
         }
       }}
     >
@@ -51,14 +42,10 @@ export default function AddReunionDialog(
           <span>Crear reunión</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[800px] max-h-[550px] overflow-hidden overflow-y-auto" 
-        style={
-          {scrollbarWidth: 'thin'}
-        }
-      >
+      <DialogContent className="max-w-[800px]">
         <DialogTitle className="text-ceu-celeste">
             {
-                task ? `Editar tarea ${task.titulo}` : `Nueva tarea` 
+                reunion ? `Editar reunión ${reunion.titulo}` : `Nueva reunión` 
             }
         </DialogTitle>
         <NewReunionForm />
