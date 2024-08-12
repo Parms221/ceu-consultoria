@@ -14,4 +14,13 @@ const ESTADOS = {
   rechazado: 5,
 } as const;
 
-export default ESTADOS;
+const TAREA_ESTADOS = {
+  por_hacer : 6,
+  en_progreso : 7,
+  hecho : 8,
+}
+
+export {
+  ESTADOS,
+  TAREA_ESTADOS
+};

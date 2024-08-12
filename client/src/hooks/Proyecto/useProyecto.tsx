@@ -1,4 +1,5 @@
 "use client";
+import { useAppContext } from "@/app/(protected)/app.context";
 import { Badge } from "@/components/ui/badge";
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
@@ -7,6 +8,7 @@ import { EstadisticasProyecto, Proyecto } from "@/types/proyecto";
 import { ProyectoResumen } from "@/types/proyecto/ProyectoResumen";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { TAREA_ESTADOS, ESTADOS } from "@/constants/proyectos/estados";
 
 export default function useProyecto() {
   const queryClient = useQueryClient();
@@ -130,25 +132,19 @@ export default function useProyecto() {
 
   // Otras funciones
   function getBadgeByStatus(status : Estado){
-    // 1	"Propuesto"
-    // 2	"En desarrollo"
-    // 3	"Finalizado"
-    // 4	"Cancelado"
-    // 5	"Rechazado"
-
     return (
       <Badge
         className="flex justify-center"
         variant={
-          status.idEstado === 1
+          status.idEstado === ESTADOS.propuesto
             ? "outline"
-            : status.idEstado === 2
+            : status.idEstado === ESTADOS.desarrollo
             ? "default"
-            : status.idEstado === 3
+            : status.idEstado === ESTADOS.finalizado
             ? "success"
-            : status.idEstado === 4
+            : status.idEstado === ESTADOS.cancelado
             ? "ghost"
-            : status.idEstado === 5
+            : status.idEstado === ESTADOS.rechazado
             ? "destructive"
             : "secondary"
         }
@@ -160,6 +156,25 @@ export default function useProyecto() {
     )
   }
 
+  function calculateProgress(proyecto : Proyecto){
+    
+    if(proyecto.hitos == null) return 0
+
+    let total = 0
+    let tareasCompletadas = 0
+    for (let hito of proyecto.hitos){
+      total += hito.tareasDelHito.length
+      for (let tarea of hito.tareasDelHito){
+        if(tarea.estado.idEstado === TAREA_ESTADOS.hecho){
+          tareasCompletadas++
+        }
+      }
+    }
+    if(total === 0)
+      return 0
+    return (tareasCompletadas / total) * 100
+  }
+
   return {
     getEstadisticasQuery,
     getProyectoByIdQuery,
@@ -169,6 +184,7 @@ export default function useProyecto() {
     actualizarEstadoProyecto,
     deleteProyecto,
 
-    getBadgeByStatus
+    getBadgeByStatus,
+    calculateProgress
   };
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import ESTADOS from "@/constants/proyectos/estados";
+import { ESTADOS } from "@/constants/proyectos/estados";
 import { fetcher } from "@/server/fetch/server-side";
 import { Proyecto } from "@/types/proyecto";
 import { revalidateTag } from "next/cache";

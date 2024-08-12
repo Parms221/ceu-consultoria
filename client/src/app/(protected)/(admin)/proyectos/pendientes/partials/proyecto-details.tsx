@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import { CircleCheck, CircleX } from "lucide-react";
 import { useState } from "react";
 import useProyecto from "@/hooks/Proyecto/useProyecto";
-import ESTADOS from "@/constants/proyectos/estados";
+import { ESTADOS } from "@/constants/proyectos/estados";
 import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
