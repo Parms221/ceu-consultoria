@@ -22,6 +22,7 @@ export default function useReunion() {
       });
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   async function createReunionByProyectoId(reunion : ReunionDTO, proyectId : number){
     const toastId = toast.loading("Creando reunión");
     try{
@@ -42,8 +43,30 @@ export default function useReunion() {
     }
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  async function deleteReunionById(id: number){
+    const toastId = toast.loading("Eliminando reunión");
+    try{
+      const response = await fetcherLocal(`/reuniones/${id}`, {
+        method: "DELETE",
+      });
+      const ok = HandleServerResponse(response, undefined, toastId);
+      if(!ok) return;
+      toast.success("Reunión eliminada correctamente", {
+        id: toastId,
+      });
+    }catch(error){
+      console.error(error);
+      toast.error("Error al eliminar reunión", {
+        id: toastId,
+      });
+    }
+  }
+
   return {
     getReunionesByProyectIdQuery,
-    createReunionByProyectoId
+    createReunionByProyectoId,
+
+    deleteReunionById,
   };
 }

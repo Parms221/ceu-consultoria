@@ -15,19 +15,27 @@ interface IProps {
     onDelete :  () => void
     title: string
     description: React.ReactNode
+    className?: string
+    asChild?: boolean
+    customTrigger?: React.ReactNode
 }
 
 export default function DeleteDialog(
-    {  title, description, onDelete} : IProps
+    {  title, description, onDelete, className, asChild = false, customTrigger} : IProps
 ) {
 
     return (
         <Dialog>
             <DialogTrigger className={cn(
                 buttonVariants({variant: "destructive", size: "sm"}),
-                "py-1.5"
-            )}>
-                <Trash2Icon size={16}/>
+                "py-1.5",
+                className
+            )}
+            asChild={asChild}
+        >
+                {
+                    customTrigger ?? <Trash2Icon size={16}/>
+                }
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle className="text-ceu-celeste">{title}</DialogTitle>

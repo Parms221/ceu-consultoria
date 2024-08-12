@@ -7,10 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DialogDescription } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
-import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/partials/contexto/proyecto-detail.context';
-import { Tarea } from "@/types/proyecto/Tarea";
 import { useRef } from "react";
 import NewReunionForm from "./form";
 import { Reunion } from "@/types/proyecto/Reunion";

@@ -1,5 +1,5 @@
 "use client"
-import ReunionItem from "./partials/reunion-iten";
+import ReunionItem from "./partials/reunion-item/reunion-iten";
 import useReunion from "@/hooks/Reuniones/useReunion";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import AddReunionDialog from "./nuevo/nueva-reunion";
