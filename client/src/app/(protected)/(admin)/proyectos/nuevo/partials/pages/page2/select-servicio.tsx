@@ -138,6 +138,7 @@ export default function SelectServicio({
                 <FormLabel>Servicio</FormLabel> 
                 <Combobox
                       placeholder="Seleccione un servicio"
+                      value={field.value.toString()}
                       options={servicios ? servicios.map(s => ({
                         label: s.titulo,
                         value: String(s.idServicio)
