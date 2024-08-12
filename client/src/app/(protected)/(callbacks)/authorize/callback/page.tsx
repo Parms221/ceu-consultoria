@@ -1,7 +1,7 @@
 "use client"
 import Loader from "@/components/common/Loader";
 import { fetcherLocal } from "@/server/fetch/client-side";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ export default function GoogleCallback(
 
     const router = useRouter();
     const firstRender = useRef(true);
+    const queryClient = useQueryClient();
 
     const mutation = useMutation({
         mutationFn: async (code : string) => {
@@ -32,6 +33,9 @@ export default function GoogleCallback(
         },
         onSuccess: (data) => {
             toast.success("Cuenta autorizada");
+            queryClient.invalidateQueries({
+                queryKey: ["google-auth", "verify"]
+            })
             router.push(state);
         }
     })
@@ -49,7 +53,7 @@ export default function GoogleCallback(
         }
     }, [code, error, state])
 
-    return <div className="grid h-screen place-content-center w-[100vw]">
+    return <div className="grid h-screen place-content-center w-[100vw] bg-white">
         {
             mutation.isPending && <Loader />
         }

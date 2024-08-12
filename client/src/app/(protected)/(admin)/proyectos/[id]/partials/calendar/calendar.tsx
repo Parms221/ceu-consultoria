@@ -7,7 +7,7 @@ import { Event } from "@/types/calendar";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { useQuery } from "@tanstack/react-query";
 import { es } from "date-fns/locale/es";
-import { CalendarDaysIcon } from "lucide-react";
+import { CalendarDaysIcon, CalendarFoldIcon } from "lucide-react";
 import { useState } from "react";
 import { DayContentProps, DayProps } from "react-day-picker";
 import { toast } from "sonner";
@@ -24,9 +24,9 @@ export default function EventsCalendar() {
      try{
       const response = await fetcherLocal("/calendars/events")
       if (!response.ok){
-        if(response.status === 401){
-          toast.error("No ha autorizado el acceso a su calendario de eventos en Google Calendar")
-        }
+        // if(response.status === 401){
+        //   toast.warning("No ha autorizado el acceso a su calendario de eventos en Google Calendar")
+        // }
         return null
       }
       const data = await response.json()
@@ -40,8 +40,8 @@ export default function EventsCalendar() {
   return (
     <div className="relative">
         <Popover>
-            <PopoverTrigger>
-                <CalendarDaysIcon className="h-8 w-8 text-ceu-celeste hover:scale-105"  strokeWidth={1}/>
+            <PopoverTrigger className="bg-white p-2 rounded-full">
+                <CalendarFoldIcon className="h-8 w-8 text-ceu-celeste hover:scale-105"  strokeWidth={1}/>
             </PopoverTrigger>
             <PopoverContent align="start" side="left" className="relative">
                 <Calendar 

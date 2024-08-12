@@ -1,3 +1,4 @@
+import { isBefore } from "date-fns";
 import { z } from "zod";
 
 export const reunionSchema = z.object({
@@ -19,4 +20,15 @@ export const reunionSchema = z.object({
     enlace: z.string().optional(),
     crearEvento : z.boolean().optional(),
     enviarUpdates : z.boolean().optional(),
-  })
+  }).superRefine((data, ctx) => {
+    if (data.fechaInicio && data.fechaFin) {
+      if (isBefore(data.fechaFin, data.fechaInicio)) {
+        ctx.addIssue({
+          message:
+            "La fecha de finalización no puede ser anterior a la de inicio",
+          code: z.ZodIssueCode.custom,
+          path: ["fechaInicio"],
+        });
+      }
+    }
+  });

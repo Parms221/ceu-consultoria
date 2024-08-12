@@ -64,7 +64,7 @@ export default function HomeConsultor() {
                 Crear nuevo proyecto
               </Link>
 
-              <TabsList className="w-full">
+              <TabsList className="w-full flex flex-wrap h-fit">
                 <ProyectTypeTab estado={undefined} numberOfProyects={data ? data.content.length : 0} />
                 {estados
                   .filter((estado) => estado.tipo === 1)

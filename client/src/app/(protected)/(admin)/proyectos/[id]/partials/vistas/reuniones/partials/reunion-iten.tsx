@@ -1,10 +1,17 @@
+import GoogleCalendarSVG from "@/components/common/GoogleCalendarLogo";
+import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Event } from "@/types/calendar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Reunion } from "@/types/proyecto/Reunion";
+import { Usuario } from "@/types/usuario";
 import { format } from "date-fns";
-import { Calendar, EllipsisVertical, SquareArrowOutUpRightIcon, User2Icon, VideoIcon } from "lucide-react";
+import { Calendar, Edit, EllipsisVertical, SquareArrowOutUpRightIcon, Trash2Icon, User2Icon, VideoIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function ReunionItem({ reunion }: { reunion: Reunion }) {
+  const { data : session } = useSession()
+  const currentUser = session?.user as unknown as Usuario
+
   function formatDate(date: string) {
     return format(new Date(date), "dd/MM/yyyy hh:mm a");
   }
@@ -25,9 +32,30 @@ export default function ReunionItem({ reunion }: { reunion: Reunion }) {
     );
   }
 
+  function GoogleCalendarLink(){
+    return (
+      <div className="absolute top-0 right-0">
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a  href={reunion.eventHtmlLink} target="_blank" rel="noreferrer">  
+                    <span className={"sr-only"}>Ver evento en Google calendar</span>
+                    <GoogleCalendarSVG className="w-8 h-8"/>
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent className="border-none">
+                  <p>Ver en calendario de eventos de Google</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+    )
+  }
+
   function Options(){
     return (
-        <aside>
+        <aside className="space-y-2 relative">
+            <GoogleCalendarLink />
             <div className="text-xs text-ceu-azul flex items-center gap-2">
               <User2Icon size={15}/>
               <div className="flex flex-col">
@@ -35,10 +63,22 @@ export default function ReunionItem({ reunion }: { reunion: Reunion }) {
                   Programada por
                 </span>
                 <strong>
-                {reunion.eventOrganizer}
+                {reunion.eventOrganizer ?? reunion.usuario.email}
                 </strong>
               </div>
             </div>
+            {
+             currentUser.id == reunion.usuario.id && (
+                <div className="flex items-center w-full [&>button]:w-full [&>button]:h-fit [&>button]:p-0 [&>button]:rounded-none divide-x [&>button>svg]:w-4">
+                  <Button>
+                    <Edit />
+                  </Button>
+                  <Button>
+                    <Trash2Icon />
+                  </Button>
+                </div>
+              )
+            }
          </aside>
     )
   }
@@ -54,6 +94,7 @@ export default function ReunionItem({ reunion }: { reunion: Reunion }) {
             </PopoverTrigger>
             <PopoverContent
               align="start" side="left"
+              className="max-w-[80vw] sm:max-w-md"
             >
               <Options />
             </PopoverContent>
