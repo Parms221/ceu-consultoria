@@ -25,7 +25,6 @@ import { ReunionDTO } from "@/types/proyecto/Reunion";
 import { Checkbox } from "@/components/ui/checkbox";
 import GoogleLogo from "@/components/common/GoogleLogo";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppContext } from "@/app/(protected)/app.context";
 
 export default function NewReunionForm() {
   const queryClient = useQueryClient()

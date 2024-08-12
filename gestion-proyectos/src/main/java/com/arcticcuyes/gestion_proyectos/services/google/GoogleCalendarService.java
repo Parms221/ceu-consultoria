@@ -87,7 +87,10 @@ public class GoogleCalendarService {
         // Filtrar eventos que no están en la lista de reuniones
         List<Event> filteredEvents = events.stream()
             .filter(event -> reuniones.stream()
-                    .noneMatch(reunion -> reunion.getEventId().equals(event.getId())))
+                    .noneMatch(reunion -> {
+                        String eventId = reunion.getEventId();
+                        return eventId != null && eventId.equals(event.getId());
+                    }))
             .collect(Collectors.toList());
            
         Map<String, List<?>> result  = new HashMap<>();  

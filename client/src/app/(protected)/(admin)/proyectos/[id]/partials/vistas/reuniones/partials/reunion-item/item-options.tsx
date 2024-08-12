@@ -1,4 +1,5 @@
 "use client"
+import GoogleCalendarLink from "@/components/common/EventsCalendar/google-calendar-link"
 import GoogleCalendarSVG from "@/components/common/GoogleCalendarLogo"
 import { Button } from "@/components/ui/button"
 import DeleteDialog from "@/components/ui/dialogs/delete-dialog"
@@ -39,7 +40,14 @@ export default function ItemOptions(
 
     return (
         <aside className="space-y-2 relative">
-            <GoogleCalendarLink reunion={reunion} />
+            <div className="absolute top-0 right-0">
+                {
+                    reunion.eventHtmlLink && (
+                        <GoogleCalendarLink reunion={reunion} />
+                    )
+                }
+            </div>
+
             <ItemDetail
                 icon={<User2Icon size={15}/>}
                 title="Programada por"
@@ -107,25 +115,3 @@ export default function ItemOptions(
          </aside>
     )
 }
-
-export function GoogleCalendarLink(
-    { reunion }: { reunion: Reunion }
-){
-    return (
-      <div className="absolute top-0 right-0">
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <a  href={reunion.eventHtmlLink} target="_blank" rel="noreferrer">  
-                    <span className={"sr-only"}>Ver evento en Google calendar</span>
-                    <GoogleCalendarSVG className="w-8 h-8"/>
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent className="border-none">
-                  <p>Ver en calendario de eventos de Google</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-    )
-  }
