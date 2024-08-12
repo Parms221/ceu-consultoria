@@ -70,8 +70,11 @@ public class RecursoController {
     }
 
     @GetMapping("/project/{id}")
-    public List<Recurso> getRecursosDeProyecto(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
+    public ResponseEntity<List<Recurso>> getRecursosDeProyecto(@AuthenticationPrincipal UsuarioAuth auth, @PathVariable Long id) {
         List<Recurso> recursos = recursoService.getAllRecursosByIdProyecto(id, auth.getUsuario());
+        if(recursos == null){
+            return ResponseEntity.notFound().build();
+        }
         List<Recurso> recursos2 = recursos.stream().map(recurso -> {
             if(recurso.isEsArchivo()){
                 recurso.setEnlace(null);
@@ -79,7 +82,7 @@ public class RecursoController {
             recurso.setProyectoAsociado(null);
             return recurso;
         }).collect(Collectors.toList());
-        return recursos2;
+        return ResponseEntity.ok(recursos2);
     }
 
     @GetMapping("/{id}")
