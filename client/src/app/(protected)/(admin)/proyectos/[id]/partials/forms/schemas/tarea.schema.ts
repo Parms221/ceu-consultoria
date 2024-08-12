@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const tareaSchema = z
   .object({
-    idTarea: z.string().optional().default(crypto.randomUUID()),
+    idTarea: z.string().optional(),
     titulo: z.string().min(2).max(100),
     descripcion: z.string().min(2).max(100),
     fechaInicio: z.date({

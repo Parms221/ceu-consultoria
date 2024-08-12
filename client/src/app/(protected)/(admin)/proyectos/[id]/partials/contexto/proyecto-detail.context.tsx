@@ -18,7 +18,6 @@ import {
 } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/schemas";
 import { useQueryClient } from "@tanstack/react-query";
 import { projectCompleteSchema } from "../../../nuevo/partials/schemas/project.schema";
-import { temporalCronogramaSchema } from "../forms/schemas/temporal-cronograma.schema";
 
 interface IProjectDetailContext {
   selectedHito: Hito | null;

@@ -1,14 +1,20 @@
 "use client"
 import GoogleLogo from "@/components/common/GoogleLogo";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getGoogleAuthUrl } from "@/lib/google";
+import { cn } from "@/lib/utils";
 import { fetcherLocal } from "@/server/fetch/client-side";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 
 /* Componente para la  autorización de acceso a api de google en backend */
 export default function GoogleAuth() {
   const path = usePathname();
+  const queryClient = useQueryClient();
+
   const  { data : isAuthorized } = useQuery({
     queryKey: ["google-auth", "verify"],
     queryFn: async () => {
@@ -21,6 +27,22 @@ export default function GoogleAuth() {
     }
   })
 
+  const revokeMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetcherLocal("/authorize/oauth2/google/revoke", {
+        method: "POST"
+      })
+    },
+    onSuccess: () =>{
+      toast.success("Se ha revocado la autorización de Google")
+      queryClient.invalidateQueries({queryKey :["google-auth", "verify"]})
+    },
+    onError: (error) => {
+      toast.error("Error al revocar la autorización de Google")
+      console.log(error)
+    }
+  })
+
   const handleAuthorization  = () => {
     const authUrl = getGoogleAuthUrl();
     authUrl.searchParams.append("state", path);
@@ -28,29 +50,77 @@ export default function GoogleAuth() {
   }
   
   const handleRevokeAuthorization  = () => {
-    confirm("¿Estás seguro de querer desconectar tu cuenta de google?");
+    if(
+      confirm("¿Estás seguro de querer desconectar tu cuenta de google?")
+    ){
+      revokeMutation.mutate();
+    }
   }
 
   function handleClick() {
-    if (isAuthorized){
-      handleRevokeAuthorization();
-    }else {
+    if (!isAuthorized){
       handleAuthorization();
     }
   }
 
   return (
-      <Button
-          onClick={handleClick}
-          variant={isAuthorized ? "default" : "outline"}
-          className="space-x-2"
-      >
-        <GoogleLogo className="h-6 w-6" />
-        <span>
-          {
-            isAuthorized ? "Cuenta conectada" : "Enlazar cuenta con Google"
-          }
-        </span>
-      </Button>
+      <Popover>
+        <PopoverTrigger asChild disabled={revokeMutation.isPending}>
+           <div className="flex items-center w-[230px]">
+            <Button
+                onClick={handleClick}
+                variant={isAuthorized ? "default" : "outline"}
+                className={
+                  cn(
+                    "space-x-2",
+                    isAuthorized && "rounded-s-md rounded-e-[0px] w-50"
+                  )
+                }
+            >
+              <GoogleLogo className="h-6 w-6" />
+              <span>
+                {
+                  isAuthorized ? "Cuenta conectada" : "Enlazar cuenta con Google"
+                }
+              </span>
+            </Button>
+            {
+              isAuthorized && (
+                <Button variant={"outline"} className="rounded-s-[0px] px-2">
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              )
+            }
+           </div>
+        </PopoverTrigger>
+        {
+          isAuthorized && (
+            <PopoverContent 
+              alignOffset={0}
+              sideOffset={0}
+              side="bottom" align="start" className="w-[230px] p-0 rounded-md overflow-hidden"
+              >
+              <ul className="[&>li>button]:text-xs [&>li>button]:px-1.5 [&>li>button]:rounded-none [&>li>button]:w-full space-y-[1px]">
+                <li>
+                <Button
+                  variant={"ghost"}
+                  className="text-ceu-celeste hover:text-ceu-celeste"
+                >
+                  Iniciar sesión con otra cuenta de Google
+                </Button>
+                </li>
+                <li>
+                <Button variant={"destructive"}
+                  onClick={handleRevokeAuthorization}
+                  disabled={revokeMutation.isPending}
+                >
+                  Desconectar cuenta de Google
+                </Button>
+                </li>
+              </ul>
+            </PopoverContent>
+          )
+        }
+      </Popover>
   );
 }

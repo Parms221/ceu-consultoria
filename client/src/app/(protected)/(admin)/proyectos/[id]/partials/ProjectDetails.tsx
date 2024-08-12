@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PROJECT_VIEWS } from "./vistas";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useProyecto from "@/hooks/Proyecto/useProyecto";
-import EventsCalendar from "./calendar";
+import EventsCalendar from "./calendar/calendar";
 
 
 export default function ProjectDetails(

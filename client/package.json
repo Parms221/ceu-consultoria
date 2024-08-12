@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@formkit/drag-and-drop": "^0.1.6",
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.15",
     "@hookform/resolvers": "^3.4.2",
     "@lexical/react": "^0.16.0",
     "@radix-ui/react-avatar": "^1.0.4",

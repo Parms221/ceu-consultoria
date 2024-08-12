@@ -1,5 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.dto.Google;
 
+import java.util.List;
+
+import com.arcticcuyes.gestion_proyectos.dto.Reunion.InvitadoDTO;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.EventDateTime;
 
@@ -22,6 +25,14 @@ public class EventDTO {
     @NotNull
     @NotBlank
     private String start;
+
+    private String summary;
+    private String description;
+    private List<InvitadoDTO> attendees;
+    private String hangoutLink; // Google meet link
+
+    // Enviar mensaje de invitación
+    private boolean sendUpdates = false;
 
     public EventDateTime getEnd(){
         EventDateTime end = new EventDateTime();

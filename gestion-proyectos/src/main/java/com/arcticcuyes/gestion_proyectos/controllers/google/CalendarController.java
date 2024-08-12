@@ -35,7 +35,7 @@ public class CalendarController {
         // Por el momento no está permitido el acceso a través de este método
         try {
             Long userId = user.getUsuario().getId();  
-            return ResponseEntity.ok(gcalendarService.getCalendars(userId.toString()));
+            return ResponseEntity.ok(gcalendarService.getCalendars(userId));
         } catch (Exception e) {
             Map<String, String> errors = new HashMap<>();
             errors.put("error", e.getMessage());
@@ -47,7 +47,7 @@ public class CalendarController {
     public ResponseEntity<?> listEvents(@AuthenticationPrincipal UsuarioAuth user) {
         try {
             Long userId = user.getUsuario().getId();  
-            return ResponseEntity.ok(gcalendarService.getEvents(userId.toString()));
+            return ResponseEntity.ok(gcalendarService.getEvents(userId));
         } catch (Exception e) {
             Map<String, String> errors = new HashMap<>();
             errors.put("error", e.getMessage());
@@ -59,8 +59,7 @@ public class CalendarController {
     public ResponseEntity<?> insertEvent(@AuthenticationPrincipal UsuarioAuth user, @RequestBody @Valid EventDTO event) {
         Map<String, String> errors = new HashMap<>();
         try {
-            Long userId = user.getUsuario().getId();  
-            Event newEvent = gcalendarService.insertEvent(userId.toString(), event);
+            Event newEvent = gcalendarService.insertEvent(user, event);
             return ResponseEntity.ok(newEvent);
         } catch (Exception e) {
             errors.put("error", "Ocurrió un error inesperado al insertar el evento");
