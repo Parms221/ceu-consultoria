@@ -65,6 +65,11 @@ public class GoogleCalendarService {
         return service.events().list("primary").setTimeMin(ThisYearStartTime()).execute().getItems();
     }
 
+    public void deleteEvent(UsuarioAuth currentUser, String eventId) throws Exception {
+        Calendar service = useCalendarApi(currentUser.getUsuario().getId());
+        service.events().delete("primary", eventId).execute();
+    }
+
     public Map<String, List<?>> getAllEvents(Long userId) throws Exception {
         List<Event> events = new ArrayList<>();
         try{
