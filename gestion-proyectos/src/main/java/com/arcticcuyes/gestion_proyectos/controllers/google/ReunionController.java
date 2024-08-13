@@ -2,9 +2,12 @@ package com.arcticcuyes.gestion_proyectos.controllers.google;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
 
 import com.arcticcuyes.gestion_proyectos.dto.Reunion.ReunionDTO;
+import com.arcticcuyes.gestion_proyectos.exception.NotFoundException;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
+import com.arcticcuyes.gestion_proyectos.models.Reunion;
 import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
 import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 import com.arcticcuyes.gestion_proyectos.services.ReunionService;
@@ -19,6 +22,7 @@ import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,6 +81,19 @@ public class ReunionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @DeleteMapping("/{idReunion}")
+    public ResponseEntity<?> deleteReunion(@AuthenticationPrincipal UsuarioAuth usuario, @PathVariable Long idReunion) {
+        try {
+            Reunion reunion = reunionService.findById(idReunion);
+            reunionService.delete(reunion, usuario);
+            return ResponseEntity.ok().build();
+        }catch(NotFoundException e ){
+            return ResponseEntity.notFound().build();
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     
     @PostMapping("/spaces")
     public ResponseEntity<?> postMethodName(@AuthenticationPrincipal UsuarioAuth usuario) {
@@ -88,6 +105,4 @@ public class ReunionController {
             return ResponseEntity.badRequest().body(errors);
         }
     }
-    
-    
 }

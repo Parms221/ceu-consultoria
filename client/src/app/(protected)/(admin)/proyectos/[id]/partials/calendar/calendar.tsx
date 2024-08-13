@@ -61,7 +61,7 @@ export default function EventsCalendar() {
                     event.preventDefault()
                     event.stopPropagation()
                     if (modifiers.booked) {
-                        const newEvents = eventos.filter(
+                        const newEvents = eventos?.filter(
                             (event : Event) => {
                                 if (event.start?.dateTime)
                                     return new Date(event.start.dateTime.value).toDateString() !== date.toDateString()

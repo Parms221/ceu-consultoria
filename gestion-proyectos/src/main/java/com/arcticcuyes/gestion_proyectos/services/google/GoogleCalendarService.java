@@ -65,6 +65,11 @@ public class GoogleCalendarService {
         return service.events().list("primary").setTimeMin(ThisYearStartTime()).execute().getItems();
     }
 
+    public void deleteEvent(UsuarioAuth currentUser, String eventId) throws Exception {
+        Calendar service = useCalendarApi(currentUser.getUsuario().getId());
+        service.events().delete("primary", eventId).execute();
+    }
+
     public Map<String, List<?>> getAllEvents(Long userId) throws Exception {
         List<Event> events = new ArrayList<>();
         try{
@@ -82,7 +87,10 @@ public class GoogleCalendarService {
         // Filtrar eventos que no están en la lista de reuniones
         List<Event> filteredEvents = events.stream()
             .filter(event -> reuniones.stream()
-                    .noneMatch(reunion -> reunion.getEventId().equals(event.getId())))
+                    .noneMatch(reunion -> {
+                        String eventId = reunion.getEventId();
+                        return eventId != null && eventId.equals(event.getId());
+                    }))
             .collect(Collectors.toList());
            
         Map<String, List<?>> result  = new HashMap<>();  

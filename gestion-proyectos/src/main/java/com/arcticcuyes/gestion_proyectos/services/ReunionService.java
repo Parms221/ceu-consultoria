@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.arcticcuyes.gestion_proyectos.dto.Google.EventDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Reunion.InvitadoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Reunion.ReunionDTO;
+import com.arcticcuyes.gestion_proyectos.exception.NotFoundException;
 import com.arcticcuyes.gestion_proyectos.models.InvitadoReunion;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.models.Reunion;
@@ -42,6 +43,29 @@ public class ReunionService {
 
     public List<Reunion> findByProject(Proyecto proyecto){
         return reunionRepository.findByProyecto(proyecto);
+    }
+
+    public Reunion findById(Long id){
+        return reunionRepository.findById(id).orElseThrow(() -> new NotFoundException("No se encontró el reunión"));
+    }
+
+    public void delete(Reunion reunion, UsuarioAuth currentUser) throws Exception {
+        // Delete evento de google por id 
+        if(reunion != null){
+            // Si existe el evento de google, lo eliminamos
+            if(reunion.getEventId() != null){
+                try{
+                    gCalendarService.deleteEvent(currentUser, reunion.getEventId());
+                }catch(Exception e){
+                    System.out.println("El evento en google no se pudo eliminar: " + e.getMessage());
+                }
+            }
+            // Eliminamos el reunión
+            System.out.println("Eliminando reunión");
+            reunionRepository.delete(reunion);;
+        }else{
+            throw new NotFoundException("No se encontró la reunión");
+        }
     }
 
     public Reunion create(Proyecto proyecto, ReunionDTO reunionDTO, UsuarioAuth currentUser) throws Exception {

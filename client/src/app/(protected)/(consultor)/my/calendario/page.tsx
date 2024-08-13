@@ -9,13 +9,16 @@ import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from '@fullcalendar/list';
 import esLocale from '@fullcalendar/core/locales/es';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Event } from "@/types/calendar";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Loader from "@/components/common/Loader";
-import { CalendarOptions } from "@fullcalendar/core/index.js";
+import { CalendarOptions, EventSourceInput } from "@fullcalendar/core/index.js";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Reunion } from "@/types/proyecto/Reunion";
+import CalendarDetalleReunion from "./partials/detalle-reunion";
+import CalendarDetalleEvento from "./partials/detalle-evento";
 
 const CalendarInit: CalendarOptions = {
   locale: esLocale,
@@ -37,18 +40,23 @@ const CalendarInit: CalendarOptions = {
   nowIndicator: true,
 };
 
+interface AllEventsResponse {
+  reuniones : Reunion[]
+  events : Event[]
+} 
+
 const CalendarEvents = () => {
-  const [selectedEvents, setSelectedEvents] = useState<any[] | null>(null);
+  const [calendarEvents, setCalendarEvents] = useState<EventSourceInput>([]);
 
   const {
     data: eventos,
     isLoading,
     isError,
-  } = useQuery({
+  } = useQuery<AllEventsResponse>({
     queryKey: ["eventos"],
     queryFn: async () => {
       try {
-        const response = await fetcherLocal("/calendars/events");
+        const response = await fetcherLocal("/calendars/events/all");
         if (!response.ok) {
           if (response.status === 401) {
             toast.error(
@@ -58,13 +66,49 @@ const CalendarEvents = () => {
           return null;
         }
         const data = await response.json();
-        return data as Event[];
+        return data;
       } catch (e) {
         toast.error("Error al obtener eventos" + e);
         return null;
       }
     },
   });
+
+  useEffect(() => {
+    if(eventos){
+      let reuniones : EventSourceInput = []
+      let gCalendarEventos : EventSourceInput = []
+      reuniones = eventos.reuniones?.map((r) => ({
+        id: r.idReunion.toString(),
+        title: r.titulo,
+        start: r.fechaInicio,
+        end: r.fechaFin,
+        color: "#0035B9",
+        extendedProps: {
+          ...r,
+          type: "reunion"
+        }
+      }));
+      gCalendarEventos = eventos.events?.map((e) => ({
+        id: e.id?.toString(),
+        title: e.summary,
+        start: e.start?.dateTime
+          ? e.start.dateTime.value
+          : new Date(),
+        end: e.end?.dateTime
+          ? e.end.dateTime.value
+          : new Date(),
+         extendedProps: {
+          ...e,
+          type: "g-evento"
+         },
+         color: "#34A853",
+      }));
+      setCalendarEvents([...reuniones, ...gCalendarEventos]);
+    }
+  }, [eventos]);
+
+
 
   function handleDateSelect(selectInfo: any) {
     console.log("selectInfo", selectInfo);
@@ -95,20 +139,7 @@ const CalendarEvents = () => {
             height={"100%"}
             {...CalendarInit}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-            events={eventos.map((evento: Event) => ({
-              id: evento.id,
-              title: evento.summary,
-              start: evento.start?.dateTime
-                ? evento.start.dateTime.value
-                : new Date(),
-              end: evento.end?.dateTime
-                ? evento.end.dateTime.value
-                : new Date(),
-               extendedProps: {
-                hola: "hola",
-               },
-               color: evento.colorId,
-            }))}
+            events={calendarEvents ? calendarEvents : []}
            
             initialView="timeGridWeek"
             // weekends={weekendsVisible}
@@ -120,12 +151,15 @@ const CalendarEvents = () => {
                     {e.event.title}
                   </PopoverTrigger>
                   <PopoverContent
-                    align="start" side="left"
-                    className="w-120"
+                    className="z-99999 w-[400px] px-2 py-0"
                   >
-                    hola detalle evento :v
-                    {e.event.start?.toLocaleString()} - {e.event.end?.toLocaleString()}
-                    {JSON.stringify(e.event.extendedProps)}
+                    {
+                      e.event.extendedProps.type === "reunion" ? (
+                        <CalendarDetalleReunion reunion={e.event.extendedProps as Reunion} />
+                      ) : (
+                        <CalendarDetalleEvento event={e.event.extendedProps as Event} />
+                      )
+                    }
                   </PopoverContent>
                 </Popover>
               )
@@ -133,12 +167,11 @@ const CalendarEvents = () => {
             // eventClick={handleEventClick}
             // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
             // /* you can update a remote database when these fire:
-            eventAdd={function(e){
-              console.log("eventAdd", e)
-            }}
-            eventChange={function(){}}
-            eventRemove={function(){}}
-            // */
+            // eventAdd={function(e){
+            //   console.log("eventAdd", e)
+            // }}
+            // eventChange={function(){}}
+            // eventRemove={function(){}}
           />
         )}
       </Card>
