@@ -125,7 +125,6 @@ export default function ProjectDetailProvider({
   // capturar el cambio de selected task para actualizar el formulario (Edit)
 
   useEffect(() => {
-    console.log("selectedTask", selectedTask)
     if (!selectedTask) return;
     tareaForm.reset({
       ...selectedTask,
@@ -140,7 +139,7 @@ export default function ProjectDetailProvider({
         from: new Date(selectedHito.fechaInicio),
         to: new Date(selectedHito.fechaFinalizacion),
       },
-      tareas: [],
+      tareas: [], // Solo editar detalles del hito
     });
   }, [selectedHito]);
 

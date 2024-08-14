@@ -38,17 +38,17 @@ export default function HitoForm() {
         console.log("Guardando hito" ,formattedData)
         if (!selectedHito) {
             await saveHito(projectId, formattedData, undefined)
+             // Close drawer
+             document.getElementById("closeDrawer")?.click()
         }
         else {
             const parsedId = parseInt(selectedHito.idHito.toString())
             console.log("Actualizando hito" ,parsedId)
             await saveHito(projectId, formattedData, parsedId)
+            // Close dialog
+            document.getElementById("closeDialog")?.click();
         }
         resetForms()
-
-        // Close drawer
-        document.getElementById("closeDrawer")?.click()
-
         queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     }
     
