@@ -66,10 +66,10 @@ export default function ProjectDetailProvider({
 
   // FORM SCHEMAS
   const hitosDefaultValues = {
-    titulo: selectedHito ? selectedHito.titulo : "Nueva tarea",
+    titulo: "Nueva tarea",
     fechas: {
-      from: selectedHito ? new Date(selectedHito.fechaInicio) : new Date(),
-      to: selectedHito ? new Date(selectedHito.fechaFinalizacion) : new Date(),
+      from: new Date(),
+      to: new Date(),
     },
     tareas: [],
   };

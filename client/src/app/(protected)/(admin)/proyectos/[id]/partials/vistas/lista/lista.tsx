@@ -10,25 +10,87 @@ import useGPT from "@/hooks/Gpt/useGPT";
 import BouncingDotsLoader from "@/components/common/Loader/loading-dots";
 import { useEffect, useState } from "react";
 import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
+import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 
 
 export default function VistaLista() {
-    const [visibleOptions, setVisibleOptions] = useState(false)
-    const { projectId, gptHitos, setGptHitos, queryClient } = useProjectDetail()
+    const { projectId, gptHitos } = useProjectDetail()
 
+    const { getHitosQuery } = useHito()
+    const { data : hitos, isLoading, isError } = getHitosQuery(projectId)   
+
+    
+    if (isLoading) {
+      return <div>Cargando ... </div>;
+    }
+  
+    if (isError || !hitos) {
+      return <div>Error al cargar la lista de hitos</div>;
+    }
+
+    return (
+      <article>
+        <VistaCronogramaActions />
+        <HitosTable
+            columns={hitosColumns}
+            data={gptHitos ? gptHitos : hitos}
+            subRowsField="tareasDelHito"
+        />
+      </article>
+    );
+}
+
+
+export function VistaCronogramaActions (){
+    const { projectId, gptHitos, setGptHitos } = useProjectDetail()
     const { getHitosQuery, updateAllHitosByProject } = useHito()
-    const { data : hitos, isLoading, isError, refetch: refetchHitos } = getHitosQuery(projectId)   
+    const { refetch: refetchHitos } = getHitosQuery(projectId)   
+  
+    const [visibleOptions, setVisibleOptions] = useState(false)
     const { isPending: updatingHitos, mutate: updateHitos, isSuccess : updatedHitos } = updateAllHitosByProject()
    
     const { gptHitosMutation } = useGPT()    
     const { data: gptData, isPending, mutate: gptMutation, reset, isSuccess } = gptHitosMutation(projectId)
     
+    function acceptSuggestions(){
+      if(!gptHitos) return 
+      const newCronograma : HitoDTO[] = gptHitos.map(hito => {
+        return {
+          titulo : hito.titulo,
+          fechaInicio: new Date(hito.fechaInicio),
+          fechaFinalizacion: new Date(hito.fechaFinalizacion),
+          tareas: hito.tareasDelHito.map(t => {
+            return{
+              titulo: t.titulo,
+              fechaInicio: new Date(t.fechaInicio),
+              fechaFin: new Date(t.fechaFin),
+              descripcion: t.descripcion,
+              estado: TAREA_ESTADOS.por_hacer,
+              participantesAsignados: t.participantesAsignados.map(p  => p.idParticipante),
+              subtareas : t.subTareas.map(st =>{
+                return {
+                  descripcion : st.descripcion,
+                  completado : false,
+                }
+              })
+            }
+          })
+        }
+      })
+      
+      updateHitos({
+        projectId: projectId,
+        hitos: newCronograma
+      })
+    }
+
     async function resetState(){
       setGptHitos(null)
       setVisibleOptions(false)
       reset()
     }
 
+    // Verificar si hay actualizaciones de gpt en el fetching para mostrar las opciones y actualizar el cronograma en memoria
     useEffect(() => {
       if (isSuccess && gptData) {
         setGptHitos(gptData.hitos)
@@ -47,17 +109,8 @@ export default function VistaLista() {
       resetStateAndInvalidate()
     }, [updatedHitos])
 
-    if (isLoading) {
-      return <div>Cargando ... </div>;
-    }
-  
-    if (isError || !hitos) {
-      return <div>Error al cargar la lista de hitos</div>;
-    }
-
     return (
-      <article>
-        <div className="flex justify-between">
+    <div className="flex justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             Lista de tareas
           </h2>
@@ -73,41 +126,12 @@ export default function VistaLista() {
                   >
                     <Button
                       size={"sm"}
-                      onClick={() =>{
-                        if(!gptHitos) return 
-                        const newCronograma : HitoDTO[] = gptHitos.map(hito => {
-                          return {
-                            titulo : hito.titulo,
-                            fechaInicio: new Date(hito.fechaInicio),
-                            fechaFinalizacion: new Date(hito.fechaFinalizacion),
-                            tareas: hito.tareasDelHito.map(t => {
-                              return{
-                                titulo: t.titulo,
-                                fechaInicio: new Date(t.fechaInicio),
-                                fechaFin: new Date(t.fechaFin),
-                                descripcion: t.descripcion,
-                                estado: 6,
-                                participantesAsignados: t.participantesAsignados.map(p  => p.idParticipante),
-                                subtareas : t.subTareas.map(st =>{
-                                  return {
-                                    descripcion : st.descripcion,
-                                    completado : false,
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                        
-                        updateHitos({
-                          projectId: projectId,
-                          hitos: newCronograma
-                        })
-                      }}
+                      onClick={() => acceptSuggestions()}
                     >
                       <CheckCheckIcon size={20} />
                       <span className="sr-only">Aceptar cronograma propuesto por IA</span>
                     </Button>
+                    {/* Descartar cronograma propuesto por IA */}
                     <Button
                       size={"sm"}
                       onClick={() => {
@@ -118,6 +142,8 @@ export default function VistaLista() {
                       <X size={20} />
                       <span className="sr-only">Descartar cronograma propuesto por IA</span>
                     </Button>
+
+                    {/* Cambia vista sin reiniciar el estado de la sugerencia de cronograma */}
                     <Button
                       variant={"outline"}
                       onClick={() => {
@@ -148,11 +174,5 @@ export default function VistaLista() {
             <NewHitoModal />
           </div>
         </div>
-        <HitosTable
-            columns={hitosColumns}
-            data={gptHitos ? gptHitos : hitos}
-            subRowsField="tareasDelHito"
-        />
-      </article>
-    );
+  )
 }

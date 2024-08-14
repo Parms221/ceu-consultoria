@@ -1,7 +1,7 @@
 export type TareaDTO = {
   idTarea?: string;
   titulo: string;
-  descripcion: string;
+  descripcion?: string;
   fechaInicio: Date;
   fechaFin: Date;
   createdAt?: string;

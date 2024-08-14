@@ -5,7 +5,7 @@ export const tareaSchema = z
   .object({
     idTarea: z.string().optional(),
     titulo: z.string().min(2).max(100),
-    descripcion: z.string().min(2).max(100),
+    descripcion: z.string().max(100).optional(),
     fechaInicio: z.date({
       required_error: "La fecha de inicio es requerida",
     }),

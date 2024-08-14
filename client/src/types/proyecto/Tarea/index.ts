@@ -7,7 +7,7 @@ import { Usuario } from '@/types/usuario';
 export type Tarea = {
     idTarea?: number | string;
     titulo : string;
-    descripcion : string;
+    descripcion? : string;
     fechaInicio : string;
     fechaFin : string;
     createdAt?: string;

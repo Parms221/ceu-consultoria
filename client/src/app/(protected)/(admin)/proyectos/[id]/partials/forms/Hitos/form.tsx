@@ -24,6 +24,7 @@ export default function HitoForm(
     async function onSubmit(values: z.infer<typeof hitoSchema>){
         const formatTareas : TareaDTO[] = values.tareas.map(tarea => ({
             ...tarea,
+            descripcion: tarea.descripcion ?? "",
             participantesAsignados: tarea.participantesAsignados ?? [],
             subtareas: tarea.subtareas ?? []
         }))
@@ -34,10 +35,12 @@ export default function HitoForm(
             fechaFinalizacion: values.fechas.to!,
             tareas: formatTareas
         }
+        console.log("Guardando hito" ,formattedData)
         if (!selectedHito) {
             await saveHito(projectId, formattedData, undefined)
         }else {
             const parsedId = parseInt(selectedHito.idHito.toString())
+            console.log("Actualizando hito" ,parsedId)
             await saveHito(projectId, formattedData, parsedId)
         }
         resetForms()
@@ -116,9 +119,11 @@ export default function HitoForm(
                     newTask = {<NewTaskModal />}
                 />
                 <DrawerFooter>
-                    <Button>Guardar</Button>
+                    <Button type="submit">
+                        {selectedHito ? "Actualizar" : "Guardar"}
+                    </Button>
                     <DrawerClose asChild>
-                        <Button variant="outline">Cancelar</Button>
+                        <Button variant="outline" type="button">Cancelar</Button>
                     </DrawerClose>
                 </DrawerFooter>
             </form>

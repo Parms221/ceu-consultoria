@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import Gantt from 'frappe-gantt';
 import 'frappe-gantt/dist/frappe-gantt.css';
 import { useProjectDetail } from "../contexto/proyecto-detail.context";
 import useHito from "@/hooks/Hito/useHito";
 import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
+import NewTaskModal from '../forms/Tareas';
+import { VistaCronogramaActions } from './lista/lista';
+import NewHitoModal from '../forms/Hitos';
+import Gantt from 'frappe-gantt';
 
 type EstadoId = number;
 
@@ -22,33 +25,54 @@ const getProgressFromEstado = (estadoId: EstadoId): number => {
 
 export default function VistaGantt() {
   const ganttRef = useRef<HTMLDivElement>(null);
-  const { projectId } = useProjectDetail(); // Obtener el projectId
+  const ganttInstanceRef = useRef<Gantt | null>(null);
+  const newTaskDialogRef = useRef<DialogRef>(null)
+  const newHitoDialogRef = useRef<DialogRef>(null)
+
+  const { projectId, setSelectedTask, setSelectedHito, gptHitos } = useProjectDetail(); // Obtener el projectId
   const { getHitosQuery } = useHito(); 
   const { data: hitos, isLoading, isError } = getHitosQuery(projectId);
+
+  const handleOpenTaskDialog = () => {
+    if (newTaskDialogRef.current) {
+      newTaskDialogRef.current.openDialog();
+    }
+  };
+
+  const handleOpenHitoDialog = () => {
+    if (newHitoDialogRef.current) {
+      newHitoDialogRef.current.openDialog();
+    }
+  };
 
   useEffect(() => {
     if (ganttRef.current && hitos) {
       // Mapeo de hitos y tareas del hito a las tareas del Gantt
-      const tareas = hitos.flatMap(hito => [
+      const data = gptHitos ? gptHitos : hitos
+      const tareas = data.flatMap(hito => [
         {
-          id: hito.titulo,
+          type: "hito",
+          id: hito.idHito.toString(),
           name: hito.titulo,
           start: hito.fechaInicio,
           end: hito.fechaFinalizacion,
           progress: 0,
           dependencies: '', 
+          hito_obj: hito,
         },
         ...hito.tareasDelHito.map(tarea => ({
-          id: tarea.titulo,
+          type: "tarea",
+          id: tarea.idTarea!.toString(),
           name: tarea.titulo,
           start: tarea.fechaInicio,
           end: tarea.fechaFin,
-          progress: getProgressFromEstado(tarea.estado.idEstado), 
-          dependencies: hito.titulo,
+          progress: tarea.estado && getProgressFromEstado(tarea.estado.idEstado), 
+          dependencies: hito.idHito.toString(),
+          tarea_obj: tarea
         }))
       ]);
 
-      const configuration = {
+      const configuration : Gantt.Options = {
         header_height: 50,
         column_width: 30,
         step: 24,
@@ -58,11 +82,34 @@ export default function VistaGantt() {
         arrow_curve: 5,
         padding: 18,
         view_mode: 'Day',
-        date_format: 'YYYY-MM-DD',
-        language: 'es'
+        date_format: 'YYYY-MM-DD hh:mm a',
+        language: 'es',
       };
 
-      const gantt = new Gantt(ganttRef.current, tareas, configuration);
+      
+
+      if(!ganttInstanceRef.current){
+        ganttInstanceRef.current = new Gantt(ganttRef.current, tareas, {
+          ...configuration,
+          on_click: function (task : any) {
+            if(task.type === "tarea"){
+              setSelectedTask(task.tarea_obj)
+              handleOpenTaskDialog(); 
+            } else {
+              setSelectedHito(task.hito_obj)
+              handleOpenHitoDialog();
+            }
+            console.log(task);
+          },
+          on_date_change: function(task: any, start: any, end: any) {
+            console.log(task, start, end);
+          },
+        });
+      }else {
+        // ganttRef.current.remove()
+        console.log("refresh")
+        ganttInstanceRef.current.refresh(tareas)
+      }
 
       // Desactivar la edición y el movimiento de las barras del diagrama
       const ganttElement = ganttRef.current;
@@ -72,15 +119,10 @@ export default function VistaGantt() {
         bars.forEach(bar => {
           bar.style.pointerEvents = 'auto';
         });
-
-        // Seleccionar todas las tareas y desactivar los eventos
-        // const tasks = ganttElement.querySelectorAll<HTMLElement>('.task');
-        // tasks.forEach(task => {
-        //   task.style.pointerEvents = 'none';
-        // });
+     
       }
     }
-  }, [hitos]);
+  }, [hitos, gptHitos]);
 
   if (isLoading) {
     return <div>Cargando ...</div>;
@@ -91,7 +133,12 @@ export default function VistaGantt() {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 relative">
+      <div className='hidden'>
+        <NewTaskModal ref={newTaskDialogRef}/>
+        <NewHitoModal ref={newHitoDialogRef}/>
+      </div>
+      <VistaCronogramaActions />
       <div ref={ganttRef} className="gantt-chart"></div>
     </div>
   );

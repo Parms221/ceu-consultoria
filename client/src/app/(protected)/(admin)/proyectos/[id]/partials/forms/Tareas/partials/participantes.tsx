@@ -31,7 +31,7 @@ const SelectParticipantesTarea = () => {
               })) || []
             }
             placeholder="Selecciona los participantes"
-            defaultValue={field.value?.map((e) => e.toString()) ?? []}
+            defaultValue={field.value?.map((e) => e?.toString()) ?? []}
           ></MultiSelect>
           {/* error */}
           <p>{form.formState.errors.participantesAsignados?.message}</p>
