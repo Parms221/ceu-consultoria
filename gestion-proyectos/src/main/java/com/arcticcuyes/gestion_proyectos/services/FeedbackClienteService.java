@@ -50,6 +50,15 @@ public class FeedbackClienteService {
             return 0.0; // No hay calificaciones para calcular el porcentaje
         }
 
+        // Filtrar los registros que tienen el campo 'registrado' en true
+        List<FeedbackCliente> feedbackRegistradoList = feedbackList.stream()
+            .filter(feedback -> feedback.isRegistrado()) // Ajustar según cómo accedes al campo
+            .collect(Collectors.toList());
+
+        if (feedbackRegistradoList.isEmpty()) {
+            return 0.0; // No hay calificaciones para calcular el porcentaje
+        }
+
         // Obtener todas las calificaciones en un solo listado
         List<Long> todasCalificaciones = feedbackList.stream()
                 .filter(feedback -> feedback.getCalificaciones() != null)
