@@ -6,12 +6,10 @@ import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/for
 import { Loader } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { useAppContext } from "@/app/(protected)/app.context";
+import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 
-export default function SelectEstadoTarea({
-    form,
-  }: {
-    form: UseFormReturn<z.infer<typeof tareaSchema>, any, undefined>;
-  }) {
+export default function SelectEstadoTarea() {
+    const { tareaForm : form } = useProjectDetail()
     const { estados } = useAppContext()
     return (
         <FormField

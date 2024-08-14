@@ -1,13 +1,13 @@
 import { MultiSelect } from "@/components/Multiselect/Multiselect";
-import { FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import useParticipante from "@/hooks/Partcipante/useParticipante";
 
 const SelectParticipantesTarea = () => {
   const { getParticipantesDeProyectoQuery } = useParticipante();
-  const { projectId, tareaForm: form } = useProjectDetail();
+  const { projectId, tareaForm: form, selectedTask } = useProjectDetail();
 
   const res = getParticipantesDeProyectoQuery(projectId);
   return (
@@ -31,10 +31,9 @@ const SelectParticipantesTarea = () => {
               })) || []
             }
             placeholder="Selecciona los participantes"
-            defaultValue={field.value?.map((e) => e?.toString()) ?? []}
+            defaultValue={field.value?.map((e) => e?.toString()) || [""]}
           ></MultiSelect>
-          {/* error */}
-          <p>{form.formState.errors.participantesAsignados?.message}</p>
+          <FormMessage />
         </FormItem>
       )}
     />

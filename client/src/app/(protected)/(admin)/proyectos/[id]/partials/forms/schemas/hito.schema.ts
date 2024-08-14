@@ -20,7 +20,7 @@ export const hitoSchema = z.object({
       ctx.addIssue({
         message: "Seleccione un rango de fechas para el inicio y finalización",
         code: z.ZodIssueCode.custom,
-         path: ["fechas"],
+         path: ["fechas.from"],
       })
     }
 
@@ -29,7 +29,7 @@ export const hitoSchema = z.object({
         ctx.addIssue({
           message: "La fecha de finalización no puede ser anterior a la de inicio",
           code: z.ZodIssueCode.custom,
-          path: ["fechas"],
+          path: ["fechas.from"],
         })
       }
     }

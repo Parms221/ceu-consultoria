@@ -12,6 +12,8 @@ import NewTaskModal from "../../../forms/Tareas";
 import NewHitoModal from "../../../forms/Hitos";
 import { Badge } from "@/components/ui/badge";
 import { Estado } from "@/types/estado";
+import useTarea from "@/hooks/Tarea/useTarea";
+import EditHitoModal from "../dialogs/edit-hito";
 
 export function getBadgeByEstado(estado: Estado) {
   return (
@@ -152,15 +154,17 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     header: "Acciones",
     cell: ({ row }) => {
       const task = row.original;
-
+      const { convertFromTareaToDTO } = useTarea() 
+   
       return (
         <div className="flex gap-2">
           {/* Editar y eliminar */}
           {
             task.idTarea ?
-              (<NewTaskModal asEdit task={task as Tarea} />)
+              (<NewTaskModal asEdit task={convertFromTareaToDTO(task as Tarea)} />)
               :
-              <NewHitoModal asEdit task={task as Hito} />
+              // <NewHitoModal asEdit task={task as Hito} />
+              <EditHitoModal hito={task as Hito} />
           }
           <DeleteTask tarea={task as Tarea | Hito} />
 

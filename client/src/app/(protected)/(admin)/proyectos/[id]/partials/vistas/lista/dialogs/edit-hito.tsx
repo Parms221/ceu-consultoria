@@ -1,4 +1,4 @@
-import {  Pen, PenBox, PlusCircle, SendHorizonal } from "lucide-react";
+import {  PenBox } from "lucide-react";
 
 import {
   Dialog,
@@ -8,21 +8,18 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/partials/contexto/proyecto-detail.context';
-import TareaForm from "./form";
-import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { cn } from "@/lib/utils";
-import useTarea from "@/hooks/Tarea/useTarea";
+import { Hito } from "@/types/proyecto/Hito";
+import HitoForm from "../../../forms/Hitos/form";
 
 interface IProps {
-  asEdit? : boolean
-  task? : TareaDTO
+  hito? : Hito
 }
 
-const NewTaskModal = forwardRef<DialogRef, IProps>(
-  ({ asEdit, task } : IProps, ref) => {
+const EditHitoModal = forwardRef<DialogRef, IProps>(
+  ({ hito } : IProps, ref) => {
   
-  const { setSelectedTask, selectedTask, tareaForm } = useProjectDetail()
+  const { selectedHito, setSelectedHito, hitoForm } = useProjectDetail()
   const dialogRef = useRef<HTMLButtonElement>(null)
 
   useImperativeHandle(ref, () => ({
@@ -36,17 +33,16 @@ const NewTaskModal = forwardRef<DialogRef, IProps>(
   return (
     <Dialog 
       onOpenChange={(isOpen) => {
-        if(!isOpen && selectedTask){
+        if(!isOpen && selectedHito){
           // Reinicia los valores del formulario
-          setSelectedTask(null)
-          tareaForm.reset({
+          setSelectedHito(null)
+          hitoForm.reset({
             titulo: "Nueva tarea",
-            fechaFin: new Date(),
-            fechaInicio: new Date(),
-            descripcion: "",
-            estado: 0,
-            participantesAsignados: [],
-            subtareas: []
+            fechas: {
+              from: new Date(),
+              to: new Date(),
+            },
+            tareas: []
           })
         }
       }}
@@ -56,26 +52,21 @@ const NewTaskModal = forwardRef<DialogRef, IProps>(
           ref={dialogRef}
         >
           {
-            !asEdit ? (
-              <Button className="bg-ceu-celeste text-white self-end mb-4" size={"sm"}>
-                  <PlusCircle /> Añadir Tarea
-              </Button>
-            ) : (
+           
               <Button
                 size={"sm"}
                 className="py-1.5 bg-ceu-azul"
                 onClick={() => {
-                  if(task){
-                    setSelectedTask(task)
+                  if(hito){
+                    setSelectedHito(hito)
                   }
                 }}
               >
                 <PenBox size={16}/>
                 <span className="sr-only">
-                  Editar tarea
+                  Editar hito
                 </span>
               </Button>
-            )
           }
         
         </DialogTrigger>
@@ -86,13 +77,13 @@ const NewTaskModal = forwardRef<DialogRef, IProps>(
       >
         <DialogTitle className="text-ceu-celeste">
             {
-                task ? `Editar tarea ${task.titulo}` : `Nueva tarea` 
+                hito && `Editar hito ${hito.titulo}`
             }
         </DialogTitle>
-       <TareaForm />
+        <HitoForm />
       </DialogContent>
     </Dialog>
   );
 })
 
-export default NewTaskModal;
+export default EditHitoModal;

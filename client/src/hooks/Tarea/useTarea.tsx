@@ -2,6 +2,7 @@
 
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
+import { Tarea } from "@/types/proyecto/Tarea";
 import { FeedbackTareaDTO } from "@/types/proyecto/Tarea/dto/FeedbackTareaDTO";
 import { TareaDTO } from "@/types/proyecto/Tarea/dto/TareaDTO";
 import { toast } from "sonner";
@@ -14,7 +15,7 @@ export default function useTarea() {
     const toastId = toast.loading("Guardando ...");
     // Si el idHito existe, se actualiza el registro
     try {
-      console.log("tarea updating", tarea);
+      console.log("tarea updating", JSON.stringify(tarea));
       const response = await fetcherLocal(`/tareas/${idTarea}`, {
         method: "PUT",
         body: JSON.stringify(tarea),
@@ -32,7 +33,7 @@ export default function useTarea() {
       toast.error("Error al actualizar la tarea", {
         id: toastId,
       });
-      throw new Error("Error al actualizar tarea");
+      return false;
     }
   }
 
@@ -56,7 +57,7 @@ export default function useTarea() {
       toast.error("Error al eliminar el registro", {
         id: toastId,
       });
-      throw new Error("Error al eliminar tarea");
+      // throw new Error("Error al eliminar tarea");
     }
   }
 
@@ -72,16 +73,27 @@ export default function useTarea() {
       if (!ok) {
         throw new Error("Error al enviar feedback sobre esta tarea");
       }
-      // toast.success("Tarea actualizada", {
-      //   id: toastId
-      // });
       return ok;
     } catch (e) {
       console.error(e);
-      // toast.error("Error al enviar feedback sobre esta tarea", {
-      //   id: toastId
-      // });
-      throw new Error("Error al enviar feedback");
+      return false;
+    }
+  }
+
+  function convertFromTareaToDTO(tarea : Tarea) : TareaDTO {
+    return {
+      ...tarea,
+      idTarea : tarea.idTarea?.toString(),
+      estado : tarea.estado?.idEstado,
+      fechaInicio : new Date(tarea.fechaInicio),
+      fechaFin : new Date(tarea.fechaFin),
+      tareaAnterior : undefined, // Por el momento no se usa la tarea anterior
+      participantesAsignados: tarea.participantesAsignados ?
+        tarea.participantesAsignados.map(p => p.idParticipante) : undefined,
+      subtareas: tarea.subTareas ? tarea.subTareas.map(t => ({
+        descripcion: t.descripcion,
+        completado: t.completado,
+      })) : [],
     }
   }
 
@@ -89,5 +101,6 @@ export default function useTarea() {
     updateTarea,
     deleteTarea,
     addFeedback,
+    convertFromTareaToDTO,
   };
 }

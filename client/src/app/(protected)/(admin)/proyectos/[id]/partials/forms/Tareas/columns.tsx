@@ -1,18 +1,16 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2Icon, ChevronRight } from "lucide-react";
-import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
+import { Trash2Icon, ChevronRight } from "lucide-react";
+import { format, formatDuration, intervalToDuration, set } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getBadgeByEstado } from "../../vistas/lista/DataTable/columns";
 import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
-import { useQuery } from "@tanstack/react-query";
-import { Estado } from "@/types/estado";
-import { fetcherLocal } from "@/server/fetch/client-side";
 import { useAppContext } from "@/app/(protected)/app.context";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import NewTaskModal from ".";
 import { es } from "date-fns/locale/es";
+import useTarea from "@/hooks/Tarea/useTarea";
 
 
 function isExpandedChevron(isExpanded: boolean) {
@@ -118,10 +116,12 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
     cell: ({ row }) => {
       const tarea = row.original;
       const { hitoForm } = useProjectDetail()
+      const { convertFromTareaToDTO } = useTarea()
       const tareasInForm = hitoForm.getValues("tareas") as unknown as TareaDTO[] ?? []
+      console.log("tareasInForm", tareasInForm)
       return (
         <div className="flex gap-2">
-          <NewTaskModal asEdit task={tarea as Tarea} />
+          <NewTaskModal asEdit task={convertFromTareaToDTO(tarea)} />
 
           <Button
             variant="ghost"

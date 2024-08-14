@@ -85,7 +85,7 @@ public class Tarea {
     )
     private List<Participante> participantesAsignados = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubTarea> subTareas;
 
     // Feedbacks

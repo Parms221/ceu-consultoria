@@ -29,6 +29,7 @@ import com.arcticcuyes.gestion_proyectos.repositories.HitoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ParticipanteRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.SubtareaRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.TareaRepository;
+
 @Service
 public class HitoService {
 
@@ -122,112 +123,112 @@ public class HitoService {
     existHito.setFechaFinalizacion(hitoDTO.getFechaFinalizacion());
     existHito = hitoRepository.save(existHito); // Guardar hito para obtener su ID
 
-    // Obtener las tareas actuales del hito
-    List<Tarea> tareasExistentes = tareaRepository.findByHito_IdHito(existHito.getIdHito());
+    // // Obtener las tareas actuales del hito
+    // List<Tarea> tareasExistentes = tareaRepository.findByHito_IdHito(existHito.getIdHito());
 
-    // Crear un conjunto con los IDs de las nuevas tareas
-    List<Long> tareaDTOIds = hitoDTO.getTareas() != null ?
-            hitoDTO.getTareas().stream()
-                    .filter(t -> t.getId() != null)  // Solo incluir IDs no nulos
-                    .map(TareaDTO::getId)
-                    .collect(Collectors.toList())
-            : new ArrayList<>();
+    // // Crear un conjunto con los IDs de las nuevas tareas
+    // List<Long> tareaDTOIds = hitoDTO.getTareas() != null ?
+    //         hitoDTO.getTareas().stream()
+    //                 .filter(t -> t.getId() != null)  // Solo incluir IDs no nulos
+    //                 .map(TareaDTO::getId)
+    //                 .collect(Collectors.toList())
+    //         : new ArrayList<>();
 
-    // Identificar y eliminar las tareas que no están en la nueva lista
-    for (Tarea tarea : tareasExistentes) {
-        if (!tareaDTOIds.contains(tarea.getIdTarea())) {
-            // Eliminar subtareas asociadas
-            subTareaRepository.deleteAllByTarea_IdTarea(tarea.getIdTarea());
-            tareaRepository.delete(tarea);
-        }
-    }
+    // // Identificar y eliminar las tareas que no están en la nueva lista
+    // for (Tarea tarea : tareasExistentes) {
+    //     if (!tareaDTOIds.contains(tarea.getIdTarea())) {
+    //         // Eliminar subtareas asociadas
+    //         subTareaRepository.deleteAllByTarea_IdTarea(tarea.getIdTarea());
+    //         tareaRepository.delete(tarea);
+    //     }
+    // }
 
-    if (hitoDTO.getTareas() != null) {
-        for (TareaDTO tareaDTO : hitoDTO.getTareas()) {
-            Tarea tarea;
-            if (tareaDTO.getId() != null) {
-                // Actualizar tarea existente
-                tarea = tareaRepository.findById(tareaDTO.getId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Tarea no encontrada con id: " + tareaDTO.getId()));
-            } else {
-                // Crear nueva tarea
-                tarea = new Tarea();
-            }
-            tarea.setTitulo(tareaDTO.getTitulo());
-            tarea.setDescripcion(tareaDTO.getDescripcion());
-            tarea.setFechaInicio(tareaDTO.getFechaInicio());
-            tarea.setFechaFin(tareaDTO.getFechaFin());
+    // if (hitoDTO.getTareas() != null) {
+    //     for (TareaDTO tareaDTO : hitoDTO.getTareas()) {
+    //         Tarea tarea;
+    //         if (tareaDTO.getId() != null) {
+    //             // Actualizar tarea existente
+    //             tarea = tareaRepository.findById(tareaDTO.getId())
+    //                     .orElseThrow(() -> new ResourceNotFoundException("Tarea no encontrada con id: " + tareaDTO.getId()));
+    //         } else {
+    //             // Crear nueva tarea
+    //             tarea = new Tarea();
+    //         }
+    //         tarea.setTitulo(tareaDTO.getTitulo());
+    //         tarea.setDescripcion(tareaDTO.getDescripcion());
+    //         tarea.setFechaInicio(tareaDTO.getFechaInicio());
+    //         tarea.setFechaFin(tareaDTO.getFechaFin());
 
-            Optional<Estado> estado = estadoRepository.findById(tareaDTO.getEstado());
-            if (estado.isEmpty()) {
-                throw new ValidationError("Estado no encontrado", "estado");
-            }
-            tarea.setEstado(estado.get());
+    //         Optional<Estado> estado = estadoRepository.findById(tareaDTO.getEstado());
+    //         if (estado.isEmpty()) {
+    //             throw new ValidationError("Estado no encontrado", "estado");
+    //         }
+    //         tarea.setEstado(estado.get());
 
-            // Obtener el proyecto asociado al hito
-            Long proyectoId = proyecto.getIdProyecto();
-            // Obtener todos los participantes cuyos consultores coincidan con los IDs proporcionados y que estén asociados con el proyecto
-            List<Participante> nuevosParticipantes = new ArrayList<>(participanteRepository.findByConsultorParticipante_IdConsultorInAndProyectoIngresado_IdProyecto(tareaDTO.getParticipantesAsignados(), proyectoId));
+    //         // Obtener el proyecto asociado al hito
+    //         Long proyectoId = proyecto.getIdProyecto();
+    //         // Obtener todos los participantes cuyos consultores coincidan con los IDs proporcionados y que estén asociados con el proyecto
+    //         List<Participante> nuevosParticipantes = new ArrayList<>(participanteRepository.findByConsultorParticipante_IdConsultorInAndProyectoIngresado_IdProyecto(tareaDTO.getParticipantesAsignados(), proyectoId));
 
-            // Obtener los participantes actuales asociados a la tarea
-            List<Participante> participantesActuales = tarea.getParticipantesAsignados();
+    //         // Obtener los participantes actuales asociados a la tarea
+    //         List<Participante> participantesActuales = tarea.getParticipantesAsignados();
 
-            // Calcular los participantes a añadir y a eliminar
-            List<Participante> participantesAAgregar = nuevosParticipantes.stream()
-                    .filter(p -> !participantesActuales.contains(p))
-                    .collect(Collectors.toList());
+    //         // Calcular los participantes a añadir y a eliminar
+    //         List<Participante> participantesAAgregar = nuevosParticipantes.stream()
+    //                 .filter(p -> !participantesActuales.contains(p))
+    //                 .collect(Collectors.toList());
 
-            List<Participante> participantesAEliminar = participantesActuales.stream()
-                    .filter(p -> !nuevosParticipantes.contains(p))
-                    .collect(Collectors.toList());
+    //         List<Participante> participantesAEliminar = participantesActuales.stream()
+    //                 .filter(p -> !nuevosParticipantes.contains(p))
+    //                 .collect(Collectors.toList());
 
-            // Actualizar la lista de participantes
-            participantesActuales.removeAll(participantesAEliminar);
-            participantesActuales.addAll(participantesAAgregar);
-            tarea.setParticipantesAsignados(participantesActuales);
+    //         // Actualizar la lista de participantes
+    //         participantesActuales.removeAll(participantesAEliminar);
+    //         participantesActuales.addAll(participantesAAgregar);
+    //         tarea.setParticipantesAsignados(participantesActuales);
 
-            tarea.setHito(existHito);
-            tarea = tareaRepository.save(tarea); // Guardar tarea para obtener su ID
+    //         tarea.setHito(existHito);
+    //         tarea = tareaRepository.save(tarea); // Guardar tarea para obtener su ID
 
-            // Obtener subtareas actuales asociadas a la tarea
-            List<SubTarea> subtareasExistentes = subTareaRepository.findByTarea_IdTarea(tarea.getIdTarea());
+    //         // Obtener subtareas actuales asociadas a la tarea
+    //         List<SubTarea> subtareasExistentes = subTareaRepository.findByTarea_IdTarea(tarea.getIdTarea());
 
-            // Crear un conjunto con los IDs de las nuevas subtareas
-            List<Long> subtareaDTOIds = tareaDTO.getSubtareas() != null ?
-                    tareaDTO.getSubtareas().stream()
-                            .filter(s -> s.getId() != null)  // Solo incluir IDs no nulos
-                            .map(SubtareaDTO::getId)
-                            .collect(Collectors.toList())
-                    : new ArrayList<>();
+    //         // Crear un conjunto con los IDs de las nuevas subtareas
+    //         List<Long> subtareaDTOIds = tareaDTO.getSubtareas() != null ?
+    //                 tareaDTO.getSubtareas().stream()
+    //                         .filter(s -> s.getId() != null)  // Solo incluir IDs no nulos
+    //                         .map(SubtareaDTO::getId)
+    //                         .collect(Collectors.toList())
+    //                 : new ArrayList<>();
 
-            // Identificar y eliminar las subtareas que no están en la nueva lista
-            for (SubTarea subtarea : subtareasExistentes) {
-                if (!subtareaDTOIds.contains(subtarea.getIdSubTarea())) {
-                    subTareaRepository.delete(subtarea);
-                }
-            }
+    //         // Identificar y eliminar las subtareas que no están en la nueva lista
+    //         for (SubTarea subtarea : subtareasExistentes) {
+    //             if (!subtareaDTOIds.contains(subtarea.getIdSubTarea())) {
+    //                 subTareaRepository.delete(subtarea);
+    //             }
+    //         }
 
-            // Procesar y actualizar o crear nuevas subtareas
-            if (tareaDTO.getSubtareas() != null) {
-                for (SubtareaDTO subtareaDTO : tareaDTO.getSubtareas()) {
-                    SubTarea subtarea;
+    //         // Procesar y actualizar o crear nuevas subtareas
+    //         if (tareaDTO.getSubtareas() != null) {
+    //             for (SubtareaDTO subtareaDTO : tareaDTO.getSubtareas()) {
+    //                 SubTarea subtarea;
 
-                    if (subtareaDTO.getId() != null) {
-                        // Actualizar subtarea existente
-                        subtarea = subTareaRepository.findById(subtareaDTO.getId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Subtarea no encontrada con id: " + subtareaDTO.getId()));
-                    } else {
-                        // Crear nueva subtarea
-                        subtarea = new SubTarea();
-                    }
-                    subtarea.setDescripcion(subtareaDTO.getDescripcion());
-                    subtarea.setTarea(tarea);
+    //                 if (subtareaDTO.getId() != null) {
+    //                     // Actualizar subtarea existente
+    //                     subtarea = subTareaRepository.findById(subtareaDTO.getId())
+    //                             .orElseThrow(() -> new ResourceNotFoundException("Subtarea no encontrada con id: " + subtareaDTO.getId()));
+    //                 } else {
+    //                     // Crear nueva subtarea
+    //                     subtarea = new SubTarea();
+    //                 }
+    //                 subtarea.setDescripcion(subtareaDTO.getDescripcion());
+    //                 subtarea.setTarea(tarea);
 
-                    subTareaRepository.save(subtarea); // Guardar subtarea para obtener su ID
-                }
-            }
-        }
-    }
+    //                 subTareaRepository.save(subtarea); // Guardar subtarea para obtener su ID
+    //             }
+    //         }
+    //     }
+    // }
 
     return hitoRepository.save(existHito);
 }

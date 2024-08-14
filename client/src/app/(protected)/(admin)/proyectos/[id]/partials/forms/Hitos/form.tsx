@@ -13,9 +13,9 @@ import { tareasColumns } from "../Tareas/columns";
 import NewTaskModal from "../Tareas";
 import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import useHito from "@/hooks/Hito/useHito";
+import TimeInput from "@/components/ui/input-time";
 
-export default function HitoForm(
-) {
+export default function HitoForm() {
     const { selectedHito, projectId, hitoForm : form, resetForms, queryClient } = useProjectDetail()
     const { saveHito } = useHito()
     
@@ -38,7 +38,8 @@ export default function HitoForm(
         console.log("Guardando hito" ,formattedData)
         if (!selectedHito) {
             await saveHito(projectId, formattedData, undefined)
-        }else {
+        }
+        else {
             const parsedId = parseInt(selectedHito.idHito.toString())
             console.log("Actualizando hito" ,parsedId)
             await saveHito(projectId, formattedData, parsedId)
@@ -87,6 +88,9 @@ export default function HitoForm(
                                         field={field}
                                         useOpenState
                                     />
+                                      <TimeInput {...field}
+                                      value={field.value || new Date()}
+                                      className="h-[40px] w-fit" />
                             </div>
                             <FormMessage />
                         </FormItem>
@@ -107,17 +111,26 @@ export default function HitoForm(
                                     field={field}
                                     useOpenState
                                 />
+                                  <TimeInput
+                                    {...field}
+                                    value={field.value || new Date()}
+                                    className="h-[40px] w-fit"
+                                    />
                             </div>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 {/* Tareas del hito */}
-                <HitosTable 
-                    columns={tareasColumns}
-                    data={tareasInForm}
-                    newTask = {<NewTaskModal />}
-                />
+                {
+                    !selectedHito && (
+                        <HitosTable 
+                            columns={tareasColumns}
+                            data={tareasInForm}
+                            newTask = {<NewTaskModal />}
+                        />
+                    )
+                }
                 <DrawerFooter>
                     <Button type="submit">
                         {selectedHito ? "Actualizar" : "Guardar"}

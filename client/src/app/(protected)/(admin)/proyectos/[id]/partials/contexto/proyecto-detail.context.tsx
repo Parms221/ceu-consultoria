@@ -18,13 +18,15 @@ import {
 } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/schemas";
 import { useQueryClient } from "@tanstack/react-query";
 import { projectCompleteSchema } from "../../../nuevo/partials/schemas/project.schema";
+import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
+import useTarea from "@/hooks/Tarea/useTarea";
 
 interface IProjectDetailContext {
   selectedHito: Hito | null;
-  selectedTask: Tarea | null;
+  selectedTask: TareaDTO | null;
   projectId: number;
   setSelectedHito: (hito: Hito | null) => void;
-  setSelectedTask: (task: Tarea | null) => void;
+  setSelectedTask: (task: TareaDTO | null) => void;
   hitoForm: UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
   tareaForm: UseFormReturn<z.infer<typeof tareaSchema>, any, undefined>;
   resetForms: () => void;
@@ -56,8 +58,9 @@ export default function ProjectDetailProvider({
   children: React.ReactNode;
   projectId: number;
 }) {
+  const { convertFromTareaToDTO }  = useTarea()
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
-  const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
+  const [selectedTask, setSelectedTask] = useState<TareaDTO | null>(null);
   // Guardar hitos propuestos por la IA en memoria para poder editarlos
   const [gptHitos, setGptHitos] = useState<Hito[] | null>(null);
 
@@ -79,8 +82,8 @@ export default function ProjectDetailProvider({
     fechaFin: new Date(),
     fechaInicio: new Date(),
     descripcion: "",
-    estado: undefined,
-    participantesAsignados: [],
+    estado: TAREA_ESTADOS.por_hacer,
+    participantesAsignados: undefined,
     subtareas: [],
   };
 
@@ -122,18 +125,10 @@ export default function ProjectDetailProvider({
   // capturar el cambio de selected task para actualizar el formulario (Edit)
 
   useEffect(() => {
+    console.log("selectedTask", selectedTask)
     if (!selectedTask) return;
-
     tareaForm.reset({
-      titulo: selectedTask.titulo,
-      fechaFin: new Date(selectedTask.fechaFin),
-      fechaInicio: new Date(selectedTask.fechaInicio),
-      descripcion: selectedTask.descripcion,
-      estado: selectedTask.estado?.idEstado,
-      participantesAsignados: selectedTask.participantesAsignados.map(
-        (p) => p.idParticipante,
-      ),
-      subtareas: selectedTask.subTareas ? selectedTask.subTareas : [],
+      ...selectedTask,
     });
   }, [selectedTask]);
 
@@ -145,19 +140,7 @@ export default function ProjectDetailProvider({
         from: new Date(selectedHito.fechaInicio),
         to: new Date(selectedHito.fechaFinalizacion),
       },
-      tareas:
-        selectedHito.tareasDelHito.map((t) => {
-          return {
-            ...t,
-            idTarea: t.idTarea?.toString(),
-            fechaFin: new Date(t.fechaFin),
-            fechaInicio: new Date(t.fechaInicio),
-            estado: t.estado?.idEstado,
-            participantesAsignados: t.participantesAsignados.map(
-              (p) => p.idParticipante,
-            ),
-          };
-        }) ?? [],
+      tareas: [],
     });
   }, [selectedHito]);
 

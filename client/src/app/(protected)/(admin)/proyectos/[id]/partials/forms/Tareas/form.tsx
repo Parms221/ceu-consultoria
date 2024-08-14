@@ -40,9 +40,11 @@ export default function TareaForm() {
     projectId,
     queryClient,
   } = useProjectDetail();
+
   function saveTarea(values: z.infer<typeof tareaSchema>) {
     const currentTareas = hitoForm.getValues("tareas");
     values.idTarea = crypto.randomUUID();
+    console.log("currentTareas", currentTareas)
     if (currentTareas) {
       hitoForm.setValue("tareas", [...currentTareas, values]);
     } else {
@@ -52,11 +54,13 @@ export default function TareaForm() {
 
   async function update(values: z.infer<typeof tareaSchema>) {
     const currentTareas = hitoForm.getValues("tareas");
+    console.log("currentTareas", currentTareas)
     if (currentTareas.length > 0) {
+      console.log("Editando en memoria", values)
       // Editando tareas en memoria (cuando se crea un nuevo hito en el drawer) usando el id temporal
       const tareaIndex = currentTareas.findIndex((t) => {
         const id = selectedTask?.idTarea;
-        if (id) return t.idTarea === id.toString();
+        if (id) return t.idTarea == id;
       });
       currentTareas[tareaIndex] = values;
       hitoForm.setValue("tareas", currentTareas);
@@ -64,6 +68,7 @@ export default function TareaForm() {
     } else {
       // Editando tarea en la bd (cuando se seleccione en la tabla de hitos y tareas principal)
       const idTarea = selectedTask?.idTarea;
+      console.log("Editando en la bd", values)
       if (idTarea) await updateTarea(values, idTarea);
       queryClient.invalidateQueries({ queryKey: [projectId, "hitos"] });
     }
@@ -106,7 +111,7 @@ export default function TareaForm() {
               )}
             />
             <SelectParticipantesTarea />
-            <SelectEstadoTarea form={form} />
+            <SelectEstadoTarea />
             <FormField
               control={form.control}
               name="fechaInicio"

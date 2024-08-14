@@ -5,8 +5,9 @@ import useHito from "@/hooks/Hito/useHito";
 import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 import NewTaskModal from '../forms/Tareas';
 import { VistaCronogramaActions } from './lista/lista';
-import NewHitoModal from '../forms/Hitos';
 import Gantt from 'frappe-gantt';
+import useTarea from '@/hooks/Tarea/useTarea';
+import EditHitoModal from './lista/dialogs/edit-hito';
 
 type EstadoId = number;
 
@@ -32,6 +33,7 @@ export default function VistaGantt() {
   const { projectId, setSelectedTask, setSelectedHito, gptHitos } = useProjectDetail(); // Obtener el projectId
   const { getHitosQuery } = useHito(); 
   const { data: hitos, isLoading, isError } = getHitosQuery(projectId);
+  const { convertFromTareaToDTO } = useTarea()
 
   const handleOpenTaskDialog = () => {
     if (newTaskDialogRef.current) {
@@ -93,7 +95,7 @@ export default function VistaGantt() {
           ...configuration,
           on_click: function (task : any) {
             if(task.type === "tarea"){
-              setSelectedTask(task.tarea_obj)
+              setSelectedTask(convertFromTareaToDTO(task.tarea_obj))
               handleOpenTaskDialog(); 
             } else {
               setSelectedHito(task.hito_obj)
@@ -136,7 +138,7 @@ export default function VistaGantt() {
     <div className="p-4 relative">
       <div className='hidden'>
         <NewTaskModal ref={newTaskDialogRef}/>
-        <NewHitoModal ref={newHitoDialogRef}/>
+        <EditHitoModal ref={newHitoDialogRef}/>
       </div>
       <VistaCronogramaActions />
       <div ref={ganttRef} className="gantt-chart"></div>

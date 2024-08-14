@@ -12,7 +12,6 @@ import { Hito } from "@/types/proyecto/Hito";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import useTarea from "@/hooks/Tarea/useTarea";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,8 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import { useQueryClient } from "@tanstack/react-query";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatDate, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";
 import { cn } from "@/lib/utils";
 import useHito from "@/hooks/Hito/useHito";
@@ -60,7 +58,7 @@ export default function FeedbackChat({ tarea }: Props) {
       await addFeedbackHito(tarea.idHito, values)
     } else {
       if(!tarea.idTarea) return;
-      await addFeedback(tarea.idTarea, values)
+      await addFeedback(Number(tarea.idTarea), values)
     }
     queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     form.reset()
