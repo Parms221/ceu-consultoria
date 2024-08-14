@@ -22,6 +22,7 @@ import com.arcticcuyes.gestion_proyectos.models.Consultor;
 import com.arcticcuyes.gestion_proyectos.models.EntregableProyecto;
 import com.arcticcuyes.gestion_proyectos.models.EntregableServicio;
 import com.arcticcuyes.gestion_proyectos.models.Estado;
+import com.arcticcuyes.gestion_proyectos.models.FeedbackCliente;
 import com.arcticcuyes.gestion_proyectos.models.Hito;
 import com.arcticcuyes.gestion_proyectos.models.Participante;
 import com.arcticcuyes.gestion_proyectos.models.Proyecto;
@@ -32,6 +33,7 @@ import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.EntregableProyectoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.EntregableServicioRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.EstadoRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.FeedbackClienteRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.HitoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ParticipanteRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ProyectoRepository;
@@ -48,6 +50,8 @@ public class ProyectoService {
     private ProyectoRepository proyectoRepository;
     @Autowired
     private EstadoRepository estadoRepository;
+    @Autowired
+    private FeedbackClienteRepository feedbackClienteRepository;
 
     @Autowired
     private ClienteService clienteService;
@@ -210,6 +214,10 @@ public class ProyectoService {
         //         entregableProyectoRepository.save(entregable);
         //     }
         // }
+        // Creamos registro de feedbackCliente
+        FeedbackCliente fb = new FeedbackCliente();
+        fb.setProyecto(proyecto);
+        feedbackClienteRepository.save(fb);
         return proyecto;
     }
 

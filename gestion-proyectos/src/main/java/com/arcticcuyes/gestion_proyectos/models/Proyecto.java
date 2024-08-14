@@ -72,6 +72,8 @@ public class Proyecto {
     @OneToMany(mappedBy = "proyectoIngresado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participante> participantes;
 
+    @OneToOne(mappedBy = "proyecto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private FeedbackCliente feedbackCliente;
 
     @OneToMany(mappedBy = "proyecto")
     private List<Reunion> reuniones;
