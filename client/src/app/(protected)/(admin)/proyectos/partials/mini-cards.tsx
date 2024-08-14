@@ -1,11 +1,13 @@
 "use client"
 import PendingDot from "@/components/ui/pending-dot";
 import useProyecto from "@/hooks/Proyecto/useProyecto";
+import {useState, useEffect} from 'react'
 import {
   Inbox,
   CircleCheckIcon,
   LucideIcon,
   SquareUserIcon,
+  StarIcon
 } from "lucide-react";
 import Link from "next/link";
 
@@ -21,6 +23,8 @@ function getEstadisticas<EstadisticasProyecto>() {
     }
   };
 }
+
+
 
 export function ProyectosTerminados() {
   const data = getEstadisticas();
@@ -43,6 +47,45 @@ export function ConsultoresAsignados() {
       TitleIcons={SquareUserIcon}
       description={`Consultores asignados en algún proyecto`}
       main={`${data.consultores.current} / ${data.consultores.max}`}
+    />
+  );
+}
+
+export function SatisfaccionProyectos() {
+  const { obtenerPorcentajeSatisfaccionGlobal } = useProyecto();
+  const [data, setData] = useState<number>(0); // Estado inicializado en 0
+  const [loading, setLoading] = useState<boolean>(true); // Estado para manejar la carga
+  const [error, setError] = useState<string | null>(null); // Estado para manejar errores
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const result = await obtenerPorcentajeSatisfaccionGlobal(); // Obtener datos asincrónicamente
+        if (result !== undefined && result !== null) {
+          setData(result); // Actualizar estado con el valor obtenido
+        } else {
+          setData(0); // Establecer 0 si el resultado es undefined o null
+        }
+      } catch (error) {
+        console.error('Error al obtener el porcentaje de satisfacción:', error);
+        setData(0); // Establecer 0 en caso de error
+        setError('Ocurrió un error al obtener el porcentaje de satisfacción');
+      } finally {
+        setLoading(false); // Marcar como cargado
+      }
+    }
+
+    fetchData();
+  }, [obtenerPorcentajeSatisfaccionGlobal]);
+
+  const formattedData = `${data}%`;
+
+  return (
+    <DefaultMiniCard
+      title="Satisfacción de proyectos"
+      TitleIcons={StarIcon}
+      description={`Nivel de satisfaccion en los proyectos actuales`}
+      main={formattedData} // Convertir a string si es necesario
     />
   );
 }
@@ -83,6 +126,8 @@ interface DefaultMiniCardProps {
 }
 
 export function DefaultMiniCard(props: DefaultMiniCardProps) {
+  
+  
   return (
     <div className="space-y-2 border border-bodydark2 bg-white px-5 py-3 dark:bg-boxdark">
       <MiniCardTitle Icon={props.TitleIcons} title={props.title} />

@@ -108,6 +108,7 @@ export async function aprobarProyecto(
     };
   }
 }
+
 export async function guardarParticipantes(
   proyectoId: string | number,
   consultoresIds: (string | number)[],

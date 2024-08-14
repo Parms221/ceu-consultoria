@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@formkit/drag-and-drop": "^0.1.6",
+    "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.4.2",
     "@lexical/react": "^0.16.0",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -37,6 +38,7 @@
     "cmdk": "^0.2.1",
     "date-fns": "^3.6.0",
     "flatpickr": "^4.6.13",
+    "free-nextjs-admin-dashboard": "file:",
     "jotai": "^2.9.0",
     "jsvectormap": "^1.5.3",
     "lexical": "^0.16.0",

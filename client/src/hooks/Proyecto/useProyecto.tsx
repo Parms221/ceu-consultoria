@@ -105,6 +105,34 @@ export default function useProyecto() {
     }
   }
 
+  async function obtenerPorcentajeSatisfaccionGlobal() {    
+    try {
+      // Realiza la solicitud al endpoint para obtener el porcentaje de satisfacción
+      const response = await fetcherLocal('/feedbackcli/satisfaccion', {
+        method: 'GET',
+      });
+      
+      // Maneja la respuesta del servidor
+      const ok = await HandleServerResponse(response, undefined);
+      if (!ok) {
+        throw new Error('Ocurrió un error al obtener el porcentaje de satisfacción global');
+      }
+      
+
+      const data = await response.json(); // Lee el cuerpo de la respuesta una vez
+      const porcentajeSatisfaccion = data; // Ajusta si el formato de datos es diferente
+
+      //console.log(porcentajeSatisfaccion)
+      return porcentajeSatisfaccion;
+    } catch (error) {
+      console.error(error);
+      // toast.error('Ocurrió un erroXXXXXXXXr, inténtelo nuevamente', {
+      //   id: toastId,
+      // });
+    }
+  }
+  
+
   async function deleteProyecto(id: number) {
     const toastId = toast.loading(`Eliminando proyecto ...`);
     try {
@@ -168,7 +196,7 @@ export default function useProyecto() {
     
     actualizarEstadoProyecto,
     deleteProyecto,
-
+    obtenerPorcentajeSatisfaccionGlobal,  
     getBadgeByStatus
   };
 }

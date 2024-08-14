@@ -24,6 +24,8 @@ interface IProjectDetailContext {
   selectedHito: Hito | null;
   selectedTask: Tarea | null;
   projectId: number;
+  feedbackClient: boolean | null;
+  setFeedbackClient: (value: boolean | null) => void; 
   setSelectedHito: (hito: Hito | null) => void;
   setSelectedTask: (task: Tarea | null) => void;
   hitoForm: UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
@@ -61,6 +63,7 @@ export default function ProjectDetailProvider({
   const [selectedTask, setSelectedTask] = useState<Tarea | null>(null);
   // Guardar hitos propuestos por la IA en memoria para poder editarlos
   const [gptHitos, setGptHitos] = useState<Hito[] | null>(null);
+  const [feedbackClient, setFeedbackClient] = useState<boolean | null>(false);
 
   // Query client to invalidate queries
   const queryClient = useQueryClient();
@@ -166,6 +169,8 @@ export default function ProjectDetailProvider({
     <ProjectDetailContext.Provider
       value={{
         projectId,
+        feedbackClient,
+        setFeedbackClient,
         selectedHito,
         setSelectedHito,
         selectedTask,

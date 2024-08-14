@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import {
   ConsultoresAsignados,
   ProyectosPorConfirmar,
-  ProyectosTerminados
+  ProyectosTerminados,
+  SatisfaccionProyectos
 } from "@/app/(protected)/(admin)/proyectos/partials/mini-cards";
 import { PlusIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,10 +23,11 @@ export default async function Page() {
   return (
     <main className="space-y-3">
       <PageTitle>Administración de proyectos</PageTitle>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
         <ProyectosTerminados />
         <ConsultoresAsignados />
         <ProyectosPorConfirmar />
+        <SatisfaccionProyectos/>
       </div>
 
       <Card>

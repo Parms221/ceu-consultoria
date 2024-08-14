@@ -2,6 +2,7 @@ import VistaGantt from "./gantt";
 import VistaResumen from "./resumen/resumen";
 import VistaLista from "./lista/lista";
 import VistaKanban from "./kanban";
+import VistaFeedback from "./feedback/feedback-client";
 import { GanttChart, InfoIcon, Kanban, ListChecks, FolderOpen } from "lucide-react";
 import VistaEspacio from "./espacio_trabajo/espacio";
 
@@ -36,6 +37,12 @@ export const PROJECT_VIEWS = [
       label: "Espacio de trabajo",
       icon: <FolderOpen/>,
       content: VistaEspacio,
+    },
+    {
+      id: "feedback",
+      label: "Feedback",
+      icon: <InfoIcon/>,
+      content: VistaFeedback,
     }
   ];
 
@@ -43,5 +50,6 @@ export {
     VistaGantt,
     VistaResumen,
     VistaLista,
-    VistaKanban
+    VistaKanban,
+    VistaFeedback
 }
