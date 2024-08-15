@@ -19,6 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Reunion } from "@/types/proyecto/Reunion";
 import CalendarDetalleReunion from "./partials/detalle-reunion";
 import CalendarDetalleEvento from "./partials/detalle-evento";
+import { AllEventsResponse } from "@/types/calendar/dto";
 
 const CalendarInit: CalendarOptions = {
   locale: esLocale,
@@ -40,10 +41,6 @@ const CalendarInit: CalendarOptions = {
   nowIndicator: true,
 };
 
-interface AllEventsResponse {
-  reuniones : Reunion[]
-  events : Event[]
-} 
 
 const CalendarEvents = () => {
   const [calendarEvents, setCalendarEvents] = useState<EventSourceInput>([]);

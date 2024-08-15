@@ -2,22 +2,8 @@ import { Reunion } from "@/types/proyecto/Reunion";
 import ItemDetail from "./item-detail";
 import { LucideUsers2, TextIcon, User2Icon, VideoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { format, isBefore, isSameDay } from "date-fns";
-import { es } from "date-fns/locale/es";
 import GoogleCalendarSVG from "@/components/common/Icons/GoogleCalendarLogo";
-
-export function formatRange(start?: string, end?: string){
-    const startDate = start ? new Date(start) : new Date();
-    const endDate = end ? new Date(end) : new Date();
-    if(isSameDay(startDate, endDate)){
-        return `
-            ${format(startDate, "EEEE, d 'de' MMMM", { locale: es })} ${format(startDate, "hh:mm")} – ${format(endDate, "hh:mm a", { locale: es })}`;
-        
-    }
-
-    return `
-        ${format(startDate, "EEEE, d 'de' MMMM", { locale: es })} ${format(startDate, "hh:mm a")} – ${format(endDate, "EEEE, d 'de' MMMM", { locale: es })} ${format(endDate, "hh:mm a")}`;
-}
+import { formatDateRange } from "@/lib/date-format";
 
 export default function CalendarDetalleReunion(
     { reunion }: { reunion: Reunion }
@@ -31,7 +17,7 @@ export default function CalendarDetalleReunion(
                     {reunion.titulo}    
                 </h1>    
                 <p className="text-xs text-neutral-600 leading-none">
-                    {formatRange(reunion.fechaInicio, reunion.fechaFin)}
+                    {formatDateRange(reunion.fechaInicio, reunion.fechaFin)}
                 </p>
             </header>  
             <ItemDetail

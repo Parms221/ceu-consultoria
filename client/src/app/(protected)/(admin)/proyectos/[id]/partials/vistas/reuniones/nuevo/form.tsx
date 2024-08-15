@@ -73,7 +73,7 @@ export default function NewReunionForm() {
       invitados: values.invitados,
       titulo: values.titulo,
       descripcion: values.descripcion,
-      enlace: values.enlace,
+      enlace: values.enlace !== "" ? values.enlace : undefined,
     };
     const ok = await createReunionByProyectoId(dto, projectId);
     queryClient.invalidateQueries({
@@ -147,8 +147,17 @@ export default function NewReunionForm() {
                     disable={(date) => {
                       return isBefore(startOfDay(date), startOfDay(new Date()));
                     }}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      form.setValue("fechaFin", date as Date);
+                    }}
                   />
-                  <TimeInput {...field} className="h-[40px] w-fit" />
+                  <TimeInput {...field} className="h-[40px] w-fit" 
+                    onChange={(date) => {
+                      field.onChange(date);
+                      form.setValue("fechaFin", date as Date);
+                    }}
+                  />
                 </div>
                 <FormMessage />
               </FormItem>
@@ -165,7 +174,7 @@ export default function NewReunionForm() {
                     mode="single"
                     field={field}
                     disable={(date) => {
-                      return isBefore(startOfDay(date), startOfDay(new Date()));
+                      return isBefore(startOfDay(date), startOfDay(form.watch("fechaInicio")));
                     }}
                   />
                   <TimeInput {...field} className="h-[40px] w-fit" />

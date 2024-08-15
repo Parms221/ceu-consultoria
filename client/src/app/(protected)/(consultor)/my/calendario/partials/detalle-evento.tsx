@@ -1,5 +1,4 @@
 import { Event } from "@/types/calendar";
-import { formatRange } from "./detalle-reunion";
 import ItemDetail from "./item-detail";
 import { LucideUsers2, TextIcon, User2Icon, VideoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
