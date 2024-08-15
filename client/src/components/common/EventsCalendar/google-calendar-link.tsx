@@ -1,6 +1,6 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Reunion } from "@/types/proyecto/Reunion";
-import GoogleCalendarSVG from "../GoogleCalendarLogo";
+import GoogleCalendarSVG from "../Icons/GoogleCalendarLogo";
 
 export default function GoogleCalendarLink(
     { reunion }: { reunion: Reunion }

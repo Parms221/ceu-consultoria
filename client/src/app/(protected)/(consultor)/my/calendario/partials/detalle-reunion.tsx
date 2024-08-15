@@ -4,7 +4,7 @@ import { LucideUsers2, TextIcon, User2Icon, VideoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, isBefore, isSameDay } from "date-fns";
 import { es } from "date-fns/locale/es";
-import GoogleCalendarSVG from "@/components/common/GoogleCalendarLogo";
+import GoogleCalendarSVG from "@/components/common/Icons/GoogleCalendarLogo";
 
 export function formatRange(start?: string, end?: string){
     const startDate = start ? new Date(start) : new Date();

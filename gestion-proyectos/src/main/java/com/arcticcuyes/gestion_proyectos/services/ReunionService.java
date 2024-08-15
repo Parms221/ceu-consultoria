@@ -80,14 +80,16 @@ public class ReunionService {
 
             reunion.setInvitados(new ArrayList<>());
             // Invitados
-            for (InvitadoDTO invitadoDTO : reunionDTO.getInvitados()) {
-                InvitadoReunion invitado = new InvitadoReunion();
-                invitado.setEmail(invitadoDTO.getEmail());
-                invitado.setOpcional(invitadoDTO.isOpcional());
-                invitado.setReunion(reunion);
-                reunion.getInvitados().add(invitado);
+            if(reunionDTO.getInvitados() != null){
+                for (InvitadoDTO invitadoDTO : reunionDTO.getInvitados()) {
+                    InvitadoReunion invitado = new InvitadoReunion();
+                    invitado.setEmail(invitadoDTO.getEmail());
+                    invitado.setOpcional(invitadoDTO.isOpcional());
+                    invitado.setReunion(reunion);
+                    reunion.getInvitados().add(invitado);
+                }
             }
-
+           
             // Se asigna al proyecto
             reunion.setProyecto(proyecto);
             Event evento = null;
@@ -103,11 +105,15 @@ public class ReunionService {
                         reunion.setEventId(evento.getId());
                     }
                 }else{
-                    // Creación de google meet space si no se crea el evento
-                    Space meetingSpace = gMeetService.createSpace(currentUser.getUsuario().getId());
-                    reunion.setEnlace(meetingSpace.getMeetingUri());
-                    reunion.setEventOrganizer(currentUser.getUsuario().getEmail());
-     
+                    // Creación de google meet space si no se crea el evento y no envía el enlace
+                   if(reunionDTO.getEnlace() == null){
+                        Space meetingSpace = gMeetService.createSpace(currentUser.getUsuario().getId());
+                        reunion.setEnlace(meetingSpace.getMeetingUri());
+                   }else{
+                    // Si se recibió enlace, no está conectaado a google
+                    reunion.setEnlace(reunionDTO.getEnlace());
+                   }
+                   reunion.setEventOrganizer(currentUser.getUsuario().getEmail());
                 }
             }catch (Exception e){
                 throw new Exception("Error al crear evento de reunion en google: " + e.getMessage());

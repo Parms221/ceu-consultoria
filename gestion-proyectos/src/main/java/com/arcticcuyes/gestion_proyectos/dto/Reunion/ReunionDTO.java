@@ -21,7 +21,7 @@ public class ReunionDTO {
 
     private String descripcion;
 
-    // El enlace se genera al crear a través de Google API
+    // El enlace se genera al crear a través de Google API solo si conectó su cuenta de google
     private String enlace;
 
     @NotNull(message = "La fecha de inicio del reunión es obligatoria")

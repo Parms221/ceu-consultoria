@@ -3,7 +3,7 @@ import { formatRange } from "./detalle-reunion";
 import ItemDetail from "./item-detail";
 import { LucideUsers2, TextIcon, User2Icon, VideoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import GoogleCalendarSVG from "@/components/common/GoogleCalendarLogo";
+import GoogleCalendarSVG from "@/components/common/Icons/GoogleCalendarLogo";
 
 export default function CalendarDetalleEvento(
     { event }: { event: Event }

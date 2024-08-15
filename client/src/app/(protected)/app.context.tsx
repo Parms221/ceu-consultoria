@@ -10,6 +10,7 @@ interface AppProviderProps {
     roles: Rol[],
     estados: Estado[],
     googleAccountQuery : UseQueryResult<GUserinfoResponse | null, unknown>
+    isGoogleAuthorized: boolean
 }
 
 const AppContext = createContext<AppProviderProps>({} as AppProviderProps)
@@ -17,6 +18,8 @@ const AppContext = createContext<AppProviderProps>({} as AppProviderProps)
 export function AppProvider(
     {children} : { children: React.ReactNode }
 ){
+    const [isGoogleAuthorized, setIsGoogleAuthorized] = useState<boolean>(false)
+
     const dataQuery = useQuery<AppProviderProps>({
         queryKey: ["index"],
         queryFn: async () => {
@@ -42,12 +45,21 @@ export function AppProvider(
         },
       })
 
+      useEffect(() => {
+        if(googleAccountQuery.data?.status === "Authorized"){
+          setIsGoogleAuthorized(true)
+        }else{
+          setIsGoogleAuthorized(false)
+        }
+      }, [googleAccountQuery.data])
+
     return (
         <AppContext.Provider
             value={{
                 roles: dataQuery.data?.roles || [],
                 estados: dataQuery.data?.estados || [],
-                googleAccountQuery: googleAccountQuery
+                googleAccountQuery: googleAccountQuery,
+                isGoogleAuthorized: isGoogleAuthorized
             }}
         >
             {children}

@@ -1,6 +1,6 @@
 "use client"
 import { useAppContext } from "@/app/(protected)/app.context";
-import GoogleLogo from "@/components/common/GoogleLogo";
+import GoogleLogo from "@/components/common/Icons/GoogleLogo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

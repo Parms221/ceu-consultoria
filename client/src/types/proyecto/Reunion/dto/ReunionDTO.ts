@@ -8,4 +8,5 @@ export type ReunionDTO = {
     invitados : InvitadoDTO[]
     crearEvento : boolean
     enviarUpdates : boolean
+    enlace? : string
 }

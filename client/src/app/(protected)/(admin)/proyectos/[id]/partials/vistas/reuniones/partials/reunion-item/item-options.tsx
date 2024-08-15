@@ -1,6 +1,6 @@
 "use client"
 import GoogleCalendarLink from "@/components/common/EventsCalendar/google-calendar-link"
-import GoogleCalendarSVG from "@/components/common/GoogleCalendarLogo"
+import GoogleCalendarSVG from "@/components/common/Icons/GoogleCalendarLogo"
 import { Button } from "@/components/ui/button"
 import DeleteDialog from "@/components/ui/dialogs/delete-dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"

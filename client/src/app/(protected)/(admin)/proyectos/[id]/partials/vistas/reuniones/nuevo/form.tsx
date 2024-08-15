@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { reunionSchema } from "./reunion.schema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,33 +23,48 @@ import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import useReunion from "@/hooks/Reuniones/useReunion";
 import { ReunionDTO } from "@/types/proyecto/Reunion";
 import { Checkbox } from "@/components/ui/checkbox";
-import GoogleLogo from "@/components/common/GoogleLogo";
+import GoogleLogo from "@/components/common/Icons/GoogleLogo";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAppContext } from "@/app/(protected)/app.context";
+import { cn } from "@/lib/utils";
+import { InfoIcon } from "lucide-react";
+import Link from "next/link";
+import GoogleMeetIcon from "@/components/common/Icons/GoogleMeet";
 
 export default function NewReunionForm() {
   const queryClient = useQueryClient()
   const { projectId } = useProjectDetail();
   const { createReunionByProyectoId } = useReunion();
   const { getParticipantesDeProyectoQuery } = useParticipante();
+  const { isGoogleAuthorized } = useAppContext()
  
   const res = getParticipantesDeProyectoQuery(projectId);
 
+  const reunionDefaultValues = {
+    idReunion: crypto.randomUUID(),
+    titulo: "Nueva reunión",
+    fechaFin: new Date(),
+    fechaInicio: new Date(),
+    descripcion: "",
+    invitados: [],
+    enlace: "",
+    crearEvento: isGoogleAuthorized,
+    enviarUpdates: false,
+  }
+
   const form = useForm<z.infer<typeof reunionSchema>>({
     resolver: zodResolver(reunionSchema),
-    defaultValues: {
-      idReunion: crypto.randomUUID(),
-      titulo: "Nueva reunión",
-      fechaFin: new Date(),
-      fechaInicio: new Date(),
-      descripcion: "",
-      invitados: [],
-      enlace: "",
-      crearEvento: true,
-      enviarUpdates: false,
-    },
+    defaultValues: {...reunionDefaultValues},
   });
 
   async function onSubmit(values: z.infer<typeof reunionSchema>) {
+    if(!isGoogleAuthorized && values.enlace === ""){
+      form.setError("enlace", {
+        type: "manual",
+        message: "Debe ingresar un enlace de la reunión",
+      });
+      return;
+    }
     const dto: ReunionDTO = {
       crearEvento: values.crearEvento ? true : false,
       enviarUpdates: values.enviarUpdates ? true : false,
@@ -58,11 +73,18 @@ export default function NewReunionForm() {
       invitados: values.invitados,
       titulo: values.titulo,
       descripcion: values.descripcion,
+      enlace: values.enlace,
     };
-    await createReunionByProyectoId(dto, projectId);
+    const ok = await createReunionByProyectoId(dto, projectId);
     queryClient.invalidateQueries({
       queryKey: ["reuniones", projectId],
     });
+
+    if(!ok){
+      return;
+    }
+    form.reset(reunionDefaultValues);
+    document.getElementById("closeDialog")?.click();
   }
 
   return (
@@ -86,7 +108,12 @@ export default function NewReunionForm() {
             name="crearEvento"
             render={({ field }) => (
               <FormItem>
-                <div className="mt-4 flex items-center gap-2">
+                <div className={
+                  cn(
+                    "mt-4 flex items-center gap-2",
+                    !isGoogleAuthorized && "opacity-80"
+                  )
+                }>
                   <GoogleLogo className="h-6 w-6" />
                   <FormLabel>Crear evento en el calendario de Google</FormLabel>
                   <FormControl>
@@ -94,9 +121,14 @@ export default function NewReunionForm() {
                       name="crearEvento"
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      disabled={!isGoogleAuthorized}
                     />
                   </FormControl>
                 </div>
+                {!isGoogleAuthorized && <p className="text-xs flex items-center gap-1">
+                  <InfoIcon className="w-4 h-4"/> 
+                  Inicie sesión con una cuenta de Google en su <Link href="/profile" className="underline text-ceu-celeste">perfil de usuario</Link> para crear el evento en el calendario de Google
+                </p>}
                 <FormMessage />
               </FormItem>
             )}
@@ -143,6 +175,27 @@ export default function NewReunionForm() {
             )}
           />
         </div>
+        {
+          !isGoogleAuthorized && (
+            <FormField
+              control={form.control}
+              name="enlace"
+              render={({ field }) => (
+                <FormItem>
+                  <Label className="flex items-center gap-1">
+                   <GoogleMeetIcon /> Enlace de la reunión
+                  </Label>
+                  <div className="flex items-center gap-1.5">
+                    <FormControl>
+                      <Input type="url" {...field} />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )
+        }
         <FormField
           control={form.control}
           name="descripcion"
@@ -190,7 +243,7 @@ export default function NewReunionForm() {
           )}
         />
         {
-         form.watch("invitados").length > 0 &&  
+         form.watch("invitados").length > 0 && isGoogleAuthorized &&  
           <FormField
             control={form.control}
             name="enviarUpdates"

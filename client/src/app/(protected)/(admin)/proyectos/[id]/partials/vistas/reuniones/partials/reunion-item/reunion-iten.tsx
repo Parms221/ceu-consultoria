@@ -50,9 +50,10 @@ export default function ReunionItem({ reunion }: { reunion: Reunion }) {
       <footer className="flex flex-col justify-between md:flex-row">
         <a
           href={reunion.enlace}
-          className="text-ceu-celeste hover:underline flex items-center gap-1.5"
+          className="text-ceu-celeste hover:underline flex items-center gap-1.5 w-fit"
           target="_blank"
           rel="noreferrer"
+          onDragStartCapture={(e) => e.preventDefault()}
         >
           <SquareArrowOutUpRightIcon strokeWidth={1} size={18}/>
           {reunion.enlace}
