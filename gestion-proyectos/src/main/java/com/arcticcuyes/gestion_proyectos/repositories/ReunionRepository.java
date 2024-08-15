@@ -9,5 +9,5 @@ import com.arcticcuyes.gestion_proyectos.models.Reunion;
 
 @Repository
 public interface ReunionRepository extends JpaRepository<Reunion, Long> {
-    List<Reunion> findByProyecto(Proyecto proyecto);
+    List<Reunion> findByProyectoOrderByFechaInicioDesc(Proyecto proyecto);
 }

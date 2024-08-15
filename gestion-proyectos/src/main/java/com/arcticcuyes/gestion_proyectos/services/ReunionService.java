@@ -42,7 +42,7 @@ public class ReunionService {
     }
 
     public List<Reunion> findByProject(Proyecto proyecto){
-        return reunionRepository.findByProyecto(proyecto);
+        return reunionRepository.findByProyectoOrderByFechaInicioDesc(proyecto);
     }
 
     public Reunion findById(Long id){
