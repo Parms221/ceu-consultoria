@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.arcticcuyes.gestion_proyectos.dto.Google.EventDTO;
+import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
+import com.arcticcuyes.gestion_proyectos.services.ProyectoService;
 import com.arcticcuyes.gestion_proyectos.services.google.GoogleCalendarService;
 import com.google.api.services.calendar.model.Event;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,6 +32,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CalendarController {
     @Autowired
     private GoogleCalendarService gcalendarService;
+
+    @Autowired
+    private ProyectoService proyectoService;
 
     @GetMapping
     public ResponseEntity<?> listCalendars(@AuthenticationPrincipal UsuarioAuth user) {
@@ -63,6 +69,23 @@ public class CalendarController {
         try {
             Long userId = user.getUsuario().getId();  
             return ResponseEntity.ok(gcalendarService.getAllEvents(userId));
+        } catch (Exception e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body(errors);
+        }
+    }
+
+    @GetMapping("/events/{idProyecto}")
+    public ResponseEntity<?> listAllEventsByProyecto(@AuthenticationPrincipal UsuarioAuth user, @PathVariable Long idProyecto) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(idProyecto);
+            if (proyecto != null) {
+                Long userId = user.getUsuario().getId();  
+                return ResponseEntity.ok(gcalendarService.getAllEventsByProyecto(userId, proyecto));
+            }else{
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("No se encontró el proyecto");
+            }
         } catch (Exception e) {
             Map<String, String> errors = new HashMap<>();
             errors.put("error", e.getMessage());

@@ -53,7 +53,7 @@ export default function ProjectDetails(
                   {proyecto && proyecto.titulo}
                   </h1>
               </div>
-              <EventsCalendar />
+              {/* <EventsCalendar /> */}
             </header>
          {/* Tabs de navegación */}
             <Tabs defaultValue={view} className="space-y-1.5 p-0">

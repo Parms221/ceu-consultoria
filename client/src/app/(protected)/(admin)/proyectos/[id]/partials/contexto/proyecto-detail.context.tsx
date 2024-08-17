@@ -19,7 +19,6 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { projectCompleteSchema } from "../../../nuevo/partials/schemas/project.schema";
 import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
-import useTarea from "@/hooks/Tarea/useTarea";
 
 interface IProjectDetailContext {
   selectedHito: Hito | null;
@@ -58,7 +57,6 @@ export default function ProjectDetailProvider({
   children: React.ReactNode;
   projectId: number;
 }) {
-  const { convertFromTareaToDTO }  = useTarea()
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
   const [selectedTask, setSelectedTask] = useState<TareaDTO | null>(null);
   // Guardar hitos propuestos por la IA en memoria para poder editarlos

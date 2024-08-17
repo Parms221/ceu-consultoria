@@ -2,7 +2,6 @@ package com.arcticcuyes.gestion_proyectos.controllers.google;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException.NotFound;
 
 import com.arcticcuyes.gestion_proyectos.dto.Reunion.ReunionDTO;
 import com.arcticcuyes.gestion_proyectos.exception.NotFoundException;
@@ -18,7 +17,6 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

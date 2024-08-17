@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 
 import com.arcticcuyes.gestion_proyectos.dto.Google.EventDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Reunion.InvitadoDTO;
+import com.arcticcuyes.gestion_proyectos.models.Proyecto;
 import com.arcticcuyes.gestion_proyectos.models.Reunion;
+import com.arcticcuyes.gestion_proyectos.models.Tarea;
 import com.arcticcuyes.gestion_proyectos.repositories.ReunionRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.TareaRepository;
 import com.arcticcuyes.gestion_proyectos.security.UsuarioAuth;
-import com.arcticcuyes.gestion_proyectos.services.ReunionService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
@@ -42,6 +44,10 @@ public class GoogleCalendarService {
 
     @Autowired
     private ReunionRepository reunionRepository;
+    
+    @Autowired
+    private TareaRepository tareaRepository;
+    
 
     private Calendar useCalendarApi (Long userID) throws Exception {
          String id = userID.toString();
@@ -70,18 +76,10 @@ public class GoogleCalendarService {
         service.events().delete("primary", eventId).execute();
     }
 
+   
+
     public Map<String, List<?>> getAllEvents(Long userId) throws Exception {
-        List<Event> events = new ArrayList<>();
-        try{
-            Calendar service = useCalendarApi(userId);
-            // Eventos de año actual en adelante
-            events = service.events().list("primary").setTimeMin(
-                ThisYearStartTime()
-            ).execute().getItems();
-        }catch(IllegalStateException e){
-            // No se pudo obtener los eventos, devolver una lista vacia
-            events = new ArrayList<>();
-        }
+        List<Event> events = getThisYearToFutureEvents(userId);
 
         List<Reunion> reuniones = reunionRepository.findAll();
         // Filtrar eventos que no están en la lista de reuniones
@@ -94,10 +92,37 @@ public class GoogleCalendarService {
             .collect(Collectors.toList());
            
         Map<String, List<?>> result  = new HashMap<>();  
+
+        // Tareas asignadas al usuario
+        List<Tarea> tareasAsignadas = tareaRepository.findByUsuario(userId);
+                    
         result.put("events", filteredEvents);
         result.put("reuniones", reuniones);
+        result.put("tareas", tareasAsignadas);
         return result;
     }
+
+    public Map<String, List<?>> getAllEventsByProyecto(Long userId, Proyecto proyecto) throws Exception {
+        Map<String, List<?>> result  = new HashMap<>();  
+        List<Event> events = getThisYearToFutureEvents(userId);
+        List<Reunion> reuniones = reunionRepository.findByProyectoOrderByFechaInicioDesc(proyecto);
+        
+        List<Event> filteredEvents = events.stream()
+        .filter(event -> reuniones.stream()
+                .noneMatch(reunion -> {
+                    String eventId = reunion.getEventId();
+                    return eventId != null && eventId.equals(event.getId());
+                }))
+        .collect(Collectors.toList());
+      
+        List<Tarea> tareasAsignadas = tareaRepository.findByUsuario(userId);
+        // 
+        result.put("events", filteredEvents);
+        result.put("reuniones", reuniones);
+        result.put("tareas", tareasAsignadas);
+        return result;
+    }
+       
 
     public Event insertEvent(UsuarioAuth currentUser, EventDTO eventDto) throws Exception{
         Calendar service = useCalendarApi(currentUser.getUsuario().getId());
@@ -147,6 +172,9 @@ public class GoogleCalendarService {
         return createdEvent;
     }
 
+    /*
+     * Devuelve la fecha y hora de inicio del año actual en formato ISO
+     */
     private DateTime ThisYearStartTime(){
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         calendar.set(java.util.Calendar.MONTH, java.util.Calendar.JANUARY); // Establece el mes a enero
@@ -160,5 +188,23 @@ public class GoogleCalendarService {
         String timeMin = isoFormat.format(startTime);
         // Retunr as Datetime
         return new DateTime(timeMin);
+    }
+
+    /*
+     * Obtiene los eventos de un usuario en el año actual y en adelante
+     */
+    private List<Event> getThisYearToFutureEvents(Long userId) throws Exception{
+        List<Event> events = new ArrayList<>();
+        try{
+            Calendar service = useCalendarApi(userId);
+            // Eventos de año actual en adelante
+            events = service.events().list("primary").setTimeMin(
+                ThisYearStartTime()
+            ).execute().getItems();
+        }catch(IllegalStateException e){
+            // No se pudo obtener los eventos, devolver una lista vacia
+            events = new ArrayList<>();
+        }
+        return events;
     }
 }

@@ -72,9 +72,7 @@ export default function HomeConsultor() {
                     <ProyectTypeTab 
                         estado={estado} 
                         numberOfProyects={
-                            Object.keys(groupedProyectos).filter(
-                                estadoId => estadoId === estado.idEstado.toString()
-                            ).length
+                            groupedProyectos[estado.idEstado.toString()] ? groupedProyectos[estado.idEstado.toString()].length : 0
                         } 
                     />
                   ))}

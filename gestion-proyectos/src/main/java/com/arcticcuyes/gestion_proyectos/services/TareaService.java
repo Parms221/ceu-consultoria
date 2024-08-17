@@ -79,4 +79,14 @@ public class TareaService {
         });
         return tarea;
     }
+
+    /* 
+     * Obtiene una lista de tareas a las que está asignado el participante por id de usuario
+     * @param usuarioId: id del usuario
+     * @param proyectoId: id del proyecto
+     * @return: lista de tareas asignadas al participante en el proyecto
+     */
+    public List<Tarea> getTareasAsignadas(Long usuarioId, Long proyectoId) {
+        return tareaRepository.findByParticipantesInProyecto(usuarioId, proyectoId);
+    }
 }
