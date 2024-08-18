@@ -42,11 +42,13 @@ export default function HitoForm() {
              document.getElementById("closeDrawer")?.click()
         }
         else {
-            const parsedId = parseInt(selectedHito.idHito.toString())
-            console.log("Actualizando hito" ,parsedId)
-            await saveHito(projectId, formattedData, parsedId)
-            // Close dialog
-            document.getElementById("closeDialog")?.click();
+            if(selectedHito.idHito){
+                const parsedId = parseInt(selectedHito.idHito.toString())
+                console.log("Actualizando hito" ,parsedId)
+                await saveHito(projectId, formattedData, parsedId)
+                // Close dialog
+                document.getElementById("closeDialog")?.click();
+            }
         }
         resetForms()
         queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
@@ -122,15 +124,15 @@ export default function HitoForm() {
                     )}
                 />
                 {/* Tareas del hito */}
-                {
-                    !selectedHito && (
+                {/* { */}
+                    {/* // !selectedHito && ( */}
                         <HitosTable 
                             columns={tareasColumns}
                             data={tareasInForm}
                             newTask = {<NewTaskModal />}
                         />
-                    )
-                }
+                    {/* )
+                } */}
                 <DrawerFooter>
                     <Button type="submit">
                         {selectedHito ? "Actualizar" : "Guardar"}

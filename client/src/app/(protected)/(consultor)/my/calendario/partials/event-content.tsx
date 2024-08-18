@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 import useTarea from "@/hooks/Tarea/useTarea";
 import { Tarea } from "@/types/proyecto/Tarea";
+import { convertFromTareaToDTO } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/utils";
 
 interface EventContentProps {
     e : EventContentArg,
@@ -20,7 +21,6 @@ export default function EventContent(
   {e, triggerOnClick} : EventContentProps
 ) {
     const { setSelectedTask } = useTareaForm();
-    const { convertFromTareaToDTO } = useTarea();
     
     return (
       <Popover>

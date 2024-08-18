@@ -1,12 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Hito } from "@/types/proyecto/Hito";
-import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import {
-  FieldArrayWithId,
-  useFieldArray,
-  UseFieldArrayAppend,
-  UseFieldArrayRemove,
   useForm,
   UseFormReturn,
 } from "react-hook-form";
@@ -14,17 +9,16 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   hitoSchema,
-  tareaSchema,
 } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/schemas";
 import { useQueryClient } from "@tanstack/react-query";
 import { projectCompleteSchema } from "../../../nuevo/partials/schemas/project.schema";
-import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
+import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
 
 interface IProjectDetailContext {
-  selectedHito: Hito | null;
+  selectedHito: HitoDTO | null;
   projectId: number;
-  setSelectedHito: (hito: Hito | null) => void;
+  setSelectedHito: (hito: HitoDTO | null) => void;
   hitoForm: UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
   resetForms: () => void;
 
@@ -52,7 +46,7 @@ export default function ProjectDetailProvider({
   projectId: number;
 }) {
   const { tareaForm, tareasDefaultValues } = useTareaForm()
-  const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
+  const [selectedHito, setSelectedHito] = useState<HitoDTO | null>(null);
   // Guardar hitos propuestos por la IA en memoria para poder editarlos
   const [gptHitos, setGptHitos] = useState<Hito[] | null>(null);
 
@@ -93,7 +87,7 @@ export default function ProjectDetailProvider({
         from: new Date(selectedHito.fechaInicio),
         to: new Date(selectedHito.fechaFinalizacion),
       },
-      tareas: [], // Solo editar detalles del hito
+      tareas: selectedHito.tareas // Solo editar detalles del hito
     });
   }, [selectedHito]);
 

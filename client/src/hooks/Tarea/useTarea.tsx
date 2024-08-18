@@ -1,7 +1,10 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
+import { Estado } from "@/types/estado";
 import { Tarea } from "@/types/proyecto/Tarea";
 import { FeedbackTareaDTO } from "@/types/proyecto/Tarea/dto/FeedbackTareaDTO";
 import { TareaDTO } from "@/types/proyecto/Tarea/dto/TareaDTO";
@@ -80,27 +83,26 @@ export default function useTarea() {
     }
   }
 
-  function convertFromTareaToDTO(tarea : Tarea) : TareaDTO {
-    return {
-      ...tarea,
-      idTarea : tarea.idTarea?.toString(),
-      estado : tarea.estado?.idEstado,
-      fechaInicio : new Date(tarea.fechaInicio),
-      fechaFin : new Date(tarea.fechaFin),
-      tareaAnterior : undefined, // Por el momento no se usa la tarea anterior
-      participantesAsignados: tarea.participantesAsignados ?
-        tarea.participantesAsignados.map(p => p.idParticipante) : undefined,
-      subtareas: tarea.subTareas ? tarea.subTareas.map(t => ({
-        descripcion: t.descripcion,
-        completado: t.completado,
-      })) : [],
-    }
+
+  function getBadgeByStatus(estado: Estado) {
+    return (
+      <Badge
+        className="text-nowrap whitespace-nowrap"
+        variant={
+          estado.idEstado === TAREA_ESTADOS.por_hacer ? "ghost" : 
+          estado.idEstado === TAREA_ESTADOS.en_progreso ? "default" :
+          estado.idEstado === TAREA_ESTADOS.hecho ? "success" : "destructive"
+        }
+      > 
+        {estado.descripcion}
+      </Badge>
+    )
   }
 
   return {
     updateTarea,
     deleteTarea,
     addFeedback,
-    convertFromTareaToDTO,
+    getBadgeByStatus
   };
 }

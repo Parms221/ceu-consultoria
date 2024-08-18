@@ -10,25 +10,11 @@ import { Tarea } from "@/types/proyecto/Tarea";
 import { DeleteTask, FeedbackChat } from "../dialogs";
 import NewTaskModal from "../../../forms/Tareas";
 import NewHitoModal from "../../../forms/Hitos";
-import { Badge } from "@/components/ui/badge";
-import { Estado } from "@/types/estado";
 import useTarea from "@/hooks/Tarea/useTarea";
-import EditHitoModal from "../dialogs/edit-hito";
+import useHito from "@/hooks/Hito/useHito";
+import { convertFromHitoToDTO, convertFromTareaToDTO } from "../../../forms/utils";
 
-export function getBadgeByEstado(estado: Estado) {
-  return (
-    <Badge
-      className="text-nowrap"
-      variant={
-        estado.idEstado === 6 ? "ghost" : 
-        estado.idEstado === 7 ? "default" :
-        estado.idEstado === 8 ? "success" : "destructive"
-      }
-    > 
-      {estado.descripcion}
-    </Badge>
-  )
-}
+
 
 export function isExpandedChevron(isExpanded: boolean) {
   return (
@@ -77,11 +63,11 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
             ) : (
               <div className="h-5 w-[20px]" />
             )}{" "}
-            <span className="ml-5 inline-flex items-center gap-3">
+            <span className="ml-2 inline-flex items-center gap-3">
               {row.original.idTarea ? (
-                <Circle className="h-4 w-4 text-ceu-celeste" />
+                <Circle className="h-3 w-3 text-ceu-celeste shrink-0" />
               ) : (
-                <Diamond className="h-4 w-4 text-ceu-celeste" />
+                <Diamond className="h-3 w-3 text-ceu-celeste shrink-0" />
               )}
 
               {row.original.titulo}
@@ -132,9 +118,10 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     accessorKey: "estado",
     header: "Estado",
     cell: ({ row }) => {
+      const { getBadgeByStatus } = useTarea()
       const estado = row.original.estado;
       if (!estado) return "";
-      return getBadgeByEstado(estado);
+      return getBadgeByStatus(estado);
     }
   },
   {
@@ -154,8 +141,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     header: "Acciones",
     cell: ({ row }) => {
       const task = row.original;
-      const { convertFromTareaToDTO } = useTarea() 
-   
+      const {  } = useHito()
       return (
         <div className="flex gap-2">
           {/* Editar y eliminar */}
@@ -163,8 +149,8 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
             task.idTarea ?
               (<NewTaskModal asEdit task={convertFromTareaToDTO(task as Tarea)} />)
               :
-              // <NewHitoModal asEdit task={task as Hito} />
-              <EditHitoModal hito={task as Hito} />
+              <NewHitoModal asEdit task={convertFromHitoToDTO(task as Hito)} />
+              // <EditHitoModal hito={task as Hito} />
           }
           <DeleteTask tarea={task as Tarea | Hito} />
 
