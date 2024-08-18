@@ -6,7 +6,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cva } from "class-variance-authority";
-import { Eye, GripVertical, Trash2Icon } from "lucide-react";
+import { Calendar, Eye, GripVertical, Trash2Icon } from "lucide-react";
 import { ColumnId } from "../index";
 import { cn } from "@/lib/utils";
 import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
@@ -14,6 +14,7 @@ import { Tarea } from "@/types/proyecto/Tarea";
 import { DeleteTask, FeedbackChat } from "../../lista/dialogs";
 import NewTaskModal from "../../../forms/Tareas";
 import { convertFromTareaToDTO } from "../../../forms/utils";
+import { formatDateRange } from "@/lib/date-format";
 
 export interface Task {
     id: UniqueIdentifier;
@@ -76,7 +77,9 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
                 })
             }
         >
-            <h2 className="font-semibold text-lg line-clamp-2 text-ceu-azul">{task.content.titulo}</h2>
+            <header>
+                <h2 className="font-semibold text-lg line-clamp-2 text-ceu-azul">{task.content.titulo}</h2>
+            </header>
             <CardContent className={cn("py-3 flex flex-row border-t-2 text-left whitespace-pre-wrap space-between text-black",
                 task.columnId === TAREA_ESTADOS.por_hacer && "border-secondary",
                 task.columnId === TAREA_ESTADOS.en_progreso && "border-orange-400",
@@ -91,12 +94,20 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
                     <span className="sr-only">Mover tarea</span>
                     <GripVertical />
                 </Button>
-                <div className="flex flex-col gap-2.5
+                <div className="flex flex-col
                     [&>div>button]:px-2 [&>div>button]:py-1.5 [&>div>button]:h-fit
                 ">
-                    <p className="text-sm">{task.content.descripcion}</p>
+                    <div className="flex gap-1 items-center -mt-8 text-muted-foreground">
+                        <i>
+                            <Calendar className="h-4 w-4"/>
+                        </i>
+                        <span className="whitespace-pre-line text-sm">
+                        {formatDateRange(task.content.fechaInicio, task.content.fechaFin)}
+                        </span>
+                    </div>
+                    <p className="text-sm mt-2">{task.content.descripcion}</p>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-3">
                         <NewTaskModal task={convertFromTareaToDTO(task.content)} asEdit/>
                         <FeedbackChat 
                             tarea={task.content}

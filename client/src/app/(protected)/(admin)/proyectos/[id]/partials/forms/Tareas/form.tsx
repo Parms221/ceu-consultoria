@@ -30,6 +30,7 @@ import SelectEstadoTarea from "./partials/estados";
 import useTarea from "@/hooks/Tarea/useTarea";
 import SelectParticipantesTarea from "./partials/participantes";
 import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
+import TimeInput from "@/components/ui/input-time";
 
 export default function TareaForm() {
   const { updateTarea } = useTarea();
@@ -123,6 +124,10 @@ export default function TareaForm() {
                       Fecha de inicio
                     </FormLabel>
                     <DatePicker mode="single" field={field} useOpenState />
+                    <TimeInput 
+                      className="w-fit h-10"
+                      {...field}
+                    />
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -149,6 +154,10 @@ export default function TareaForm() {
                         }
                         return false;
                       }}
+                    />
+                    <TimeInput 
+                      className="w-fit h-10"
+                      {...field}
                     />
                   </div>
                   <FormMessage />

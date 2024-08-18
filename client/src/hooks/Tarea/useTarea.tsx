@@ -40,6 +40,26 @@ export default function useTarea() {
     }
   }
 
+  async function updateStatusById(id: number, status: number){
+    try{
+      const response = await fetcherLocal(`/tareas/${id}/status`,{
+        method: "PUT",
+        body: JSON.stringify({
+          idEstado : status
+        })
+      })
+      const ok = await HandleServerResponse(response, undefined, undefined);
+      if (!ok) {
+        toast.error("Error al actualizar el estado de la tarea")
+      }
+      toast.success("Estado actualizado")
+      return ok;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
   async function deleteTarea(id: number | string) {
     const toastId = toast.loading("Eliminado ...");
 
@@ -101,8 +121,9 @@ export default function useTarea() {
 
   return {
     updateTarea,
+    updateStatusById,
     deleteTarea,
     addFeedback,
-    getBadgeByStatus
+    getBadgeByStatus,
   };
 }

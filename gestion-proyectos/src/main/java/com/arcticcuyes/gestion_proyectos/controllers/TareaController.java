@@ -73,7 +73,7 @@ public class TareaController {
         }
     }
 
-    @PutMapping("status/{idTarea}")
+    @PutMapping("{idTarea}/status")
     public ResponseEntity<?> updateTareaStatusById(@PathVariable Long idTarea, @RequestBody @Valid EstadoDTO estadoDTO) {
         try {
             tareaService.updateStatusTarea(idTarea, estadoDTO);

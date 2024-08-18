@@ -25,6 +25,7 @@ import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import useHito from "@/hooks/Hito/useHito";
 import Loader from "@/components/common/Loader";
+import useTarea from "@/hooks/Tarea/useTarea";
 
 const defaultCols = [
     {
@@ -46,9 +47,9 @@ export type ColumnId = (typeof defaultCols)[number]["id"];;
 export default function VistaKanban() {
     const [columns, setColumns] = useState<Column[]>(defaultCols);
     const { projectId, setSelectedHito, gptHitos } = useProjectDetail(); 
-
+    const { updateStatusById } = useTarea();  
     const { getHitosQuery } = useHito();
-    const { data: hitos, isLoading, isError } = getHitosQuery(projectId);
+    const { data: hitos, isLoading, refetch : refetchHitos } = getHitosQuery(projectId);
 
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -63,6 +64,7 @@ export default function VistaKanban() {
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
     const [activeTask, setActiveTask] = useState<Task | null>(null);
+    const [previousStatus, setPreviousStatus] = useState<number | null>(null);
 
     const sensors = useSensors(
         useSensor(MouseSensor),
@@ -92,11 +94,12 @@ export default function VistaKanban() {
 
         if (data?.type === "Task") {
             setActiveTask(data.task);
+            setPreviousStatus(data.task.columnId)
             return;
         }
     }
 
-    function onDragEnd(event: DragEndEvent) {
+    async function onDragEnd(event: DragEndEvent) {
         setActiveColumn(null);
         setActiveTask(null);
 
@@ -110,6 +113,15 @@ export default function VistaKanban() {
 
         const activeData = active.data.current;
 
+        // Actualizar estado 
+        if(activeData && previousStatus && activeData.type === "Task"){
+            const newColumnStatusId = activeData.task.columnId;
+            if(previousStatus !== newColumnStatusId){
+                await updateStatusById(Number(activeId), activeData.task.columnId)
+                 refetchHitos()
+            }
+        }
+        
         if (activeId === overId) return;
 
         const isActiveAColumn = activeData?.type === "Column";
