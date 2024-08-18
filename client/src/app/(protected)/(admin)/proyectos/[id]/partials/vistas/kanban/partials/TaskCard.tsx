@@ -6,15 +6,19 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cva } from "class-variance-authority";
-import { GripVertical } from "lucide-react";
+import { Eye, GripVertical, Trash2Icon } from "lucide-react";
 import { ColumnId } from "../index";
 import { cn } from "@/lib/utils";
 import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
+import { Tarea } from "@/types/proyecto/Tarea";
+import { DeleteTask, FeedbackChat } from "../../lista/dialogs";
+import NewTaskModal from "../../../forms/Tareas";
+import { convertFromTareaToDTO } from "../../../forms/utils";
 
 export interface Task {
     id: UniqueIdentifier;
     columnId: ColumnId;
-    content: string;
+    content: Tarea;
 }
 
 interface TaskCardProps {
@@ -53,7 +57,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
         transform: CSS.Translate.toString(transform),
     };
 
-    const variants = cva("", {
+    const variants = cva("relative", {
         variants: {
             dragging: {
                 over: "ring-2 opacity-30",
@@ -66,11 +70,14 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
         <Card
             ref={setNodeRef}
             style={style}
-            className={variants({
-                dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
-            })}
+            className={
+                variants({
+                    dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
+                })
+            }
         >
-            <CardContent className={cn("px-3 pt-3 flex flex-row pb-6 border-t-2 text-left whitespace-pre-wrap space-between text-black",
+            <h2 className="font-semibold text-lg line-clamp-2 text-ceu-azul">{task.content.titulo}</h2>
+            <CardContent className={cn("py-3 flex flex-row border-t-2 text-left whitespace-pre-wrap space-between text-black",
                 task.columnId === TAREA_ESTADOS.por_hacer && "border-secondary",
                 task.columnId === TAREA_ESTADOS.en_progreso && "border-orange-400",
                 task.columnId === TAREA_ESTADOS.hecho && "border-green-600"
@@ -79,12 +86,26 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
                     variant={"ghost"}
                     {...attributes}
                     {...listeners}
-                    className="p-1 text-secondary-foreground/50 -ml-2 h-auto cursor-grab"
+                    className="p-1 text-secondary-foreground/50 -ml-2 cursor-grab absolute left-0 top-0 h-full"
                 >
                     <span className="sr-only">Mover tarea</span>
                     <GripVertical />
                 </Button>
-                {task.content}
+                <div className="flex flex-col gap-2.5
+                    [&>div>button]:px-2 [&>div>button]:py-1.5 [&>div>button]:h-fit
+                ">
+                    <p className="text-sm">{task.content.descripcion}</p>
+                    
+                    <div className="flex items-center gap-2">
+                        <NewTaskModal task={convertFromTareaToDTO(task.content)} asEdit/>
+                        <FeedbackChat 
+                            tarea={task.content}
+                        />
+                        <DeleteTask 
+                            tarea={task.content}
+                        />
+                    </div>
+                </div>
             </CardContent>
         </Card>
     );

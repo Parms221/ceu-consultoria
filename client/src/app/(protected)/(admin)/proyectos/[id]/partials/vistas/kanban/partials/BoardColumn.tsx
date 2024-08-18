@@ -81,7 +81,7 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
                 className: cn(column.id == TAREA_ESTADOS.por_hacer && "bg-blue-100", column.id == TAREA_ESTADOS.en_progreso && "bg-orange-100", column.id == TAREA_ESTADOS.hecho && "bg-green-200"),
             })}
         >
-            <CardHeader className="p-4 font-semibold border-b-2 text-left flex flex-row space-between items-center">
+            <CardHeader className="font-semibold border-b-2 text-left flex flex-row space-between items-center">
                 <Button
                     variant={"ghost"}
                     {...attributes}
@@ -94,7 +94,7 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
                 <span className="ml-auto text-graydark"> {column.title}</span>
             </CardHeader>
             <ScrollArea>
-                <CardContent className="flex flex-grow flex-col gap-2 p-2">
+                <CardContent className="flex flex-grow flex-col gap-2 py-2">
                     <SortableContext items={tasksIds}>
                         {tasks.map((task) => (
                             <TaskCard key={task.id} task={task} />

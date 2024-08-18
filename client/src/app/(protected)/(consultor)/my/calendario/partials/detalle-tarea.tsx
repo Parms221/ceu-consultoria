@@ -14,7 +14,7 @@ export default function CalendarDetalleTarea(){
     return (
     <Form {...form}>
       <form
-        className="grid"
+        className="grid p-4 w-[500px]"
         id="tarea-form"
       >
         <article className="p-2">

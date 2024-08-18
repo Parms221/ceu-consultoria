@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.SubtareaDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Tarea.EstadoDTO;
 import com.arcticcuyes.gestion_proyectos.models.SubTarea;
 import com.arcticcuyes.gestion_proyectos.models.Tarea;
 import com.arcticcuyes.gestion_proyectos.repositories.EstadoRepository;
@@ -88,5 +89,14 @@ public class TareaService {
      */
     public List<Tarea> getTareasAsignadas(Long usuarioId, Long proyectoId) {
         return tareaRepository.findByParticipantesInProyecto(usuarioId, proyectoId);
+    }
+
+    public void updateStatusTarea(Long idTarea, EstadoDTO estadoDTO) {
+        tareaRepository.findById(idTarea)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarea no encontrada con el id " + idTarea))
+                .setEstado(estadoRepository
+                        .findById(estadoDTO.getIdEstado())
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Estado no encontrado con id: " + estadoDTO.getIdEstado())));
     }
 }

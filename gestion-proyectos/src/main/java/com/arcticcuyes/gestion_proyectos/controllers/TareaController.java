@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Tarea.EstadoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Tarea.FeedbackDTO;
 import com.arcticcuyes.gestion_proyectos.models.Consultor;
 import com.arcticcuyes.gestion_proyectos.models.Usuario;
@@ -69,6 +70,16 @@ public class TareaController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al agregar feedback a la tarea: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("status/{idTarea}")
+    public ResponseEntity<?> updateTareaStatusById(@PathVariable Long idTarea, @RequestBody @Valid EstadoDTO estadoDTO) {
+        try {
+            tareaService.updateStatusTarea(idTarea, estadoDTO);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al actualizar el estado de la tarea.");
         }
     }
 }

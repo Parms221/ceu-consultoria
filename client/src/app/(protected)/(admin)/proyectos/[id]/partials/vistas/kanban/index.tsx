@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { BoardColumn, BoardContainer } from "./partials/BoardColumn";
@@ -24,6 +24,7 @@ import { hasDraggableData } from "./partials/utils";
 import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import useHito from "@/hooks/Hito/useHito";
+import Loader from "@/components/common/Loader";
 
 const defaultCols = [
     {
@@ -51,13 +52,13 @@ export default function VistaKanban() {
 
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
-    const initialTasks: Task[] = hitos?.flatMap(hito => hito.tareasDelHito.map(tarea => ({
-        id: tarea.idTarea!,
-        columnId: tarea.estado.idEstado,
-        content: tarea.titulo,
-    }))) ?? [];
+    // const initialTasks: Task[] = hitos?.flatMap(hito => hito.tareasDelHito.map(tarea => ({
+    //     id: tarea.idTarea!,
+    //     columnId: tarea.estado.idEstado,
+    //     content: tarea,
+    // }))) ?? [];
 
-    const [tasks, setTasks] = useState<Task[]>(initialTasks);
+    const [tasks, setTasks] = useState<Task[]>([]);
 
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
@@ -68,47 +69,18 @@ export default function VistaKanban() {
         useSensor(TouchSensor),
     );
 
-    if (isLoading) return <div>Cargando...</div>
 
-    if(tasks.length === 0) setTasks(initialTasks);
-
-    return (
-        <DndContext
-            sensors={sensors}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-            onDragOver={onDragOver}
-        >
-            <BoardContainer>
-                <SortableContext items={columnsId}>
-                    {columns.map((col) => (
-                        <BoardColumn
-                            key={col.id}
-                            column={col}
-                            tasks={tasks.filter((task) => task.columnId === col.id)}
-                        />
-                    ))}
-                </SortableContext>
-            </BoardContainer>
-
-            {"document" in window &&
-                createPortal(
-                    <DragOverlay>
-                        {activeColumn && (
-                            <BoardColumn
-                                isOverlay
-                                column={activeColumn}
-                                tasks={tasks.filter(
-                                    (task) => task.columnId === activeColumn.id
-                                )}
-                            />
-                        )}
-                        {activeTask && <TaskCard task={activeTask} isOverlay />}
-                    </DragOverlay>,
-                    document.body
-                )}
-        </DndContext>
-    );
+    // if(tasks.length === 0) setTasks(initialTasks);
+    useEffect(()=> {
+        if(hitos){
+            const initialTasks: Task[] = hitos?.flatMap(hito => hito.tareasDelHito.map(tarea => ({
+                id: tarea.idTarea!,
+                columnId: tarea.estado.idEstado,
+                content: tarea,
+            }))) ?? [];
+            setTasks(initialTasks)
+        }
+    }, [hitos])
 
     function onDragStart(event: DragStartEvent) {
         if (!hasDraggableData(event.active)) return;
@@ -206,4 +178,48 @@ export default function VistaKanban() {
             });
         }
     }
+
+    if (isLoading) return <div className="w-full h-screen">
+        <Loader />
+    </div>
+
+    return (
+        <DndContext
+            sensors={sensors}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}
+        >
+            <BoardContainer>
+                <SortableContext items={columnsId}>
+                    {columns.map((col) => (
+                        <BoardColumn
+                            key={col.id}
+                            column={col}
+                            tasks={tasks.filter((task) => task.columnId === col.id)}
+                        />
+                    ))}
+                </SortableContext>
+            </BoardContainer>
+
+            {"document" in window &&
+                createPortal(
+                    <DragOverlay>
+                        {activeColumn && (
+                            <BoardColumn
+                                isOverlay
+                                column={activeColumn}
+                                tasks={tasks.filter(
+                                    (task) => task.columnId === activeColumn.id
+                                )}
+                            />
+                        )}
+                        {activeTask && <TaskCard task={activeTask} isOverlay />}
+                    </DragOverlay>,
+                    document.body
+                )}
+        </DndContext>
+    );
+
+    
 }

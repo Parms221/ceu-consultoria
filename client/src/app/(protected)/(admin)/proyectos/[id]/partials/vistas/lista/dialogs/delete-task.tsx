@@ -8,7 +8,7 @@ import useHito from "@/hooks/Hito/useHito";
 import useTarea from "@/hooks/Tarea/useTarea";
 
 export default function DeleteTask(
-    { tarea } : { tarea : Hito | Tarea }
+    { tarea, className } : { tarea : Hito | Tarea, className?: string }
 ) {
 
     const { deleteHito } = useHito()
@@ -34,6 +34,7 @@ export default function DeleteTask(
 
     return (
        <DeleteDialog 
+            className={className}
             title="Eliminar tarea"
             description={<>
                 `Está seguro que quiere eliminar la tarea {<span className="font-bold">{tarea.titulo}</span>}`

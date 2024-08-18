@@ -8,7 +8,6 @@ import { Event } from "@/types/calendar";
 import CalendarDetalleTarea from "./detalle-tarea";
 import { cn } from "@/lib/utils";
 import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
-import useTarea from "@/hooks/Tarea/useTarea";
 import { Tarea } from "@/types/proyecto/Tarea";
 import { convertFromTareaToDTO } from "@/app/(protected)/(admin)/proyectos/[id]/partials/forms/utils";
 
