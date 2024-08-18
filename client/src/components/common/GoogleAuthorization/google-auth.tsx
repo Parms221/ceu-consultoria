@@ -17,18 +17,7 @@ export default function GoogleAuth() {
   const path = usePathname();
   const { googleAccountQuery } = useAppContext()
 
-  // Loagin query
-  if (googleAccountQuery.isLoading || googleAccountQuery.isError){
-      return (
-        <div className="flex items-center w-[230px]">
-            <Button variant={"outline"} className="rounded-s-[0px] p-0">
-              <div className="h-full w-[216px] bg-neutral-200 animate-pulse">
-              </div>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-      </div>
-      )
-    }
+  
 
   const { data : activeGoogleAccount } = googleAccountQuery
   const isAuthorized = activeGoogleAccount?.status === "Authorized";
@@ -69,6 +58,18 @@ export default function GoogleAuth() {
     }
   }
 
+  // Loagin query
+  if (googleAccountQuery.isLoading || googleAccountQuery.isError){
+    return (
+      <div className="flex items-center w-[230px]">
+          <Button variant={"outline"} className="rounded-s-[0px] p-0">
+            <div className="h-full w-[216px] bg-neutral-200 animate-pulse">
+            </div>
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+    </div>
+    )
+  }
  
   return (
       <Popover>

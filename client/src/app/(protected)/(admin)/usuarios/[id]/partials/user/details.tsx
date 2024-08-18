@@ -55,7 +55,7 @@ export default function UserDetails({ usuario, currentUser = false } : IUserDeta
           ">
           <article>
               <h4>Datos de usuario</h4>
-              <UserDetailsForm  usuario={usuario}/>
+              <UserDetailsForm  usuario={usuario} currentUser={currentUser}/>
             </article>
             <article>
               <h4>Contraseña</h4>
