@@ -134,7 +134,7 @@ export default function useProyecto() {
   function getBadgeByStatus(status : Estado){
     return (
       <Badge
-        className="flex justify-center"
+        className="flex justify-center whitespace-nowrap"
         variant={
           status.idEstado === ESTADOS.propuesto
             ? "outline"

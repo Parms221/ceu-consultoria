@@ -7,12 +7,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/partials/contexto/proyecto-detail.context';
 import TareaForm from "./form";
-import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
+import { TareaDTO } from "@/types/proyecto/Tarea";
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { cn } from "@/lib/utils";
-import useTarea from "@/hooks/Tarea/useTarea";
 import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 
 interface IProps {
@@ -67,6 +64,7 @@ const NewTaskModal = forwardRef<DialogRef, IProps>(
                 className="py-1.5 bg-ceu-azul"
                 onClick={() => {
                   if(task){
+                    console.log("task", task)
                     setSelectedTask(task)
                   }
                 }}

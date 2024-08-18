@@ -6,10 +6,11 @@ import { Hito } from "@/types/proyecto/Hito";
 import { Button } from "@/components/ui/button";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import { forwardRef, useImperativeHandle, useRef } from "react";
+import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
 
 interface IProps {
   asEdit? : boolean,
-  task? : Hito
+  task? : HitoDTO
 }
 
 const NewHitoModal = forwardRef<DialogRef, IProps>((
