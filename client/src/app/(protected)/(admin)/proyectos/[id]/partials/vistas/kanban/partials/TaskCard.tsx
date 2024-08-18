@@ -48,10 +48,10 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
         },
     });
 
-    // const style = {
-    //     transition,
-    //     transform: CSS.Translate.toString(transform),
-    // };
+    const style = {
+        transition,
+        transform: CSS.Translate.toString(transform),
+    };
 
     const variants = cva("", {
         variants: {
@@ -65,7 +65,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
     return (
         <Card
             ref={setNodeRef}
-            // style={style}
+            style={style}
             className={variants({
                 dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
             })}
@@ -75,7 +75,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
                 task.columnId === TAREA_ESTADOS.en_progreso && "border-orange-400",
                 task.columnId === TAREA_ESTADOS.hecho && "border-green-600"
             )}>
-                {/* <Button
+                <Button
                     variant={"ghost"}
                     {...attributes}
                     {...listeners}
@@ -83,7 +83,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
                 >
                     <span className="sr-only">Mover tarea</span>
                     <GripVertical />
-                </Button> */}
+                </Button>
                 {task.content}
             </CardContent>
         </Card>
