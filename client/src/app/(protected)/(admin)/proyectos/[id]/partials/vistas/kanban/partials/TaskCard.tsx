@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { cva } from "class-variance-authority";
 import { GripVertical } from "lucide-react";
 import { ColumnId } from "../index";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 
 export interface Task {
     id: UniqueIdentifier;
@@ -47,10 +48,10 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
         },
     });
 
-    const style = {
-        transition,
-        transform: CSS.Translate.toString(transform),
-    };
+    // const style = {
+    //     transition,
+    //     transform: CSS.Translate.toString(transform),
+    // };
 
     const variants = cva("", {
         variants: {
@@ -64,26 +65,25 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
     return (
         <Card
             ref={setNodeRef}
-            style={style}
+            // style={style}
             className={variants({
                 dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
             })}
         >
-            <CardHeader className="px-3 py-3 space-between flex flex-row border-b-2 border-secondary relative">
-                <Button
+            <CardContent className={cn("px-3 pt-3 flex flex-row pb-6 border-t-2 text-left whitespace-pre-wrap space-between text-black",
+                task.columnId === TAREA_ESTADOS.por_hacer && "border-secondary",
+                task.columnId === TAREA_ESTADOS.en_progreso && "border-orange-400",
+                task.columnId === TAREA_ESTADOS.hecho && "border-green-600"
+            )}>
+                {/* <Button
                     variant={"ghost"}
                     {...attributes}
                     {...listeners}
                     className="p-1 text-secondary-foreground/50 -ml-2 h-auto cursor-grab"
                 >
-                    <span className="sr-only">Move task</span>
+                    <span className="sr-only">Mover tarea</span>
                     <GripVertical />
-                </Button>
-                <Badge variant={"outline"} className="ml-auto font-semibold">
-                    Task
-                </Badge>
-            </CardHeader>
-            <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
+                </Button> */}
                 {task.content}
             </CardContent>
         </Card>

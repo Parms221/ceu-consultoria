@@ -21,95 +21,108 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { type Task, TaskCard } from "./partials/TaskCard";
 import type { Column } from "./partials/BoardColumn";
 import { hasDraggableData } from "./partials/utils";
+import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
+import { useProjectDetail } from "../../contexto/proyecto-detail.context";
+import useHito from "@/hooks/Hito/useHito";
 
 const defaultCols = [
     {
-        id: "todo" as const,
-        title: "Todo",
+        id: TAREA_ESTADOS.por_hacer,
+        title: "Por hacer",
     },
     {
-        id: "in-progress" as const,
-        title: "In progress",
+        id: TAREA_ESTADOS.en_progreso,
+        title: "En progreso",
     },
     {
-        id: "done" as const,
-        title: "Done",
+        id: TAREA_ESTADOS.hecho, 
+        title: "Hecho",
     },
 ] satisfies Column[];
 
-export type ColumnId = (typeof defaultCols)[number]["id"];
+export type ColumnId = (typeof defaultCols)[number]["id"];;
 
-const initialTasks: Task[] = [
-    {
-        id: "task1",
-        columnId: "done",
-        content: "Project initiation and planning",
-    },
-    {
-        id: "task2",
-        columnId: "done",
-        content: "Gather requirements from stakeholders",
-    },
-    {
-        id: "task3",
-        columnId: "done",
-        content: "Create wireframes and mockups",
-    },
-    {
-        id: "task4",
-        columnId: "in-progress",
-        content: "Develop homepage layout",
-    },
-    {
-        id: "task5",
-        columnId: "in-progress",
-        content: "Design color scheme and typography",
-    },
-    {
-        id: "task6",
-        columnId: "todo",
-        content: "Implement user authentication",
-    },
-    {
-        id: "task7",
-        columnId: "todo",
-        content: "Build contact us page",
-    },
-    {
-        id: "task8",
-        columnId: "todo",
-        content: "Create product catalog",
-    },
-    {
-        id: "task9",
-        columnId: "todo",
-        content: "Develop about us page",
-    },
-    {
-        id: "task10",
-        columnId: "todo",
-        content: "Optimize website for mobile devices",
-    },
-    {
-        id: "task11",
-        columnId: "todo",
-        content: "Integrate payment gateway",
-    },
-    {
-        id: "task12",
-        columnId: "todo",
-        content: "Perform testing and bug fixing",
-    },
-    {
-        id: "task13",
-        columnId: "todo",
-        content: "Launch website and deploy to server",
-    },
-];
+// const initialTasks: Task[] = [
+//     {
+//         id: "task1",
+//         columnId: "done",
+//         content: "Project initiation and planning",
+//     },
+//     {
+//         id: "task2",
+//         columnId: "done",
+//         content: "Gather requirements from stakeholders",
+//     },
+//     {
+//         id: "task3",
+//         columnId: "done",
+//         content: "Create wireframes and mockups",
+//     },
+//     {
+//         id: "task4",
+//         columnId: "in-progress",
+//         content: "Develop homepage layout",
+//     },
+//     {
+//         id: "task5",
+//         columnId: "in-progress",
+//         content: "Design color scheme and typography",
+//     },
+//     {
+//         id: "task6",
+//         columnId: "todo",
+//         content: "Implement user authentication",
+//     },
+//     {
+//         id: "task7",
+//         columnId: "todo",
+//         content: "Build contact us page",
+//     },
+//     {
+//         id: "task8",
+//         columnId: "todo",
+//         content: "Create product catalog",
+//     },
+//     {
+//         id: "task9",
+//         columnId: "todo",
+//         content: "Develop about us page",
+//     },
+//     {
+//         id: "task10",
+//         columnId: "todo",
+//         content: "Optimize website for mobile devices",
+//     },
+//     {
+//         id: "task11",
+//         columnId: "todo",
+//         content: "Integrate payment gateway",
+//     },
+//     {
+//         id: "task12",
+//         columnId: "todo",
+//         content: "Perform testing and bug fixing",
+//     },
+//     {
+//         id: "task13",
+//         columnId: "todo",
+//         content: "Launch website and deploy to server",
+//     },
+// ];
 export default function VistaKanban() {
     const [columns, setColumns] = useState<Column[]>(defaultCols);
-    const pickedUpTaskColumn = useRef<ColumnId | null>(null);
+    const { projectId, setSelectedHito, gptHitos } = useProjectDetail(); 
+
+    const { getHitosQuery } = useHito();
+    const { data: hitos, isLoading, isError } = getHitosQuery(projectId);
+
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+
+    const initialTasks: Task[] = hitos?.flatMap(hito => hito.tareasDelHito.map(tarea => ({
+        id: tarea.idTarea!,
+        columnId: tarea.estado.idEstado,
+        content: tarea.titulo,
+    }))) ?? [];
 
     const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
@@ -122,106 +135,10 @@ export default function VistaKanban() {
         useSensor(TouchSensor),
     );
 
-    function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
-        const tasksInColumn = tasks.filter((task) => task.columnId === columnId);
-        const taskPosition = tasksInColumn.findIndex((task) => task.id === taskId);
-        const column = columns.find((col) => col.id === columnId);
-        return {
-            tasksInColumn,
-            taskPosition,
-            column,
-        };
-    }
-
-    const announcements: Announcements = {
-        onDragStart({ active }) {
-            if (!hasDraggableData(active)) return;
-            if (active.data.current?.type === "Column") {
-                const startColumnIdx = columnsId.findIndex((id) => id === active.id);
-                const startColumn = columns[startColumnIdx];
-                return `Picked up Column ${startColumn?.title} at position: ${startColumnIdx + 1
-                    } of ${columnsId.length}`;
-            } else if (active.data.current?.type === "Task") {
-                pickedUpTaskColumn.current = active.data.current.task.columnId;
-                const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
-                    active.id,
-                    pickedUpTaskColumn.current
-                );
-                return `Picked up Task ${active.data.current.task.content
-                    } at position: ${taskPosition + 1} of ${tasksInColumn.length
-                    } in column ${column?.title}`;
-            }
-        },
-        onDragOver({ active, over }) {
-            if (!hasDraggableData(active) || !hasDraggableData(over)) return;
-
-            if (
-                active.data.current?.type === "Column" &&
-                over.data.current?.type === "Column"
-            ) {
-                const overColumnIdx = columnsId.findIndex((id) => id === over.id);
-                return `Column ${active.data.current.column.title} was moved over ${over.data.current.column.title
-                    } at position ${overColumnIdx + 1} of ${columnsId.length}`;
-            } else if (
-                active.data.current?.type === "Task" &&
-                over.data.current?.type === "Task"
-            ) {
-                const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
-                    over.id,
-                    over.data.current.task.columnId
-                );
-                if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
-                    return `Task ${active.data.current.task.content
-                        } was moved over column ${column?.title} in position ${taskPosition + 1
-                        } of ${tasksInColumn.length}`;
-                }
-                return `Task was moved over position ${taskPosition + 1} of ${tasksInColumn.length
-                    } in column ${column?.title}`;
-            }
-        },
-        onDragEnd({ active, over }) {
-            if (!hasDraggableData(active) || !hasDraggableData(over)) {
-                pickedUpTaskColumn.current = null;
-                return;
-            }
-            if (
-                active.data.current?.type === "Column" &&
-                over.data.current?.type === "Column"
-            ) {
-                const overColumnPosition = columnsId.findIndex((id) => id === over.id);
-
-                return `Column ${active.data.current.column.title
-                    } was dropped into position ${overColumnPosition + 1} of ${columnsId.length
-                    }`;
-            } else if (
-                active.data.current?.type === "Task" &&
-                over.data.current?.type === "Task"
-            ) {
-                const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
-                    over.id,
-                    over.data.current.task.columnId
-                );
-                if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
-                    return `Task was dropped into column ${column?.title} in position ${taskPosition + 1
-                        } of ${tasksInColumn.length}`;
-                }
-                return `Task was dropped into position ${taskPosition + 1} of ${tasksInColumn.length
-                    } in column ${column?.title}`;
-            }
-            pickedUpTaskColumn.current = null;
-        },
-        onDragCancel({ active }) {
-            pickedUpTaskColumn.current = null;
-            if (!hasDraggableData(active)) return;
-            return `Dragging ${active.data.current?.type} cancelled.`;
-        },
-    };
+    if (isLoading) return <div>Cargando...</div>
 
     return (
         <DndContext
-            accessibility={{
-                announcements,
-            }}
             sensors={sensors}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}

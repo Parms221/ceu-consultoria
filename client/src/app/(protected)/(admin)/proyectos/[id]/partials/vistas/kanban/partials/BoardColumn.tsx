@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
 
 export interface Column {
     id: UniqueIdentifier;
@@ -76,6 +78,7 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
             style={style}
             className={variants({
                 dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
+                className: cn(column.id == TAREA_ESTADOS.por_hacer && "bg-blue-100", column.id == TAREA_ESTADOS.en_progreso && "bg-orange-100", column.id == TAREA_ESTADOS.hecho && "bg-green-200"),
             })}
         >
             <CardHeader className="p-4 font-semibold border-b-2 text-left flex flex-row space-between items-center">
@@ -83,12 +86,12 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
                     variant={"ghost"}
                     {...attributes}
                     {...listeners}
-                    className=" p-1 text-primary/50 -ml-2 h-auto cursor-grab relative"
+                    className=" p-1 text-graydark -ml-2 h-auto cursor-grab relative"
                 >
                     <span className="sr-only">{`Move column: ${column.title}`}</span>
                     <GripVertical />
                 </Button>
-                <span className="ml-auto"> {column.title}</span>
+                <span className="ml-auto text-graydark"> {column.title}</span>
             </CardHeader>
             <ScrollArea>
                 <CardContent className="flex flex-grow flex-col gap-2 p-2">
