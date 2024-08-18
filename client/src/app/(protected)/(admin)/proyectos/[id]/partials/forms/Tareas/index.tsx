@@ -13,6 +13,7 @@ import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 import useTarea from "@/hooks/Tarea/useTarea";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 
 interface IProps {
   asEdit? : boolean
@@ -22,7 +23,7 @@ interface IProps {
 const NewTaskModal = forwardRef<DialogRef, IProps>(
   ({ asEdit, task } : IProps, ref) => {
   
-  const { setSelectedTask, selectedTask, tareaForm } = useProjectDetail()
+  const { setSelectedTask, selectedTask, tareaForm } = useTareaForm()
   const dialogRef = useRef<HTMLButtonElement>(null)
 
   useImperativeHandle(ref, () => ({

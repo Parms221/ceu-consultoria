@@ -6,6 +6,7 @@ import { PROJECT_VIEWS } from "./vistas";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useProyecto from "@/hooks/Proyecto/useProyecto";
 import EventsCalendar from "./calendar/calendar";
+import TareaFormProvider from "@/hooks/Tarea/useTareaForm.context";
 
 
 export default function ProjectDetails(
@@ -38,53 +39,54 @@ export default function ProjectDetails(
       // }
 
     return (
-    <ProjectDetailProvider projectId={id}>
-        <section className="mx-auto space-y-1.5">
-            <header className="flex justify-between">
-              <div className="flex items-center gap-2">
-                  <Image
-                  className="h-[50px] w-[50px] rounded-md"
-                  src={"/images/cover/cover-01.png"}
-                  alt="Project illustration"
-                  width={50}
-                  height={50}
-                  />
-                  <h1 className="text-2xl font-bold tracking-tighter">
-                  {proyecto && proyecto.titulo}
-                  </h1>
-              </div>
-              {/* <EventsCalendar /> */}
-            </header>
-         {/* Tabs de navegación */}
-            <Tabs defaultValue={view} className="space-y-1.5 p-0">
-            <TabsList>
-                {PROJECT_VIEWS.map((view) => {
-                return (
-                    <TabsTrigger
-                      key={view.id}
-                      value={view.id}
-                      className="flex items-center gap-2"
-                      onClick={() => updateSearchParams("view", view.id)}
-                    >
-                      {view.icon}
-                      <span>{view.label}</span>
-                    </TabsTrigger>
-                );
-                })}
-            </TabsList>
-            <div className="area p-8">
-                {PROJECT_VIEWS.map((view) => {
-                const View = view.content;
-                return (
-                    <TabsContent key={view.id} value={view.id}>
-                    <View />
-                    </TabsContent>
-                );
-                })}
-            </div>
-            </Tabs>
-      </section>
-    </ProjectDetailProvider>
-
+      <TareaFormProvider>
+        <ProjectDetailProvider projectId={id}>
+            <section className="mx-auto space-y-1.5">
+                <header className="flex justify-between">
+                  <div className="flex items-center gap-2">
+                      <Image
+                      className="h-[50px] w-[50px] rounded-md"
+                      src={"/images/cover/cover-01.png"}
+                      alt="Project illustration"
+                      width={50}
+                      height={50}
+                      />
+                      <h1 className="text-2xl font-bold tracking-tighter">
+                      {proyecto && proyecto.titulo}
+                      </h1>
+                  </div>
+                  {/* <EventsCalendar /> */}
+                </header>
+             {/* Tabs de navegación */}
+                <Tabs defaultValue={view} className="space-y-1.5 p-0">
+                <TabsList>
+                    {PROJECT_VIEWS.map((view) => {
+                    return (
+                        <TabsTrigger
+                          key={view.id}
+                          value={view.id}
+                          className="flex items-center gap-2"
+                          onClick={() => updateSearchParams("view", view.id)}
+                        >
+                          {view.icon}
+                          <span>{view.label}</span>
+                        </TabsTrigger>
+                    );
+                    })}
+                </TabsList>
+                <div className="area p-8">
+                    {PROJECT_VIEWS.map((view) => {
+                    const View = view.content;
+                    return (
+                        <TabsContent key={view.id} value={view.id}>
+                        <View />
+                        </TabsContent>
+                    );
+                    })}
+                </div>
+                </Tabs>
+          </section>
+        </ProjectDetailProvider>
+    </TareaFormProvider>
     );
 }

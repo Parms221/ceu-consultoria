@@ -19,20 +19,14 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { projectCompleteSchema } from "../../../nuevo/partials/schemas/project.schema";
 import { TAREA_ESTADOS } from "@/constants/proyectos/estados";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 
 interface IProjectDetailContext {
   selectedHito: Hito | null;
-  selectedTask: TareaDTO | null;
   projectId: number;
   setSelectedHito: (hito: Hito | null) => void;
-  setSelectedTask: (task: TareaDTO | null) => void;
   hitoForm: UseFormReturn<z.infer<typeof hitoSchema>, any, undefined>;
-  tareaForm: UseFormReturn<z.infer<typeof tareaSchema>, any, undefined>;
   resetForms: () => void;
-
-  subtareasFields: FieldArrayWithId<TareaDTO, "subtareas", "id">[];
-  appendSubtarea: UseFieldArrayAppend<TareaDTO, "subtareas">;
-  removeSubtarea: UseFieldArrayRemove;
 
   queryClient: ReturnType<typeof useQueryClient>;
 
@@ -57,8 +51,8 @@ export default function ProjectDetailProvider({
   children: React.ReactNode;
   projectId: number;
 }) {
+  const { tareaForm, tareasDefaultValues } = useTareaForm()
   const [selectedHito, setSelectedHito] = useState<Hito | null>(null);
-  const [selectedTask, setSelectedTask] = useState<TareaDTO | null>(null);
   // Guardar hitos propuestos por la IA en memoria para poder editarlos
   const [gptHitos, setGptHitos] = useState<Hito[] | null>(null);
 
@@ -75,25 +69,10 @@ export default function ProjectDetailProvider({
     tareas: [],
   };
 
-  const tareasDefaultValues = {
-    titulo: "Nueva tarea",
-    fechaFin: new Date(),
-    fechaInicio: new Date(),
-    descripcion: "",
-    estado: TAREA_ESTADOS.por_hacer,
-    participantesAsignados: undefined,
-    subtareas: [],
-  };
-
   // Forms
   const projectDetailForm = useForm<z.infer<typeof projectCompleteSchema>>({
     resolver: zodResolver(projectCompleteSchema),
     defaultValues: {},
-  });
-
-  const tareaForm = useForm<z.infer<typeof tareaSchema>>({
-    resolver: zodResolver(tareaSchema),
-    defaultValues: tareasDefaultValues,
   });
 
   const hitoForm = useForm<z.infer<typeof hitoSchema>>({
@@ -101,33 +80,10 @@ export default function ProjectDetailProvider({
     defaultValues: hitosDefaultValues,
   });
 
-  // Array de subtareas
-  const {
-    fields: subtareasFields,
-    append: appendSubtarea,
-    remove: removeSubtarea,
-  } = useFieldArray({
-    control: tareaForm.control,
-    name: "subtareas",
-    rules: {
-      required: true,
-      minLength: 1,
-    },
-  });
-
   function resetForms() {
     tareaForm.reset(tareasDefaultValues);
     hitoForm.reset(hitosDefaultValues);
   }
-
-  // capturar el cambio de selected task para actualizar el formulario (Edit)
-
-  useEffect(() => {
-    if (!selectedTask) return;
-    tareaForm.reset({
-      ...selectedTask,
-    });
-  }, [selectedTask]);
 
   useEffect(() => {
     if (!selectedHito) return;
@@ -147,16 +103,9 @@ export default function ProjectDetailProvider({
         projectId,
         selectedHito,
         setSelectedHito,
-        selectedTask,
-        setSelectedTask,
 
         hitoForm,
-        tareaForm,
         resetForms,
-
-        appendSubtarea,
-        removeSubtarea,
-        subtareasFields,
 
         projectDetailForm,
         queryClient,

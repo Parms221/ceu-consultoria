@@ -29,17 +29,17 @@ import { toast } from "sonner";
 import SelectEstadoTarea from "./partials/estados";
 import useTarea from "@/hooks/Tarea/useTarea";
 import SelectParticipantesTarea from "./partials/participantes";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 
 export default function TareaForm() {
   const { updateTarea } = useTarea();
   const {
-    selectedTask,
-    tareaForm: form,
     hitoForm,
-    appendSubtarea,
     projectId,
     queryClient,
   } = useProjectDetail();
+
+  const {selectedTask, tareaForm : form, appendSubtarea} = useTareaForm()
 
   function saveTarea(values: z.infer<typeof tareaSchema>) {
     const currentTareas = hitoForm.getValues("tareas");

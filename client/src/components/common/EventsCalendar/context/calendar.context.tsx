@@ -1,4 +1,5 @@
 "use client";
+import TareaFormProvider from "@/hooks/Tarea/useTareaForm.context";
 import { AllEventsResponse } from "@/types/calendar/dto";
 import { EventContentArg, EventSourceInput } from "@fullcalendar/core/index.js";
 import { useQuery } from "@tanstack/react-query";
@@ -41,16 +42,19 @@ export default function CalendarProvider(
       }
 
     return (
-        <CalendarContext.Provider
-            value={{
-                query,
-                calendarEvents,
-                eventContent,
-                handleDateSelect
-            }}
-        >
-            {children}
-        </CalendarContext.Provider>
+        // Para el manejo de estados de formulario de tarea en el calendario de eventos
+        <TareaFormProvider>
+            <CalendarContext.Provider
+                value={{
+                    query,
+                    calendarEvents,
+                    eventContent,
+                    handleDateSelect
+                }}
+            >
+                {children}
+            </CalendarContext.Provider>
+        </TareaFormProvider>
     )
 }
 

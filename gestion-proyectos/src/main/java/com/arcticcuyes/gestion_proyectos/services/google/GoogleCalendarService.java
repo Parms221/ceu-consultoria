@@ -115,7 +115,7 @@ public class GoogleCalendarService {
                 }))
         .collect(Collectors.toList());
       
-        List<Tarea> tareasAsignadas = tareaRepository.findByUsuario(userId);
+        List<Tarea> tareasAsignadas = tareaRepository.findByParticipantesInProyecto(userId, proyecto.getIdProyecto());
         // 
         result.put("events", filteredEvents);
         result.put("reuniones", reuniones);

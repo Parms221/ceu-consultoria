@@ -8,9 +8,9 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { AllEventsResponse } from "@/types/calendar/dto";
 import CalendarProvider from "@/components/common/EventsCalendar/context/calendar.context";
 import CalendarEvents from "@/components/common/EventsCalendar/Calendar";
-import { eventContent } from "./partials/event-content";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
 import { setCalendarDataFromAllEventsResponse } from "@/lib/calendar";
+import EventContent from "./partials/event-content";
 
 const Calendar = () => {
   const [calendarEvents, setCalendarEvents] = useState<EventSourceInput>([]);
@@ -47,16 +47,16 @@ const Calendar = () => {
  
   return (
     <section>
-      <Breadcrumb pageName="Calendario de eventos" slug="" />
-      <Card className="h-[calc(100vh-100px)] overflow-auto">
-        <CalendarProvider
-          query={query}
-          calendarEvents={calendarEvents}
-          eventContent={eventContent}
-        >
-          <CalendarEvents />
-        </CalendarProvider>
-      </Card>
+        <Breadcrumb pageName="Calendario de eventos" slug="" />
+        <Card className="h-[calc(100vh-100px)] overflow-auto">
+          <CalendarProvider
+            query={query}
+            calendarEvents={calendarEvents}
+            eventContent={(e) => <EventContent e={e}/>}
+          >
+            <CalendarEvents />
+          </CalendarProvider>
+        </Card>
     </section>
   );
 };

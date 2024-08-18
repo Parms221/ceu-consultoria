@@ -9,7 +9,7 @@ import { fetcherLocal } from "@/server/fetch/client-side";
 import { useEffect, useState } from "react";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
 import { setCalendarDataFromAllEventsResponse } from "@/lib/calendar";
-import { eventContent } from "@/app/(protected)/(consultor)/my/calendario/partials/event-content";
+import EventContent from "@/app/(protected)/(consultor)/my/calendario/partials/event-content";
 
 export default function VistaCalendario() {
     const { projectId } = useProjectDetail();
@@ -33,7 +33,7 @@ export default function VistaCalendario() {
         <section className="h-[calc(100vh-150px)]">
             <CalendarProvider 
                 calendarEvents={events}
-                eventContent={eventContent}
+                eventContent={(e) => <EventContent e={e}/>}
                 query={query}
             >
                 <CalendarEvents />

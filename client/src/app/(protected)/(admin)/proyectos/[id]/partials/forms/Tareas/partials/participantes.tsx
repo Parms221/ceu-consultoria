@@ -4,11 +4,13 @@ import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/for
 import React from "react";
 import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import useParticipante from "@/hooks/Partcipante/useParticipante";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 
 const SelectParticipantesTarea = () => {
   const { getParticipantesDeProyectoQuery } = useParticipante();
-  const { projectId, tareaForm: form } = useProjectDetail();
-
+  const { projectId } = useProjectDetail();
+  const { tareaForm: form } = useTareaForm();
+  
   const res = getParticipantesDeProyectoQuery(projectId);
   return (
     <FormField

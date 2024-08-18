@@ -1,3 +1,4 @@
+"use client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import CalendarDetalleReunion from "./detalle-reunion";
 import CalendarDetalleEvento from "./detalle-evento";
@@ -5,13 +6,33 @@ import { EventContentArg } from "@fullcalendar/core/index.js";
 import { Reunion } from "@/types/proyecto/Reunion";
 import { Event } from "@/types/calendar";
 import CalendarDetalleTarea from "./detalle-tarea";
-import { Tarea } from "@/types/proyecto/Tarea";
 import { cn } from "@/lib/utils";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
+import useTarea from "@/hooks/Tarea/useTarea";
+import { Tarea } from "@/types/proyecto/Tarea";
 
-export function eventContent(e : EventContentArg) {
+interface EventContentProps {
+    e : EventContentArg,
+    triggerOnClick? : () => void
+}
+
+export default function EventContent(
+  {e, triggerOnClick} : EventContentProps
+) {
+    const { setSelectedTask } = useTareaForm();
+    const { convertFromTareaToDTO } = useTarea();
+    
     return (
       <Popover>
-        <PopoverTrigger className="overflow-hidden w-full">
+        <PopoverTrigger className="overflow-hidden w-full"
+          onClickCapture={() => {
+            if(e.event.extendedProps.type === "tarea"){
+            console.log("selected task", e.event.extendedProps)
+              setSelectedTask(convertFromTareaToDTO(e.event.extendedProps as Tarea))
+            }
+            triggerOnClick && triggerOnClick()
+          }}
+        >
           {e.event.title}
         </PopoverTrigger>
         <PopoverContent
@@ -26,7 +47,7 @@ export function eventContent(e : EventContentArg) {
             e.event.extendedProps.type === "reunion" ? (
               <CalendarDetalleReunion reunion={e.event.extendedProps as Reunion} />
             ) : e.event.extendedProps.type === "tarea" ? (
-                <CalendarDetalleTarea tarea={e.event.extendedProps as Tarea} />
+                <CalendarDetalleTarea />
             ) : (
               <CalendarDetalleEvento event={e.event.extendedProps as Event} />
             )

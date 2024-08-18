@@ -33,7 +33,7 @@ public interface TareaRepository extends CrudRepository<Tarea, Long> {
                         "join participante p on p.id_participante = a.id_participante  " + 
                         "join consultor c on c.id_consultor = p.id_consultor  " + 
                         "join usuario u on u.id = c.id_usuario  " + 
-                        "where u.id = :userId and proy.id = :proyectoId",
+                        "where u.id = :userId and proy.id_proyecto = :proyectoId",
         nativeQuery = true
     )
     List<Tarea> findByParticipantesInProyecto(@Param("userId") Long userId, @Param("proyectoId") Long proyectoId);

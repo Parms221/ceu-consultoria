@@ -1,19 +1,18 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 
 
 export default function SubTareasChecklist() {
     const { 
       removeSubtarea,
-
       subtareasFields, 
       tareaForm : form 
-    } = useProjectDetail();
+    } = useTareaForm();
    
     return (
       <div className={"space-y-3"}>

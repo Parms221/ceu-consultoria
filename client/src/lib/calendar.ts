@@ -25,7 +25,7 @@ export function setCalendarDataFromAllEventsResponse({ events, reuniones, tareas
           type: "reunion"
         }
     }));
-    eventosData = events.map((e) => ({
+    eventosData = events?.map((e) => ({
       id: e.id?.toString(),
       title: e.summary,
       start: e.start?.dateTime

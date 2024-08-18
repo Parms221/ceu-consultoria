@@ -8,6 +8,7 @@ import { VistaCronogramaActions } from './lista/lista';
 import Gantt from 'frappe-gantt';
 import useTarea from '@/hooks/Tarea/useTarea';
 import EditHitoModal from './lista/dialogs/edit-hito';
+import { useTareaForm } from '@/hooks/Tarea/useTareaForm.context';
 
 type EstadoId = number;
 
@@ -30,7 +31,9 @@ export default function VistaGantt() {
   const newTaskDialogRef = useRef<DialogRef>(null)
   const newHitoDialogRef = useRef<DialogRef>(null)
 
-  const { projectId, setSelectedTask, setSelectedHito, gptHitos } = useProjectDetail(); // Obtener el projectId
+  const { projectId, setSelectedHito, gptHitos } = useProjectDetail(); // Obtener el projectId
+  const { setSelectedTask } = useTareaForm()
+  
   const { getHitosQuery } = useHito(); 
   const { data: hitos, isLoading, isError } = getHitosQuery(projectId);
   const { convertFromTareaToDTO } = useTarea()
