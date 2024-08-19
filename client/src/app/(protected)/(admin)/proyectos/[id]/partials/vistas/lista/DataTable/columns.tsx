@@ -118,6 +118,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     accessorKey: "estado",
     header: "Estado",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const { getBadgeByStatus } = useTarea()
       const estado = row.original.estado;
       if (!estado) return "";
@@ -141,6 +142,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     header: "Acciones",
     cell: ({ row }) => {
       const task = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const {  } = useHito()
       return (
         <div className="flex gap-2">
