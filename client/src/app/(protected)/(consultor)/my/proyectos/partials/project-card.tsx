@@ -35,7 +35,7 @@ export default function ProjectCard(
         </CardContent>
         <CardFooter className="px-2 py-0 pb-1.5 flex flex-col gap-2 text-xs text-ceu-azul">
           <Progress value={progress} className="h-1 bg-neutral-300" indicatorClassname="bg-ceu-azul"/>
-          <span className="self-start pl-1.5">{progress}% completado</span>
+          <span className="self-start pl-1.5">{progress.toFixed(2)}% completado</span>
         </CardFooter>
       </Card>
     </Link>
