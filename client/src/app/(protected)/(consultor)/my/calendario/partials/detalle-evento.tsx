@@ -63,7 +63,7 @@ export default function CalendarDetalleEvento(
                         />
                     <ul className="text-xs ml-6 text-ceu-azul font-semibold">
                     {
-                        event.attendees.map(invitado => (
+                        event.attendees.map((invitado: any) => (
                             <li key={invitado.id}>
                                 {invitado.email}
                             </li>

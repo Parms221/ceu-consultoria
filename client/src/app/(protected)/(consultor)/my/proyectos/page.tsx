@@ -13,6 +13,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppContext } from "@/app/(protected)/app.context";
 import { Estado } from "@/types/estado";
 
+interface IProyectTypeTab {
+  estado?: Estado,
+  numberOfProyects: number,
+}
+
+function ProyectTypeTab(
+    { numberOfProyects, estado } : IProyectTypeTab
+) {
+  return (
+    <TabsTrigger value={estado ? estado.idEstado.toString() : "all" } className="flex grow gap-1.5">
+      <span>{estado ? estado.descripcion : "Todos"}</span>
+      <span className="grid h-5 w-5 place-content-center rounded-full bg-ceu-celeste/50 text-white">
+        {numberOfProyects}
+      </span>
+    </TabsTrigger>
+  );
+}
+
 export default function HomeConsultor() {
   const { estados } = useAppContext();
   const { data, isLoading, isError } = useQuery({
@@ -98,22 +116,5 @@ export default function HomeConsultor() {
         </Tabs>
       </section>
     </Fragment>
-  );
-}
-interface IProyectTypeTab {
-  estado?: Estado,
-  numberOfProyects: number,
-}
-
-export function ProyectTypeTab(
-    { numberOfProyects, estado } : IProyectTypeTab
-) {
-  return (
-    <TabsTrigger value={estado ? estado.idEstado.toString() : "all" } className="flex grow gap-1.5">
-      <span>{estado ? estado.descripcion : "Todos"}</span>
-      <span className="grid h-5 w-5 place-content-center rounded-full bg-ceu-celeste/50 text-white">
-        {numberOfProyects}
-      </span>
-    </TabsTrigger>
   );
 }
