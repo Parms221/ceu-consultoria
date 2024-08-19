@@ -17,9 +17,9 @@ export const MENU : Navigation[] = [
         icon: Users2,
         label: "Mis clientes",
     },
-    {  
-        href: "/my/archivos",
-        icon: FolderOpen,
-        label: "Archivos",
-    },
+    // {  
+    //     href: "/my/archivos",
+    //     icon: FolderOpen,
+    //     label: "Archivos",
+    // },
 ]

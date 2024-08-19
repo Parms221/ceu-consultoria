@@ -46,7 +46,7 @@ export default function EventContent(
             e.event.extendedProps.type === "reunion" ? (
               <CalendarDetalleReunion reunion={e.event.extendedProps as Reunion} />
             ) : e.event.extendedProps.type === "tarea" ? (
-                <CalendarDetalleTarea />
+                <CalendarDetalleTarea tarea={e.event.extendedProps as Tarea} />
             ) : (
               <CalendarDetalleEvento event={e.event.extendedProps as Event} />
             )
