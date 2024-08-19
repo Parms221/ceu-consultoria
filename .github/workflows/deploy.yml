@@ -13,31 +13,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+      #   run: npm install
 
-      - name: Build
-        run: npm run build
-        env:
-          NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
-          NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
-          BACK_URI: ${{secrets.BACK_URI}}
-          GOOGLE_AUTH_URI: ${{vars.GOOGLE_AUTH_URI}}
-          GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
-          GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
-          GOOGLE_REDIRECT_URI: ${{secrets.GOOGLE_REDIRECT_URI}}
-          GOOGLE_SCOPES: ${{vars.GOOGLE_SCOPES}}
+      # - name: Build
+      #   run: npm run build
+      #   env:
+      #     NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
+      #     NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
+      #     BACK_URI: ${{secrets.BACK_URI}}
+      #     GOOGLE_AUTH_URI: ${{vars.GOOGLE_AUTH_URI}}
+      #     GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+      #     GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+      #     GOOGLE_REDIRECT_URI: ${{secrets.GOOGLE_REDIRECT_URI}}
+      #     GOOGLE_SCOPES: ${{vars.GOOGLE_SCOPES}}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
             ARGS: "-rlgoDzvc -i --delete"
-            SOURCE: ".next/"
+            SOURCE: "package.json"
             REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
             REMOTE_USER: ${{ secrets.REMOTE_USER }}
             EXCLUDE: "node_modules/"
