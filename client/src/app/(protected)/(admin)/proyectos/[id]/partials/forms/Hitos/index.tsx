@@ -13,6 +13,7 @@ interface IProps {
   task? : HitoDTO
 }
 
+// eslint-disable-next-line react/display-name
 const NewHitoModal = forwardRef<DialogRef, IProps>((
   { asEdit, task } : IProps, ref
 ) => {

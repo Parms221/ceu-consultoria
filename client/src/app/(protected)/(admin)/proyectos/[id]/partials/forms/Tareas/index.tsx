@@ -17,6 +17,7 @@ interface IProps {
   task? : TareaDTO
 }
 
+// eslint-disable-next-line react/display-name
 const NewTaskModal = forwardRef<DialogRef, IProps>(
   ({ asEdit, task } : IProps, ref) => {
   

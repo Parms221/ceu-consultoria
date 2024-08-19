@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
