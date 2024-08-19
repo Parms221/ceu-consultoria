@@ -7,7 +7,8 @@ const nextConfig = {
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
         GOOGLE_SCOPES: process.env.GOOGLE_SCOPES,
         GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
-    }
+    },
+    output: "standalone",
 };
 
 export default nextConfig;
