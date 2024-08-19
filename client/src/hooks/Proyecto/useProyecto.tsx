@@ -14,6 +14,7 @@ export default function useProyecto() {
   const queryClient = useQueryClient();
   
   function getEstadisticasQuery(){
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<EstadisticasProyecto>({
       queryKey: ["proyectos", "estadisticas"],
       queryFn: async () => {

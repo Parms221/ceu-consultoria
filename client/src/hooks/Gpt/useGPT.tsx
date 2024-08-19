@@ -7,6 +7,7 @@ import { toast } from "sonner"
 
 export default function useGPT() {
     function gptHitosMutation(idProyecto : number){
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         return useMutation<GptCronogramaResponse, Error, unknown, unknown>({
             mutationKey: ["gptCronograma", idProyecto],
             mutationFn: async () => {

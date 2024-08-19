@@ -113,9 +113,9 @@ export default function EventsCalendar() {
                 <div>
                     <Accordion collapsible type="single">
                       {
-                        selectedReunions?.map((e : Reunion) => {
+                        selectedReunions?.map((e : Reunion, index) => {
                           return (
-                            <AccordionItem value={e.idReunion.toString()}>
+                            <AccordionItem value={e.idReunion.toString()} key={index}>
                               <AccordionTrigger>
                                 {e.titulo}
                               </AccordionTrigger>
@@ -127,9 +127,9 @@ export default function EventsCalendar() {
                         })
                       }
                       {
-                        selectedEvents?.map((e : Event) => {
+                        selectedEvents?.map((e : Event, index) => {
                           return (
-                            <AccordionItem value={e.id ? e.id : crypto.randomUUID()}>
+                            <AccordionItem value={e.id ? e.id : crypto.randomUUID()} key={index}>
                               <AccordionTrigger>
                                 {e.summary}
                               </AccordionTrigger>

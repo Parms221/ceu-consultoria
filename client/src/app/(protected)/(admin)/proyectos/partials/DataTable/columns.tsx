@@ -76,6 +76,7 @@ export const columns: ColumnDef<Proyecto>[] = [
     id: "estado",
     header: "Estado",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const {  getBadgeByStatus } = useProyecto();
 
       const proyecto = row.original

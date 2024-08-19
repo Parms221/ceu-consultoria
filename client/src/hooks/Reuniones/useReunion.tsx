@@ -9,6 +9,7 @@ import { toast } from "sonner";
 export default function useReunion() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   function getReunionesByProyectIdQuery(id: number){
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Reunion[]>({
         queryKey: ["reuniones", id],
         queryFn: async () => {

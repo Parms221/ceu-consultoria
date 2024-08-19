@@ -70,6 +70,7 @@ export default function HomeConsultor() {
                   .filter((estado) => estado.tipo === 1)
                   .map((estado) => (
                     <ProyectTypeTab 
+                      key={estado.idEstado}
                         estado={estado} 
                         numberOfProyects={
                             groupedProyectos[estado.idEstado.toString()] ? groupedProyectos[estado.idEstado.toString()].length : 0

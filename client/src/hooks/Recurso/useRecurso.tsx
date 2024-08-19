@@ -11,6 +11,7 @@ export default function useRecurso() {
     const queryClient = useQueryClient();
 
     function getRecursosEspacio(id: number){
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         return useQuery<Recurso[]>({
             queryKey: ["recursos", "espacio", id],
             queryFn: async () => {

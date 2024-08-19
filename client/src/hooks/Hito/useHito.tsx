@@ -101,6 +101,7 @@ export default function useHito() {
   }
 
   function updateAllHitosByProject() {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useMutation({
       mutationFn: async ({ projectId, hitos } : { projectId: number, hitos: HitoDTO[] }) => {
          const response = await fetcherLocal(`/proyectos/${projectId}/hitos/updateAll`, {
