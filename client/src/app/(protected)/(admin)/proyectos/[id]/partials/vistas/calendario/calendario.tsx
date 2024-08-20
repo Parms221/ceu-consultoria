@@ -25,7 +25,7 @@ export default function VistaCalendario() {
     useEffect(()=>{
         if(query.data){
             const { eventosData, reunionesData, tareasData } = setCalendarDataFromAllEventsResponse(query.data);
-            setEvents([...reunionesData, ...eventosData, ...tareasData]);
+            setEvents([...reunionesData, ...tareasData]);
         }
     }, [query.data])
 

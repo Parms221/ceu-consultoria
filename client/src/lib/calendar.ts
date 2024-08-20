@@ -38,7 +38,7 @@ export function setCalendarDataFromAllEventsResponse({ events, reuniones, tareas
         ...e,
         type: "g-evento"
        },
-       color: colors?.eventoColor ?? "#CDD6FD",
+       color: colors?.eventoColor ?? "#E34033",
     }));
 
     tareasData = tareas?.map((t) => ({
