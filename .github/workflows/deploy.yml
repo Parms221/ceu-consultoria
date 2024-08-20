@@ -20,17 +20,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Make envfile
+        run: |
+          touch .env
+          echo "NEXTAUTH_SECRET=${{secrets.NEXTAUTH_SECRET}}" >> .env
+          echo "NEXTAUTH_URL=${{secrets.NEXTAUTH_URL}}" >> .env
+          echo "BACK_URI=${{secrets.BACK_URI}}" >> .env
+          echo "GOOGLE_AUTH_URI=${{vars.GOOGLE_AUTH_URI}}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}}" >> .env
+          echo "GOOGLE_REDIRECT_URI=${{secrets.GOOGLE_REDIRECT_URI}}" >> .env
+          echo "GOOGLE_SCOPES=${{vars.GOOGLE_SCOPES}}" >> .env
+
       - name: Build
         run: npm run build
-        env:
-          NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
-          NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
-          BACK_URI: ${{secrets.BACK_URI}}
-          GOOGLE_AUTH_URI: ${{vars.GOOGLE_AUTH_URI}}
-          GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
-          GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
-          GOOGLE_REDIRECT_URI: ${{secrets.GOOGLE_REDIRECT_URI}}
-          GOOGLE_SCOPES: ${{vars.GOOGLE_SCOPES}}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v5.1.0
@@ -41,4 +44,3 @@ jobs:
             TARGET: "/var/www/ceu/client/"
             REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
             REMOTE_USER: ${{ secrets.REMOTE_USER }}
-            EXCLUDE: "node_modules/"
