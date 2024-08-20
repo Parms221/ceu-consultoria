@@ -9,12 +9,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Proyecto } from "@/types/proyecto";
-import { format } from "date-fns";
+import { format, formatDuration, intervalToDuration } from "date-fns";
 import { CircleCheck, CircleX } from "lucide-react";
 import { useState } from "react";
 import useProyecto from "@/hooks/Proyecto/useProyecto";
 import { ESTADOS } from "@/constants/proyectos/estados";
 import { useQueryClient } from "@tanstack/react-query";
+import { es } from "date-fns/locale/es";
 
 type Props = {
   proyecto: Proyecto;
@@ -97,6 +98,31 @@ const ProyectoDetails = ({ proyecto }: Props) => {
             }
           </p>
         </div>
+        <div>
+          <h3 className="font-medium text-black dark:text-white">
+            Duración total
+          </h3>
+          <p>
+            {
+              // format date using date-fns example: 01 de Enero de 2021
+              formatDuration(
+                intervalToDuration({
+                  start: new Date(proyecto.fechaInicio),
+                  end: new Date(proyecto.fechaLimite)
+                }), {
+                  locale : es,
+                  format: ["months", "days", "hours"]
+                }
+              )
+            }
+          </p>
+        </div>
+      </div>
+      <div>
+        <h3 className="font-medium text-black dark:text-white">Cotización total</h3>
+        <p className="text-lg">
+          S/{proyecto.precio}
+        </p>
       </div>
       <div>
         <h3 className="font-medium text-black dark:text-white">
