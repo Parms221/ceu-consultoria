@@ -6,11 +6,11 @@
         "parameters":{
             "type":"object",
             "properties":{
-                "fecha_inicio": {
+                "fechaInicio": {
                     "type":"string",
                     "description":"Fecha de inicio del proyecto"
                 },
-                "fecha_fin": {
+                "fechaLimite": {
                     "type":"string",
                     "description":"Fecha de fin del proyecto"
                 },
@@ -19,23 +19,31 @@
                     "items":{
                         "type":"object",
                         "properties":{
+                            "idHito" : {
+                                "type": "number",
+                                "description": "Un número auto-incrementado que identifica el hito"
+                            },
                             "titulo":{
                                 "type":"string",
                                 "description":"Título del hito"
                             },
-                            "fecha_inicio": {
+                            "fechaInicio": {
                                 "type":"string",
                                 "description":"Fecha de inicio del hito"
                             },
-                            "fecha_fin":{
+                            "fechaFinalizacion":{
                                 "type":"string",
                                 "description":"Fecha de fin del hito"
                             },
-                            "tareas":{
+                            "tareasDelHito":{
                                 "type":"array",
                                 "items":{
                                     "type":"object",
                                     "properties":{
+                                        "idTarea":{
+                                            "type": "number",
+                                            "description": "Un número auto-incrementado que identifica la tarea"
+                                        },
                                         "titulo":{
                                             "type":"string",
                                             "description":"Título de la tarea"
@@ -44,19 +52,45 @@
                                             "type":"string",
                                             "description":"Descripción de la tarea"
                                         },
-                                        "fecha_inicio": {
+                                        "fechaInicio": {
                                             "type":"string",
                                             "description":"Fecha de inicio de la tarea"
                                         },
-                                        "fecha_fin":{
+                                        "fechaFin":{
                                             "type":"string",
                                             "description":"Fecha de fin de la tarea"
                                         },
-                                        "subtareas":{
+                                        "participantesAsignados": {
+                                            "type": "array",
+                                            "items":{
+                                                "type":"object",
+                                                "properties":{
+                                                    "idParticipante":{
+                                                        "type": "number",
+                                                        "description": "El id de consultor participante que está entre paréntesis"
+                                                    },
+                                                    "consultorParticipante":{
+                                                        "type":"object",
+                                                        "properties":{
+                                                            "nombres":{
+                                                                "type": "string",
+                                                                "description": "Nombre del consultor de la tarea"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "subTareas":{
                                             "type":"array",
                                             "items":{
-                                                "type":"string",
-                                                "description":"Titulo de la subtarea de la tarea"
+                                                "type":"object",
+                                                "properties":{
+                                                    "descripcion":{
+                                                        "type":"string",
+                                                        "description":"Titulo de la subtarea de la tarea"
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -68,5 +102,5 @@
             }
         }
     },
-    "required": ["fecha_inicio", "fecha_fin", "hitos"]
+    "required": ["fechaInicio", "fechaFin", "hitos"]
 }

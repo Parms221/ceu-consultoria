@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 
 function getEstadisticas<EstadisticasProyecto>() {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { getEstadisticasQuery } = useProyecto()
   const { data } = getEstadisticasQuery()
   return data ? data : {

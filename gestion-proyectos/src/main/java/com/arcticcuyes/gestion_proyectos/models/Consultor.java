@@ -57,10 +57,6 @@ public class Consultor {
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "consultor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<FeedbackTarea> feedbacks;
-
     @Override
     public String toString() {
         return "Consultor{idConsultor=" + idConsultor + ", nombres='" + nombres + "'}";

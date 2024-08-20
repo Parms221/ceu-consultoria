@@ -1,9 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
@@ -43,7 +42,7 @@ public class Tarea {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idTarea;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String titulo;
 
     @Column(columnDefinition = "TEXT")
@@ -84,9 +83,9 @@ public class Tarea {
         joinColumns = @JoinColumn(name="id_tarea"), 
         inverseJoinColumns = @JoinColumn(name="id_participante")
     )
-    private Set<Participante> participantesAsignados = new HashSet<>();
+    private List<Participante> participantesAsignados = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tarea",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubTarea> subTareas;
 
     // Feedbacks

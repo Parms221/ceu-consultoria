@@ -29,7 +29,7 @@ import { Hito } from '@/types/proyecto/Hito'
 interface DataTableProps<TData, TSubRowsField extends keyof TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  subRowsField: TSubRowsField; // Field in TData that contains the sub rows
+  subRowsField?: TSubRowsField; // Field in TData that contains the sub rows
   newTask?: React.ReactNode;
 }
 
@@ -60,7 +60,7 @@ export function HitosTable<
     getExpandedRowModel: getExpandedRowModel(),
     onExpandedChange: setExpanded,
     enableExpanding: true,
-    getSubRows: (row) => row[subRowsField] as TData[],
+    getSubRows: (row) => subRowsField && row[subRowsField] as TData[],
     // getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,

@@ -6,23 +6,32 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DialogDescription } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
-import { useProjectDetail } from '@/app/(protected)/(admin)/proyectos/[id]/partials/contexto/proyecto-detail.context';
 import TareaForm from "./form";
-import { Tarea } from "@/types/proyecto/Tarea";
-import { useRef } from "react";
+import { TareaDTO } from "@/types/proyecto/Tarea";
+import { forwardRef, useImperativeHandle, useRef } from "react";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 
 interface IProps {
   asEdit? : boolean
-  task? : Tarea
+  task? : TareaDTO
 }
 
-export default function NewTaskModal(
-  { asEdit, task} : IProps
-) {
-  const { setSelectedTask, selectedTask, tareaForm } = useProjectDetail()
-  const dialogRef = useRef(null)
+// eslint-disable-next-line react/display-name
+const NewTaskModal = forwardRef<DialogRef, IProps>(
+  ({ asEdit, task } : IProps, ref) => {
+  
+  const { setSelectedTask, selectedTask, tareaForm } = useTareaForm()
+  const dialogRef = useRef<HTMLButtonElement>(null)
+
+  useImperativeHandle(ref, () => ({
+    openDialog: () => {
+      if (dialogRef.current) {
+        dialogRef.current.click();
+      }
+    },
+  }));
+
   return (
     <Dialog 
       onOpenChange={(isOpen) => {
@@ -41,34 +50,35 @@ export default function NewTaskModal(
         }
       }}
     >
-      <DialogTrigger
-        asChild
-        ref={dialogRef}
-      >
-        {
-          !asEdit ? (
-            <Button className="bg-ceu-celeste text-white self-end mb-4" size={"sm"}>
-                <PlusCircle /> Añadir Tarea
-            </Button>
-          ) : (
-            <Button
-              size={"sm"}
-              className="py-1.5 bg-ceu-azul"
-              onClick={() => {
-                if(task){
-                  setSelectedTask(task)
-                }
-              }}
-            >
-              <PenBox size={16}/>
-              <span className="sr-only">
-                Editar tarea
-              </span>
-            </Button>
-          )
-        }
-       
-      </DialogTrigger>
+        <DialogTrigger
+          asChild
+          ref={dialogRef}
+        >
+          {
+            !asEdit ? (
+              <Button className="bg-ceu-celeste text-white self-end mb-4" size={"sm"}>
+                  <PlusCircle /> Añadir Tarea
+              </Button>
+            ) : (
+              <Button
+                size={"sm"}
+                className="py-1.5 bg-ceu-azul"
+                onClick={() => {
+                  if(task){
+                    console.log("task", task)
+                    setSelectedTask(task)
+                  }
+                }}
+              >
+                <PenBox size={16}/>
+                <span className="sr-only">
+                  Editar tarea
+                </span>
+              </Button>
+            )
+          }
+        
+        </DialogTrigger>
       <DialogContent className="max-w-[800px] max-h-[550px] overflow-hidden overflow-y-auto" 
         style={
           {scrollbarWidth: 'thin'}
@@ -83,4 +93,6 @@ export default function NewTaskModal(
       </DialogContent>
     </Dialog>
   );
-}
+})
+
+export default NewTaskModal;

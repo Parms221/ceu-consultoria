@@ -1,11 +1,15 @@
 package com.arcticcuyes.gestion_proyectos.models;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -32,11 +37,19 @@ public class Reunion {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idReunion;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String titulo;
+
+    @Column(nullable = true, length = 100)
+    private String descripcion;
 
     @Column(nullable = false)
     private String enlace;
+
+    // Si se crea el evento se obtienen las siguientes propiedades
+    private String eventId;
+    private String eventOrganizer;
+    private String eventHtmlLink;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="fecha_inicio", nullable = false)
@@ -48,6 +61,7 @@ public class Reunion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_proyecto", nullable = false)
+    @JsonBackReference
     private Proyecto proyecto;
 
     @CreationTimestamp(source = SourceType.DB)
@@ -57,4 +71,12 @@ public class Reunion {
     @UpdateTimestamp(source = SourceType.DB)
     @Column(name="updated_at", insertable = false)
     private Timestamp updatedAt;
+
+    @OneToMany(mappedBy = "reunion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvitadoReunion> invitados;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario",  referencedColumnName = "id", nullable = false)
+    private Usuario usuario;
+
 }

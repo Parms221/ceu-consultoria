@@ -22,87 +22,80 @@ import {
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import { tareaSchema } from "../schemas";
 import { z } from "zod";
-import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import SubTareasChecklist from "./partials/sub-tareas";
-import { useState } from "react";
-import { ParticipanteDTO } from "@/types/proyecto/Tarea";
 import { toast } from "sonner";
 import SelectEstadoTarea from "./partials/estados";
 import useTarea from "@/hooks/Tarea/useTarea";
+import SelectParticipantesTarea from "./partials/participantes";
+import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
+import TimeInput from "@/components/ui/input-time";
 
 export default function TareaForm() {
-  const { updateTarea } = useTarea()
-  const { 
-      selectedTask,
-      tareaForm: form, 
-      hitoForm, 
-      appendSubtarea,
-      projectId,
-      queryClient
+  const { updateTarea } = useTarea();
+  const {
+    hitoForm,
+    projectId,
+    queryClient,
   } = useProjectDetail();
 
-  const [responsables, setResponsables ] = useState<ParticipanteDTO[]>([])
+  const {selectedTask, tareaForm : form, appendSubtarea} = useTareaForm()
 
-  function saveTarea(values : z.infer<typeof tareaSchema>){
+  function saveTarea(values: z.infer<typeof tareaSchema>) {
     const currentTareas = hitoForm.getValues("tareas");
-    values.idTarea = crypto.randomUUID()
-    if(currentTareas){
-      hitoForm.setValue("tareas", [...currentTareas, values])
-    }else {
-      hitoForm.setValue("tareas", [values])
+    values.idTarea = crypto.randomUUID();
+    console.log("currentTareas", currentTareas)
+    if (currentTareas) {
+      hitoForm.setValue("tareas", [...currentTareas, values]);
+    } else {
+      hitoForm.setValue("tareas", [values]);
     }
-   
   }
 
-  async function update(values : z.infer<typeof tareaSchema>){
+  async function update(values: z.infer<typeof tareaSchema>) {
     const currentTareas = hitoForm.getValues("tareas");
-    if(currentTareas.length > 0){
+    console.log("currentTareas", currentTareas)
+    if (currentTareas.length > 0) {
+      console.log("Editando en memoria", values)
       // Editando tareas en memoria (cuando se crea un nuevo hito en el drawer) usando el id temporal
-      console.log("Editando tarea en memoria", currentTareas)
-      const tareaIndex = currentTareas.findIndex(t => {
-        const id = selectedTask?.idTarea
-        if(id) 
-          return t.idTarea === id.toString()
-      })
-      currentTareas[tareaIndex] = values
-      hitoForm.setValue("tareas", currentTareas)
-      toast.success(`Tarea actualizada`)
-    }else {
+      const tareaIndex = currentTareas.findIndex((t) => {
+        const id = selectedTask?.idTarea;
+        if (id) return t.idTarea == id;
+      });
+      currentTareas[tareaIndex] = values;
+      hitoForm.setValue("tareas", currentTareas);
+      toast.success(`Tarea actualizada`);
+    } else {
       // Editando tarea en la bd (cuando se seleccione en la tabla de hitos y tareas principal)
-      const idTarea = selectedTask?.idTarea
-      if(idTarea)
-        await updateTarea(values, idTarea)
-      queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
+      const idTarea = selectedTask?.idTarea;
+      console.log("Editando en la bd", values)
+      if (idTarea) await updateTarea(values, idTarea);
+      queryClient.invalidateQueries({ queryKey: [projectId, "hitos"] });
     }
   }
 
   async function onSubmit(values: z.infer<typeof tareaSchema>) {
-    if (selectedTask){
-      await update(values)
+    if (selectedTask) {
+      await update(values);
       // Close the modal
-      document.getElementById("closeDialog")?.click()
-
-    }else {
-      saveTarea(values)
-      toast.success(`Tarea guardada`)
+      document.getElementById("closeDialog")?.click();
+    } else {
+      saveTarea(values);
+      toast.success(`Tarea guardada`);
     }
     form.reset();
-    
   }
 
   return (
     <Form {...form}>
-    <form className="grid grid-cols-3" 
-       id="tarea-form"
-       onSubmit={form.handleSubmit(onSubmit)}
-    
-    >
-      <article className="col-span-2 p-2">
-          <div
-            className="space-y-4 [&>div>div>label]:w-[200px]"
-          >
+      <form
+        className="grid grid-cols-3"
+        id="tarea-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <article className="col-span-2 p-2">
+          <div className="space-y-4 [&>div>div>label]:w-[200px]">
             <FormField
               control={form.control}
               name="titulo"
@@ -118,43 +111,8 @@ export default function TareaForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="participantesAsignados"
-              render={({ field }) => (
-                <FormItem className="pl-1">
-                  <div className="flex items-center gap-1.5">
-                    <FormLabel className="flex shrink-0 items-center gap-1 text-sm">
-                      <User2 size={14} />
-                      Responsable
-                    </FormLabel>
-                    <Combobox
-                      placeholder="Seleccione un responsable"
-                      options={[
-                        {
-                          label: "Consultor 1",
-                          value: "1",
-                        },
-                        {
-                          label: "Consultor 2",
-                          value: "2",
-                        },
-                      ]}
-                      onSelect={(value) => {
-                        const participante = {} as ParticipanteDTO
-                        participante.idConsultor = Number(value)
-                        if(responsables.find((p) => p.idConsultor === participante.idConsultor) === undefined){
-                          setResponsables([...responsables, participante])
-                        }
-                        field.onChange(responsables);
-                      }}
-                    />
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SelectEstadoTarea form={form}/>
+            <SelectParticipantesTarea />
+            <SelectEstadoTarea />
             <FormField
               control={form.control}
               name="fechaInicio"
@@ -166,6 +124,10 @@ export default function TareaForm() {
                       Fecha de inicio
                     </FormLabel>
                     <DatePicker mode="single" field={field} useOpenState />
+                    <TimeInput 
+                      className="w-fit h-10"
+                      {...field}
+                    />
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -181,17 +143,21 @@ export default function TareaForm() {
                       <CalendarCheck size={14} />
                       Fecha de finalización
                     </FormLabel>
-                    <DatePicker mode="single" field={field} 
+                    <DatePicker
+                      mode="single"
+                      field={field}
                       useOpenState
-                      disable = {
-                        (value) => {
-                          const fechaInicio = form.getValues("fechaInicio")
-                          if(fechaInicio){
-                            return new Date(value) < new Date(fechaInicio)
-                          }
-                          return false
+                      disable={(value) => {
+                        const fechaInicio = form.getValues("fechaInicio");
+                        if (fechaInicio) {
+                          return new Date(value) < new Date(fechaInicio);
                         }
-                      }
+                        return false;
+                      }}
+                    />
+                    <TimeInput 
+                      className="w-fit h-10"
+                      {...field}
                     />
                   </div>
                   <FormMessage />
@@ -219,50 +185,55 @@ export default function TareaForm() {
             {/* Lista de subtareas checklist */}
             <SubTareasChecklist />
           </div>
-      </article>
-      <aside className="rounded-md bg-[#EBEBEB] p-2 [&>div]:space-y-1.5">
-        <div>
-          <h4>Añadir a la tarea</h4>
-          <Button
-            type="button"
-            className="w-full"
-            size={"sm"}
-            variant={"outline"}
-          >
-            <Link size={18} /> Adjuntos
-          </Button>
-          <Button
-            type="button"
-            className="w-full"
-            size={"sm"}
-            variant={"outline"}
-            onClick={() => appendSubtarea({
-              descripcion: "Nueva subtarea",
-              completado: false,
-            })}
-          >
-            <CheckCircle size={18} /> Subtareas
-          </Button>
-        </div>
-        <div>
-          <h4>Acciones</h4>
-          <Button className="w-full" size={"sm"} form="tarea-form"
-            type="button"
-            onClick={() => form.handleSubmit(onSubmit)()}
-          >
-            Guardar
-          </Button>
-          <Button
-            type="button"
-            className="w-full"
-            size={"sm"}
-            variant={"destructive"}
-          >
-            Eliminar
-          </Button>
-        </div>
-      </aside>
-    </form>
+        </article>
+        <aside className="rounded-md bg-[#EBEBEB] p-2 [&>div]:space-y-1.5">
+          <div>
+            <h4>Añadir a la tarea</h4>
+            <Button
+              type="button"
+              className="w-full"
+              size={"sm"}
+              variant={"outline"}
+            >
+              <Link size={18} /> Adjuntos
+            </Button>
+            <Button
+              type="button"
+              className="w-full"
+              size={"sm"}
+              variant={"outline"}
+              onClick={() =>
+                appendSubtarea({
+                  descripcion: "Nueva subtarea",
+                  completado: false,
+                })
+              }
+            >
+              <CheckCircle size={18} /> Subtareas
+            </Button>
+          </div>
+          <div>
+            <h4>Acciones</h4>
+            <Button
+              className="w-full"
+              size={"sm"}
+              form="tarea-form"
+              type="button"
+              onClick={() => form.handleSubmit(onSubmit)()}
+            >
+              Guardar
+            </Button>
+            <Button
+              type="button"
+              className="w-full"
+              size={"sm"}
+              variant={"destructive"}
+            >
+              Eliminar
+            </Button>
+          </div>
+        </aside>
+      </form>
     </Form>
   );
 }

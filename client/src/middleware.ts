@@ -13,6 +13,13 @@ export default withAuth(
       const url = req.nextUrl.clone()
       const isAdmin = checkIsAdmin(session)
 
+
+      const allowedPathsForEveryUser = ["/_next/image", "/image", '/authorize/callback']
+
+      if(allowedPathsForEveryUser.some(path => url.pathname.startsWith(path))){
+        return NextResponse.next()
+      }
+
       // Si no es admin y está en una ruta de admin (es consultor o cliente) 
       if (!isAdmin && !url.pathname.startsWith("/my")){
         url.pathname = "/my/proyectos"

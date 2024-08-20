@@ -1,3 +1,5 @@
+import { HitoDTO } from "./Hito/dto/HitoDTO";
+
 export type ProyectoIncompletoDto = {
   titulo: string;
   descripcion?: string;
@@ -9,4 +11,5 @@ export type ProyectoIncompletoDto = {
   precio: number;
   idCliente: number;
   servicio: number;
+  hitos : HitoDTO[];
 };

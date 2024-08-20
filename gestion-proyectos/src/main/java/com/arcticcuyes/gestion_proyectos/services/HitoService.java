@@ -1,10 +1,8 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,7 @@ import com.arcticcuyes.gestion_proyectos.repositories.HitoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ParticipanteRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.SubtareaRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.TareaRepository;
+
 @Service
 public class HitoService {
 
@@ -80,9 +79,26 @@ public class HitoService {
                         "Estado no encontrado con id: " + tareaDTO.getEstado()
                     ))
                 );
+
+                if (tareaDTO.getParticipantesAsignados()!= null) {
+                    List<Participante> participantesAsignados = new ArrayList<>();
+                    for (Long participanteId : tareaDTO.getParticipantesAsignados()) {
+                        Participante participante = participanteRepository
+                           .findByIdParticipanteAndProyectoIngresado_IdProyecto(participanteId, proyecto.getIdProyecto())
+                           .orElseThrow(() -> new ResourceNotFoundException(
+                                "Participante no encontrado con id: " + participanteId + " o no pertenece al proyecto"
+                            ));
+                        participantesAsignados.add(participante);
+                    }
+                    //System.out.println("Seteando participantes en tarea:" + tareaDTO.getTitulo() + "-" + participantesAsignados);
+                    tarea.setParticipantesAsignados(participantesAsignados);
+                }
+
                 tarea.setHito(hito);
 
                 tarea = tareaRepository.save(tarea); // Guardar tarea para obtener su ID
+
+                //System.out.println(tarea);
 
                 // List<SubTarea> subtareas = new ArrayList<>();
                 if (hitoDTO.getTareas() != null) {
@@ -111,12 +127,12 @@ public class HitoService {
     List<Tarea> tareasExistentes = tareaRepository.findByHito_IdHito(existHito.getIdHito());
 
     // Crear un conjunto con los IDs de las nuevas tareas
-    Set<Long> tareaDTOIds = hitoDTO.getTareas() != null ?
+    List<Long> tareaDTOIds = hitoDTO.getTareas() != null ?
             hitoDTO.getTareas().stream()
                     .filter(t -> t.getId() != null)  // Solo incluir IDs no nulos
                     .map(TareaDTO::getId)
-                    .collect(Collectors.toSet())
-            : new HashSet<>();
+                    .collect(Collectors.toList())
+            : new ArrayList<>();
 
     // Identificar y eliminar las tareas que no están en la nueva lista
     for (Tarea tarea : tareasExistentes) {
@@ -152,19 +168,19 @@ public class HitoService {
             // Obtener el proyecto asociado al hito
             Long proyectoId = proyecto.getIdProyecto();
             // Obtener todos los participantes cuyos consultores coincidan con los IDs proporcionados y que estén asociados con el proyecto
-            Set<Participante> nuevosParticipantes = new HashSet<>(participanteRepository.findByConsultorParticipante_IdConsultorInAndProyectoIngresado_IdProyecto(tareaDTO.getParticipantesAsignados(), proyectoId));
+            List<Participante> nuevosParticipantes = new ArrayList<>(participanteRepository.findByConsultorParticipante_IdConsultorInAndProyectoIngresado_IdProyecto(tareaDTO.getParticipantesAsignados(), proyectoId));
 
             // Obtener los participantes actuales asociados a la tarea
-            Set<Participante> participantesActuales = tarea.getParticipantesAsignados();
+            List<Participante> participantesActuales = tarea.getParticipantesAsignados();
 
             // Calcular los participantes a añadir y a eliminar
-            Set<Participante> participantesAAgregar = nuevosParticipantes.stream()
+            List<Participante> participantesAAgregar = nuevosParticipantes.stream()
                     .filter(p -> !participantesActuales.contains(p))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
-            Set<Participante> participantesAEliminar = participantesActuales.stream()
+            List<Participante> participantesAEliminar = participantesActuales.stream()
                     .filter(p -> !nuevosParticipantes.contains(p))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             // Actualizar la lista de participantes
             participantesActuales.removeAll(participantesAEliminar);
@@ -178,12 +194,12 @@ public class HitoService {
             List<SubTarea> subtareasExistentes = subTareaRepository.findByTarea_IdTarea(tarea.getIdTarea());
 
             // Crear un conjunto con los IDs de las nuevas subtareas
-            Set<Long> subtareaDTOIds = tareaDTO.getSubtareas() != null ?
+            List<Long> subtareaDTOIds = tareaDTO.getSubtareas() != null ?
                     tareaDTO.getSubtareas().stream()
                             .filter(s -> s.getId() != null)  // Solo incluir IDs no nulos
                             .map(SubtareaDTO::getId)
-                            .collect(Collectors.toSet())
-                    : new HashSet<>();
+                            .collect(Collectors.toList())
+                    : new ArrayList<>();
 
             // Identificar y eliminar las subtareas que no están en la nueva lista
             for (SubTarea subtarea : subtareasExistentes) {

@@ -3,6 +3,7 @@ package com.arcticcuyes.gestion_proyectos.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.HitoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ProyectoDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Proyecto.ResumenProyectoDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.SubtareaDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
@@ -55,6 +57,8 @@ public class ProyectoService {
     private EntregableServicioRepository entregableServicioRepository;
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private HitoService hitoService;
 
     @Autowired
     private EntregableProyectoRepository entregableProyectoRepository;
@@ -84,6 +88,13 @@ public class ProyectoService {
 
     public List<Proyecto> getProyectosByEstado(Long idEstado) {
         return proyectoRepository.findAllByEstadoIdEstado(idEstado);
+    }
+
+    public ResumenProyectoDTO getResumenProyecto(Proyecto proyecto) {
+        ResumenProyectoDTO resumen = new ResumenProyectoDTO();
+        BeanUtils.copyProperties(proyecto, resumen);
+        resumen.calcularProgreso();
+        return resumen;
     }
 
     public Proyecto cambiarEstadoProyecto(Long idProyecto, Long idEstado){
@@ -157,7 +168,7 @@ public class ProyectoService {
         proyecto.setFechaLimite(proyectoDTO.getFechaLimite());
         proyecto.setPrecio(proyectoDTO.getPrecio());
 
-        //Guardar proyecto para luego poder con los entregables
+        //Guardar proyecto para luego poder con los entregables e hitos
         proyecto = proyectoRepository.save(proyecto);
 
         List<EntregableServicio> entregableServicios = entregableServicioRepository.findByServicio(servicio);
@@ -171,6 +182,15 @@ public class ProyectoService {
 
             // Guardar cada entregable
             entregableProyectoRepository.save(entregable);
+        }
+
+        for (HitoDTO hitoDto : proyectoDTO.getHitos()){
+            Hito newHito = new Hito();
+            newHito.setTitulo(hitoDto.getTitulo());
+            newHito.setFechaInicio(hitoDto.getFechaInicio());
+            newHito.setFechaFinalizacion(hitoDto.getFechaFinalizacion());
+            newHito.setProyecto(proyecto);
+            hitoService.saveHito(hitoDto, proyecto);
         }
 
         // proyecto.setEntregables(entregablesProyecto);
@@ -247,6 +267,18 @@ public class ProyectoService {
         } 
     // }
 
+    public void updateAllHitos(List<HitoDTO> hitos, Proyecto proyecto) {
+        // Limpiar los hitos existentes en el proyecto
+        List<Hito> existingHitos = proyecto.getHitos();
+        for (Hito hito : existingHitos) {
+            hitoService.deleteHitoById(hito.getIdHito());
+        }
+
+        for (HitoDTO hitoDto : hitos){
+            hitoService.saveHito(hitoDto, proyecto);
+        }
+    }
+
     @Transactional
     public void saveParticipantesProyecto(List<Long> consultores, Proyecto proyecto) {
         try {
@@ -277,6 +309,32 @@ public class ProyectoService {
             throw e; // Re-throw the exception to be handled by the controller
         }
     }
+    // getParticipantesProyecto
+
+    // add participante
+    public void addParticipanteProyecto(Long idProyecto, Long idConsultor) {
+        Proyecto proyecto = proyectoRepository.findById(idProyecto)
+            .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto));
+        Consultor consultor = consultorRepository.findById(idConsultor)
+            .orElseThrow(() -> new ResourceNotFoundException("Consultor no encontrado con el id  " + idConsultor));
+        // primero verificar si el consultor ya está en el proyecto
+        List<Participante> participantes = proyecto.getParticipantes();
+        for (Participante participante : participantes) {
+            if (participante.getConsultorParticipante().getIdConsultor() == idConsultor) {
+                return; // El consultor ya está en el proyecto
+            }
+        }
+        Participante participante = new Participante();
+        participante.setProyectoIngresado(proyecto);
+        participante.setConsultorParticipante(consultor);
+        participanteRepository.save(participante);
+    }
+
+    public List<Participante> getParticipantesProyecto(Long idProyecto) {
+        return proyectoRepository.findById(idProyecto)
+            .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + idProyecto))
+            .getParticipantes();
+    }
 
     public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO) {
         Proyecto existingProyecto = proyectoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado con el id  " + id));
@@ -293,5 +351,9 @@ public class ProyectoService {
 
     public void deleteProyecto(Long id) {
         proyectoRepository.deleteById(id);
+    }
+
+    public EntregableProyecto getEntregableProyectoById(Long idEntregableProyecto) {
+        return entregableProyectoRepository.findById(idEntregableProyecto).orElse(null);    
     }
 }

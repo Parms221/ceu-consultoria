@@ -32,25 +32,43 @@ export default function Filters<TData>(
     return (
         <div className="flex flex-wrap items-center py-4 [&>div]:space-y-1 gap-4">
             <div className="max-w-sm">
-              <Label htmlFor="hito">
-                Buscar tarea hito
+              <Label htmlFor="nombre">
+                Buscar usuario
               </Label>
               <Input
-                placeholder="Tarea"
-                name="titulo"
-                value={(table.getColumn("titulo")?.getFilterValue() as string) ?? ""}
+                placeholder="Usuario"
+                name="nombre"
+                value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                 onChange={(event) =>
-                  table.getColumn("titulo")?.setFilterValue(event.target.value)
+                  table.getColumn("name")?.setFilterValue(event.target.value)
                 }
                 className="w-full"
               />
             </div> 
             <div>
-                <Label>Estado</Label>
+                <Label>Rol</Label>
                 <Combobox
                     options={ROL_OPTIONS}
                     onSelect={(value) => {
-                        table.getColumn("estado")?.setFilterValue(value)
+                        table.getColumn("roles")?.setFilterValue(value)
+                    }
+                    }
+                />
+            </div>
+            <div>
+                <Label htmlFor="activo">Activo</Label>
+                <Combobox
+                    options={[
+                      {
+                        label: "Sí",
+                        value: "si",
+                      },{
+                        label: "No",
+                        value: "no",
+                      }
+                    ]}
+                    onSelect={(value) => {
+                        table.getColumn("enabled")?.setFilterValue(value === "si" ? true : value === "no" ? false : undefined)
                     }
                     }
                 />

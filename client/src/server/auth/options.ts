@@ -97,6 +97,7 @@ export const authOptions: AuthOptions = {
         user: {
           ...session.user,
           roles: token.roles,
+          id: token.sub,
         },
       };
     },
@@ -105,6 +106,7 @@ export const authOptions: AuthOptions = {
         const u = user as unknown as Usuario
         return {
           ...token,
+          id: u.id,
           roles: u.roles,
         };
       }

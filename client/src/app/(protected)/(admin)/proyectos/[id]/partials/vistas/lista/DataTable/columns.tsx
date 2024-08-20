@@ -1,36 +1,22 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { DataTableColumnHeader } from "@/components/ui/DataTable/column-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2Icon, ChevronRight, Diamond, Circle, Pen } from "lucide-react";
+import { ChevronRight, Diamond, Circle } from "lucide-react";
 import { Hito } from "@/types/proyecto/Hito";
 import { es } from "date-fns/locale/es";
 import { format, formatDuration, intervalToDuration } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Tarea } from "@/types/proyecto/Tarea";
 import { DeleteTask, FeedbackChat } from "../dialogs";
-import { useProjectDetail } from "../../../contexto/proyecto-detail.context";
 import NewTaskModal from "../../../forms/Tareas";
 import NewHitoModal from "../../../forms/Hitos";
-import { Badge } from "@/components/ui/badge";
-import { Estado } from "@/types/estado";
+import useTarea from "@/hooks/Tarea/useTarea";
+import useHito from "@/hooks/Hito/useHito";
+import { convertFromHitoToDTO, convertFromTareaToDTO } from "../../../forms/utils";
 
-export function getBadgeByEstado(estado: Estado) {
-  return (
-    <Badge
-      className="text-nowrap"
-      variant={
-        estado.idEstado === 6 ? "ghost" : 
-        estado.idEstado === 7 ? "default" :
-        estado.idEstado === 8 ? "success" : "destructive"
-      }
-    > 
-      {estado.descripcion}
-    </Badge>
-  )
-}
 
-function isExpandedChevron(isExpanded: boolean) {
+
+export function isExpandedChevron(isExpanded: boolean) {
   return (
     <ChevronRight
       className={cn(
@@ -77,11 +63,11 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
             ) : (
               <div className="h-5 w-[20px]" />
             )}{" "}
-            <span className="ml-5 inline-flex items-center gap-3">
+            <span className="ml-2 inline-flex items-center gap-3">
               {row.original.idTarea ? (
-                <Circle className="h-4 w-4 text-ceu-celeste" />
+                <Circle className="h-3 w-3 text-ceu-celeste shrink-0" />
               ) : (
-                <Diamond className="h-4 w-4 text-ceu-celeste" />
+                <Diamond className="h-3 w-3 text-ceu-celeste shrink-0" />
               )}
 
               {row.original.titulo}
@@ -98,7 +84,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
       const fechaInicio = row.original.fechaInicio;
       if (!fechaInicio) return "-";
       const date = new Date(fechaInicio);
-      return format(date, "d/MM/yyyy");
+      return format(date, "d/MM/yyyy hh:mm a");
     }
   },
   {
@@ -107,12 +93,12 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     cell: ({ row }) => {
       const dateFin = row.original.fechaFinalizacion || row.original.fechaFin;
       if (!dateFin) return "-";
-      return format(dateFin, "d/MM/yyyy");
+      return format(dateFin, "d/MM/yyyy hh:mm a");
     }
   },
   {
     id: "duracion",
-    header: "Duración (días)",
+    header: "Duración",
     enableColumnFilter: true,
     cell: ({ row }) => {
       const inicio = row.original.fechaInicio;
@@ -124,7 +110,7 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
         start: new Date(inicio),
         end: new Date(final)
       });
-      return Number(duracion.days ?? 0);
+      return <span>{formatDuration(duracion, { locale : es})}</span>;
     }
   },
   {
@@ -132,9 +118,11 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     accessorKey: "estado",
     header: "Estado",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { getBadgeByStatus } = useTarea()
       const estado = row.original.estado;
       if (!estado) return "";
-      return getBadgeByEstado(estado);
+      return getBadgeByStatus(estado);
     }
   },
   {
@@ -154,15 +142,17 @@ export const hitosColumns: ColumnDef<Partial<Hito> & Partial<Tarea>>[] = [
     header: "Acciones",
     cell: ({ row }) => {
       const task = row.original;
-
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const {  } = useHito()
       return (
         <div className="flex gap-2">
           {/* Editar y eliminar */}
           {
             task.idTarea ?
-              (<NewTaskModal asEdit task={task as Tarea} />)
+              (<NewTaskModal asEdit task={convertFromTareaToDTO(task as Tarea)} />)
               :
-              <NewHitoModal asEdit task={task as Hito} />
+              <NewHitoModal asEdit task={convertFromHitoToDTO(task as Hito)} />
+              // <EditHitoModal hito={task as Hito} />
           }
           <DeleteTask tarea={task as Tarea | Hito} />
 

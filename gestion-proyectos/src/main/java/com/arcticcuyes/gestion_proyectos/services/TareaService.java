@@ -1,19 +1,20 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.SubtareaDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Proyecto.TareaDTO;
-import com.arcticcuyes.gestion_proyectos.dto.Tarea.FeedbackDTO;
-import com.arcticcuyes.gestion_proyectos.models.Consultor;
-import com.arcticcuyes.gestion_proyectos.models.FeedbackTarea;
+import com.arcticcuyes.gestion_proyectos.dto.Tarea.EstadoDTO;
 import com.arcticcuyes.gestion_proyectos.models.SubTarea;
 import com.arcticcuyes.gestion_proyectos.models.Tarea;
-import com.arcticcuyes.gestion_proyectos.repositories.ConsultorRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.EstadoRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ParticipanteRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.SubtareaRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.TareaRepository;
 
 import jakarta.transaction.Transactional;
@@ -31,7 +32,7 @@ public class TareaService {
     private ParticipanteRepository participanteRepository;
 
     @Autowired
-    private ConsultorRepository consultorRepository;
+    private SubtareaRepository subtareaRepository;
 
     public void delete(Long id) {
         Tarea tarea = tareaRepository.findById(id)
@@ -58,12 +59,17 @@ public class TareaService {
                         "Estado no encontrado con id: " + tareaDTO.getEstado())));
 
         // subtareas
-        tarea.getSubTareas().clear();
-                        
-        for (SubtareaDTO subtareaDTO : tareaDTO.getSubtareas()) {
-            SubTarea subtarea = new SubTarea();
-            subtarea.setDescripcion(subtareaDTO.getDescripcion());
-            subtarea.setTarea(tarea);
+        if(tareaDTO.getSubtareas() != null){
+            tarea.getSubTareas().clear();
+            for (SubtareaDTO subtareaDTO : tareaDTO.getSubtareas()) {
+                SubTarea subtarea = new SubTarea();
+                subtarea.setDescripcion(subtareaDTO.getDescripcion());
+                subtarea.setCompletado(subtareaDTO.isCompletado());
+                subtarea.setTarea(tarea);
+                subtareaRepository.save(subtarea);
+            }
+        }else{
+            tarea.getSubTareas().clear();
         }
 
         // participantes asignados
@@ -75,14 +81,22 @@ public class TareaService {
         return tarea;
     }
 
-    public void addFeedback(Long idTarea, FeedbackDTO feedbackDTO, Consultor consultor) {
-        Tarea tarea = tareaRepository.findById(idTarea)
-                .orElseThrow(() -> new ResourceNotFoundException("Tarea no encontrada con el id " + idTarea));
-        FeedbackTarea feedback = new FeedbackTarea();
-        feedback.setMensaje(feedbackDTO.getMensaje());
-        feedback.setConsultor(consultor);
-        feedback.setTarea(tarea);
-        tarea.getFeedbacks().add(feedback);
-        tareaRepository.save(tarea);    
+    /* 
+     * Obtiene una lista de tareas a las que está asignado el participante por id de usuario
+     * @param usuarioId: id del usuario
+     * @param proyectoId: id del proyecto
+     * @return: lista de tareas asignadas al participante en el proyecto
+     */
+    public List<Tarea> getTareasAsignadas(Long usuarioId, Long proyectoId) {
+        return tareaRepository.findByParticipantesInProyecto(usuarioId, proyectoId);
+    }
+
+    public void updateStatusTarea(Long idTarea, EstadoDTO estadoDTO) {
+        tareaRepository.findById(idTarea)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarea no encontrada con el id " + idTarea))
+                .setEstado(estadoRepository
+                        .findById(estadoDTO.getIdEstado())
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Estado no encontrado con id: " + estadoDTO.getIdEstado())));
     }
 }

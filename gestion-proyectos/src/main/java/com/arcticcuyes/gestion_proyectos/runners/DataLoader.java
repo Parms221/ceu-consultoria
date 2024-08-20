@@ -18,10 +18,16 @@ public class DataLoader implements CommandLineRunner{
     @Autowired
     ServiciosEntregablesRunnerService serviciosEntregablesRunnerService;
 
+    @Autowired
+    FilesDirRunnerService filesDirRunnerService;
+
     @Override
     public void run(String... args) throws Exception {
         userRolesRunnerService.crearUsuariosYRoles();
         estadosRunnerService.crearEstados();
         serviciosEntregablesRunnerService.createServiciosYEntrgables();
+
+        //dir
+        filesDirRunnerService.createFilesDir();
     }
 }

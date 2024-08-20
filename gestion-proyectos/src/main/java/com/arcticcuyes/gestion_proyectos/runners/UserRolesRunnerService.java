@@ -1,7 +1,7 @@
 package com.arcticcuyes.gestion_proyectos.runners;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,7 +58,7 @@ public class UserRolesRunnerService {
             adminUser.setName("admin");
             adminUser.setPassword(passwordEncoder.encode("password"));  // Ajusta la contraseña según tus necesidades
 
-            Set<Rol> roles = new HashSet<>();
+            List<Rol> roles = new ArrayList<>();
             roles.add(roleRepository.findByRol("ROLE_ADMIN"));
             adminUser.setRoles(roles);
 
@@ -71,7 +71,7 @@ public class UserRolesRunnerService {
             consultorUser.setName("consultor");
             consultorUser.setPassword(passwordEncoder.encode("password"));  // Ajusta la contraseña según tus necesidades
 
-            Set<Rol> roles = new HashSet<>();
+            List<Rol> roles = new ArrayList<>();
             roles.add(roleRepository.findByRol("ROLE_CONSULTOR"));
             consultorUser.setRoles(roles);
 

@@ -15,7 +15,7 @@ import { useAppContext } from "@/app/(protected)/app.context"
 import { getReadableRole } from "@/lib/rol"
 import { Checkbox } from "@/components/ui/checkbox"
 
-export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
+export default function UserDetailsForm({ usuario, currentUser } : { usuario : Usuario, currentUser? : boolean}) {
     const { roles } = useAppContext()
 
     const formSchema = z.object({
@@ -25,7 +25,7 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
             { message: "El rol seleccionado no es válido"}
         ),
         email: z.string().email(),
-        enabled: z.boolean(),
+        enabled: z.boolean().optional(),
       })
 
       const form = useForm<z.infer<typeof formSchema>>({
@@ -34,7 +34,7 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
           name: usuario.name,
           roles: usuario.roles[0].rol as Rol["rol"],
           email: usuario.email,
-          enabled: usuario.enabled,
+          enabled: currentUser ? undefined : usuario.enabled,
         },
       })
 
@@ -44,8 +44,9 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
             const rawData = Object.fromEntries(formData.entries())
             const newUser = {...rawData,
                 roles: [rawData.roles],
-                enabled: rawData.enabled ? true : false
+                enabled: currentUser ? undefined : rawData.enabled ? true : false
             } as UpdateUsuarioDetailsDto
+
             const response = await updateUsuarioDetails(usuario.id, newUser) 
             
             if(response.status === "success"){
@@ -112,28 +113,32 @@ export default function UserDetailsForm({ usuario } : { usuario : Usuario}) {
                         </FormItem>
                     )}
                 />
-                <FormField 
-                    control={form.control}
-                    name="enabled"
-                    render = {({field}) => (
-                        <FormItem>
-                            <div className="mt-4 flex items-center gap-2">
-                                <FormLabel>Activo</FormLabel>
-                                <FormControl>
-                                    <Checkbox
-                                        name="enabled"
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </div>
-                            <FormDescription>
-                                Si la casilla está marcada, el usuario podrá acceder al sistema.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                {
+                    !currentUser && (
+                        <FormField 
+                            control={form.control}
+                            name="enabled"
+                            render = {({field}) => (
+                                <FormItem>
+                                    <div className="mt-4 flex items-center gap-2">
+                                        <FormLabel>Activo</FormLabel>
+                                        <FormControl>
+                                            <Checkbox
+                                                name="enabled"
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                    </div>
+                                    <FormDescription>
+                                        Si la casilla se encuentra marcada, el usuario podrá acceder al sistema.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )
+                }
             </div>
             {/* Actions */}
             <div className="space-x-2">

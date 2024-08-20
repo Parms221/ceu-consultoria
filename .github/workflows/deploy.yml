@@ -1,0 +1,66 @@
+name: Deploy Client
+
+on: 
+  workflow_dispatch:
+
+jobs: 
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Make envfile
+        run: |
+          touch .env
+          echo "NEXTAUTH_SECRET=${{secrets.NEXTAUTH_SECRET}}" >> .env
+          echo "NEXTAUTH_URL=${{secrets.NEXTAUTH_URL}}" >> .env
+          echo "BACK_URI=${{secrets.BACK_URI}}" >> .env
+          echo "GOOGLE_AUTH_URI=${{vars.GOOGLE_AUTH_URI}}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}}" >> .env
+          echo "GOOGLE_REDIRECT_URI=${{secrets.GOOGLE_REDIRECT_URI}}" >> .env
+          echo "GOOGLE_SCOPES=${{vars.GOOGLE_SCOPES}}" >> .env
+
+      - name: Build
+        run: npm run build
+
+      - name: Copy Standalone
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "client/.next/standalone/"
+          TARGET: "/var/www/ceu/client"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+
+      - name: Copy Static
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "client/.next/static/"
+          TARGET: "/var/www/ceu/client/.next/static"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+      
+      - name: Copy Public
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "client/public/"
+          TARGET: "/var/www/ceu/client/public"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}

@@ -1,17 +1,17 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2Icon, ChevronRight } from "lucide-react";
-import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
+import { Trash2Icon, ChevronRight } from "lucide-react";
+import { format, formatDuration, intervalToDuration, set } from "date-fns";
 import { cn } from "@/lib/utils";
-import { getBadgeByEstado } from "../../vistas/lista/DataTable/columns";
 import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
-import { useQuery } from "@tanstack/react-query";
-import { Estado } from "@/types/estado";
-import { fetcherLocal } from "@/server/fetch/client-side";
 import { useAppContext } from "@/app/(protected)/app.context";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
 import NewTaskModal from ".";
+import { es } from "date-fns/locale/es";
+import useTarea from "@/hooks/Tarea/useTarea";
+import { convertFromTareaToDTO } from "../utils";
 
 
 function isExpandedChevron(isExpanded: boolean) {
@@ -86,29 +86,30 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
     accessorKey: "estado",
     header: "Estado",
     cell: ({ row }) => {
-      const { estados } = useAppContext() 
+      const { estados } = useAppContext()
+      const {  getBadgeByStatus  } = useTarea()
       const estado = row.original.estado;
       if (!estado || !estados) return "-";
       if (estado instanceof Object){
-        return getBadgeByEstado(estado)
+        return getBadgeByStatus(estado)
       }else {
         const estadoObj = estados.find(e => e.idEstado === estado)
         if (!estadoObj) return "-"
-        return getBadgeByEstado(estadoObj)
+        return getBadgeByStatus(estadoObj)
       }
     },
   },
   {
     id: "duracion",
-    header: "Duración (días)",
+    header: "Duración",
     cell: ({ row }) => {
       const inicio = row.original.fechaInicio;
       const final = row.original.fechaFin
       if (!inicio || !final) return "-";
     
       // get diff time in days using date-fns
-      const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)}).days
-      return Number(duracion ?? 0);
+      const duracion = intervalToDuration({start: new Date(inicio), end: new Date(final)})
+      return formatDuration(duracion, { locale: es});
     },
   },
   {
@@ -117,10 +118,11 @@ export const tareasColumns: ColumnDef<Tarea>[] = [
     cell: ({ row }) => {
       const tarea = row.original;
       const { hitoForm } = useProjectDetail()
-      const tareasInForm = hitoForm.getValues("tareas") as unknown as TareaDTO[] ?? []
+      const tareasInForm = hitoForm.getValues("tareas")
+      console.log("tareasInForm", tareasInForm)
       return (
         <div className="flex gap-2">
-          <NewTaskModal asEdit task={tarea as Tarea} />
+          <NewTaskModal asEdit task={tareasInForm.find(t => t.idTarea === tarea.idTarea)} />
 
           <Button
             variant="ghost"

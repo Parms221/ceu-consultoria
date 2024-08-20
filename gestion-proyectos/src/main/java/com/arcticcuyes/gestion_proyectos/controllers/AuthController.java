@@ -14,13 +14,13 @@ import com.arcticcuyes.gestion_proyectos.controllers.dao.LoginRequest;
 import com.arcticcuyes.gestion_proyectos.services.auth.AuthService;
 
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-
     private final AuthService authService;
-
+   
     @PostMapping(path="/login", consumes = "application/json", produces = "application/json")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         AuthResponse authRes = authService.login(request);
@@ -29,7 +29,4 @@ public class AuthController {
         }
         return ResponseEntity.ok(authRes);
     }
-    
-
-    
 }

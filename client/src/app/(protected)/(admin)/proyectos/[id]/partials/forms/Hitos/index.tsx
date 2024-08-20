@@ -5,16 +5,29 @@ import HitoForm from "./form";
 import { Hito } from "@/types/proyecto/Hito";
 import { Button } from "@/components/ui/button";
 import { useProjectDetail } from "../../contexto/proyecto-detail.context";
+import { forwardRef, useImperativeHandle, useRef } from "react";
+import { HitoDTO } from "@/types/proyecto/Hito/dto/HitoDTO";
 
 interface IProps {
   asEdit? : boolean,
-  task? : Hito
+  task? : HitoDTO
 }
 
-export default function NewHitoModal(
-  { asEdit, task } : IProps
-) {
+// eslint-disable-next-line react/display-name
+const NewHitoModal = forwardRef<DialogRef, IProps>((
+  { asEdit, task } : IProps, ref
+) => {
   const { setSelectedHito, resetForms } = useProjectDetail()
+  const dialogRef = useRef<HTMLButtonElement>(null)
+ 
+  useImperativeHandle(ref, () => ({
+    openDialog: () => {
+      if (dialogRef.current) {
+        dialogRef.current.click();
+      }
+    },
+  }));
+
   return (
     <Drawer direction="right"
       onClose={() => {
@@ -24,6 +37,7 @@ export default function NewHitoModal(
     >
       <DrawerTrigger
         asChild
+        ref={dialogRef}
       >
           
           {
@@ -76,4 +90,6 @@ export default function NewHitoModal(
       </DrawerContent>
     </Drawer>
   );
-}
+})
+
+export default NewHitoModal;

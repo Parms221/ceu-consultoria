@@ -21,5 +21,5 @@ public class Rol {
     private String rol;
 
     // @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    // private Set<Usuario> usuarios = new HashSet<>();
+    // private List<Usuario> usuarios = new ArrayList<>();
 }

@@ -1,16 +1,20 @@
 "use client";
+import { useAppContext } from "@/app/(protected)/app.context";
 import { Badge } from "@/components/ui/badge";
 import HandleServerResponse from "@/lib/handle-response";
 import { fetcherLocal } from "@/server/fetch/client-side";
 import { Estado } from "@/types/estado";
 import { EstadisticasProyecto, Proyecto } from "@/types/proyecto";
+import { ProyectoResumen } from "@/types/proyecto/ProyectoResumen";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { TAREA_ESTADOS, ESTADOS } from "@/constants/proyectos/estados";
 
 export default function useProyecto() {
   const queryClient = useQueryClient();
   
   function getEstadisticasQuery(){
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<EstadisticasProyecto>({
       queryKey: ["proyectos", "estadisticas"],
       queryFn: async () => {
@@ -41,7 +45,8 @@ export default function useProyecto() {
       }
     });
   }
-
+  
+  // Retorna proyecto completo (incluye hitos y lo demás)
   function getProyectoByIdQuery(id: number) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useQuery<Proyecto>({
@@ -56,6 +61,25 @@ export default function useProyecto() {
         const data = await response.json();
 
         return data as Proyecto;
+      }
+    });
+  }
+
+  // Retorna solo el resumen del proyecto sin hitos ni otros detalles del hito
+  function getResumenByIdQuery(id: number) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useQuery<ProyectoResumen>({
+      queryKey: ["proyecto", id],
+      queryFn: async () => {
+        const response = await fetcherLocal(`/proyectos/${id}/resumen`);
+
+        if (!response.ok) {
+          throw new Error("Error fetching project");
+        }
+
+        const data = await response.json();
+
+        return data;
       }
     });
   }
@@ -109,25 +133,19 @@ export default function useProyecto() {
 
   // Otras funciones
   function getBadgeByStatus(status : Estado){
-    // 1	"Propuesto"
-    // 2	"En desarrollo"
-    // 3	"Finalizado"
-    // 4	"Cancelado"
-    // 5	"Rechazado"
-
     return (
       <Badge
-        className="flex justify-center"
+        className="flex justify-center whitespace-nowrap"
         variant={
-          status.idEstado === 1
+          status.idEstado === ESTADOS.propuesto
             ? "outline"
-            : status.idEstado === 2
+            : status.idEstado === ESTADOS.desarrollo
             ? "default"
-            : status.idEstado === 3
+            : status.idEstado === ESTADOS.finalizado
             ? "success"
-            : status.idEstado === 4
+            : status.idEstado === ESTADOS.cancelado
             ? "ghost"
-            : status.idEstado === 5
+            : status.idEstado === ESTADOS.rechazado
             ? "destructive"
             : "secondary"
         }
@@ -139,14 +157,35 @@ export default function useProyecto() {
     )
   }
 
+  function calculateProgress(proyecto : Proyecto){
+    
+    if(proyecto.hitos == null) return 0
+
+    let total = 0
+    let tareasCompletadas = 0
+    for (let hito of proyecto.hitos){
+      total += hito.tareasDelHito.length
+      for (let tarea of hito.tareasDelHito){
+        if(tarea.estado.idEstado === TAREA_ESTADOS.hecho){
+          tareasCompletadas++
+        }
+      }
+    }
+    if(total === 0)
+      return 0
+    return (tareasCompletadas / total) * 100
+  }
+
   return {
     getEstadisticasQuery,
     getProyectoByIdQuery,
     getProyectosPropuestosQuery,
+    getResumenByIdQuery,
     
     actualizarEstadoProyecto,
     deleteProyecto,
 
-    getBadgeByStatus
+    getBadgeByStatus,
+    calculateProgress
   };
 }

@@ -26,6 +26,9 @@ import { createProyectoIncompleto } from "@/services/proyecto";
 import { ProyectoIncompletoJsonResponse } from "@/types/proyecto/Response";
 import SelectServicio from "./select-servicio";
 import { useForm, UseFormReturn } from "react-hook-form";
+import { formatTime } from "@/lib/utils";
+import { endOfDay, isBefore, startOfDay } from "date-fns";
+import TimeInput from "@/components/ui/input-time";
 
 export default function ProjectFormPage2() {
   const { next, prev, form: formProject } = useProjectForm();
@@ -36,11 +39,11 @@ export default function ProjectFormPage2() {
     defaultValues: formProject.getValues("project") || {
       title: "Proyecto 1",
       description: "Descripción de proyecto",
-      fechaInicio: new Date(),
+      fechaInicio: startOfDay(new Date()),
       fechaLimite: (function () {
         const date = new Date();
         date.setDate(new Date().getDate() + 1);
-        return date;
+        return endOfDay(date);
       })(),
       objetivos: ["Objetivo1"],
       servicioId: 1,
@@ -60,8 +63,14 @@ export default function ProjectFormPage2() {
         fechaLimite: data.fechaLimite,
         objetivos: data.objetivos.join("\n"),
         servicio: data.servicioId,
+        hitos: data.hitos.map(hito => ({
+          titulo: hito.titulo,
+          fechaInicio: hito.fechas.from!,
+          fechaFinalizacion: hito.fechas.to!,
+          tareas: []
+        })),
         indicaciones: "",
-        precio: 100.0,
+        precio: Number(data.precio),
         requerimientos: "",
         idCliente: clientId as number,
       },
@@ -113,25 +122,29 @@ export default function ProjectFormPage2() {
               <FormItem className="flex-1">
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha de inicio</FormLabel>
-                  <DatePicker
-                    mode="single"
-                    field={field}
-                    onChange={(date) => {
-                      if (!date || date instanceof Date === false) {
-                        return;
-                      }
+                  <div className="flex gap-0.5">
+                    <DatePicker
+                        mode="single"
+                        field={field}
+                        disable={(date) => isBefore(startOfDay(date), startOfDay(new Date()))}
+                        onChange={(date) => {
+                          if (!date || date instanceof Date === false) {
+                            return;
+                          }
 
-                      if (
-                        date.getTime() >
-                        formProjectDetail.getValues("fechaLimite").getTime()
-                      ) {
-                        const dateCopy = date;
-                        dateCopy.setDate(date.getDate() + 1);
+                          if (
+                            date.getTime() >
+                            formProjectDetail.getValues("fechaLimite").getTime()
+                          ) {
+                            const dateCopy = date;
+                            dateCopy.setDate(date.getDate() + 1);
 
-                        formProjectDetail.setValue("fechaLimite", dateCopy);
-                      }
-                    }}
-                  />
+                            formProjectDetail.setValue("fechaLimite", dateCopy);
+                          }
+                        }}
+                      />
+                          <TimeInput {...field} className="w-fit px-0.5 py-0"/>
+                  </div>
                 </div>
                 <FormMessage />
               </FormItem>
@@ -144,16 +157,22 @@ export default function ProjectFormPage2() {
               <FormItem className="flex-1">
                 <div className="flex flex-col gap-2">
                   <FormLabel>Fecha Límite</FormLabel>
-                  <DatePicker
-                    mode="single"
-                    field={field}
-                    disable={(date) => {
-                      return (
-                        date.getTime() <
-                        formProjectDetail.watch("fechaInicio").getTime()
-                      );
-                    }}
-                  />
+                  <div className="flex gap-0.5">
+                    <DatePicker
+                        mode="single"
+                        field={field}
+                        disable={(date) => {
+                          return (
+                            date.getTime() <
+                            formProjectDetail.watch("fechaInicio").getTime()
+                          );
+                        }}
+                      />
+                      <TimeInput
+                        className="w-fit px-0.5 py-0"
+                        {...field}
+                      />
+                  </div>
                 </div>
                 <FormMessage />
               </FormItem>

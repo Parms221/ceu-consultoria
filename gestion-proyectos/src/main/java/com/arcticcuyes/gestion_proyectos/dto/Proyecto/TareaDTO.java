@@ -2,9 +2,7 @@ package com.arcticcuyes.gestion_proyectos.dto.Proyecto;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -18,5 +16,5 @@ public class TareaDTO {
     private Timestamp fechaFin;
     private List<SubtareaDTO> subtareas;
     private Long estado;
-    private Set<Long> participantesAsignados;
+    private List<Long> participantesAsignados;
 }

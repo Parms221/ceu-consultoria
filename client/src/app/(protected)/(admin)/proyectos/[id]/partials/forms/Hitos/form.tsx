@@ -13,9 +13,9 @@ import { tareasColumns } from "../Tareas/columns";
 import NewTaskModal from "../Tareas";
 import { Tarea, TareaDTO } from "@/types/proyecto/Tarea";
 import useHito from "@/hooks/Hito/useHito";
+import TimeInput from "@/components/ui/input-time";
 
-export default function HitoForm(
-) {
+export default function HitoForm() {
     const { selectedHito, projectId, hitoForm : form, resetForms, queryClient } = useProjectDetail()
     const { saveHito } = useHito()
     
@@ -24,6 +24,7 @@ export default function HitoForm(
     async function onSubmit(values: z.infer<typeof hitoSchema>){
         const formatTareas : TareaDTO[] = values.tareas.map(tarea => ({
             ...tarea,
+            descripcion: tarea.descripcion ?? "",
             participantesAsignados: tarea.participantesAsignados ?? [],
             subtareas: tarea.subtareas ?? []
         }))
@@ -34,14 +35,22 @@ export default function HitoForm(
             fechaFinalizacion: values.fechas.to!,
             tareas: formatTareas
         }
-   
-        await saveHito(projectId, formattedData, selectedHito?.idHito)
-        
+        console.log("Guardando hito" ,formattedData)
+        if (!selectedHito) {
+            await saveHito(projectId, formattedData, undefined)
+             // Close drawer
+             document.getElementById("closeDrawer")?.click()
+        }
+        else {
+            if(selectedHito.idHito){
+                const parsedId = parseInt(selectedHito.idHito.toString())
+                console.log("Actualizando hito" ,parsedId)
+                await saveHito(projectId, formattedData, parsedId)
+                // Close dialog
+                document.getElementById("closeDialog")?.click();
+            }
+        }
         resetForms()
-
-        // Close drawer
-        document.getElementById("closeDrawer")?.click()
-
         queryClient.invalidateQueries({queryKey: [projectId, "hitos"]})
     }
     
@@ -81,6 +90,9 @@ export default function HitoForm(
                                         field={field}
                                         useOpenState
                                     />
+                                      <TimeInput {...field}
+                                      value={field.value || new Date()}
+                                      className="h-[40px] w-fit" />
                             </div>
                             <FormMessage />
                         </FormItem>
@@ -101,22 +113,32 @@ export default function HitoForm(
                                     field={field}
                                     useOpenState
                                 />
+                                  <TimeInput
+                                    {...field}
+                                    value={field.value || new Date()}
+                                    className="h-[40px] w-fit"
+                                    />
                             </div>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 {/* Tareas del hito */}
-                <HitosTable 
-                    columns={tareasColumns}
-                    data={tareasInForm}
-                    subRowsField="subTareas"
-                    newTask = {<NewTaskModal />}
-                />
+                {/* { */}
+                    {/* // !selectedHito && ( */}
+                        <HitosTable 
+                            columns={tareasColumns}
+                            data={tareasInForm}
+                            newTask = {<NewTaskModal />}
+                        />
+                    {/* )
+                } */}
                 <DrawerFooter>
-                    <Button>Guardar</Button>
+                    <Button type="submit">
+                        {selectedHito ? "Actualizar" : "Guardar"}
+                    </Button>
                     <DrawerClose asChild>
-                        <Button variant="outline">Cancelar</Button>
+                        <Button variant="outline" type="button">Cancelar</Button>
                     </DrawerClose>
                 </DrawerFooter>
             </form>

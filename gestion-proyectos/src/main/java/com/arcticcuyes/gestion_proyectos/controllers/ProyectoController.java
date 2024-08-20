@@ -6,15 +6,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.arcticcuyes.gestion_proyectos.exception.ValidationError;
+import com.arcticcuyes.gestion_proyectos.models.Participante;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +44,7 @@ public class ProyectoController {
         return ResponseEntity.ok(proyectos);
     }
 
+    /* Muestra estadísticas para las cards en lista de proyectos (admin) */
     @GetMapping("/estadisticas")
     public ResponseEntity<?> getEstadisticasProyectos(){
 
@@ -58,6 +58,7 @@ public class ProyectoController {
          */
 
         Map<String, Object> mapConsultores  = new HashMap<>();
+        // TODO: Obtener el número de consultores asignados al menos a un proyecto / número total de consultores
         mapConsultores.put("current", 1);
         mapConsultores.put("max", 5);
 
@@ -69,6 +70,17 @@ public class ProyectoController {
         response.put("propuestos", proyectosPropuestos.size());
         response.put("consultores", mapConsultores);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/resumen")
+    public ResponseEntity<?> getResumenProyectoById(@PathVariable Long id) {
+        System.out.println("Obteniendo resumen del proyecto *********");
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(id);
+            return ResponseEntity.ok(proyectoService.getResumenProyecto(proyecto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener el resumen del proyecto: " + e.getMessage());
+        }
     }
 
     @GetMapping("/propuestos")
@@ -175,6 +187,17 @@ public class ProyectoController {
         }
     }
 
+    @PostMapping("{idProyecto}/hitos/updateAll")
+    public ResponseEntity<?> updateAllHitos(@PathVariable Long idProyecto, @RequestBody List<HitoDTO> hitos) {
+        try {
+            Proyecto proyecto = proyectoService.findProyectoById(idProyecto);
+            proyectoService.updateAllHitos(hitos, proyecto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar los hitos: " + e.getMessage());
+        }
+    }
+
     // Endpoints asginación de participantes
     @PostMapping("{id}/participantes/save")
     public ResponseEntity<?> saveParticipantesProyecto(@PathVariable Long id, @RequestBody List<Long> consultores) {
@@ -187,6 +210,28 @@ public class ProyectoController {
             System.err.println("Error en el controlador: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar los participantes: " + e.getMessage());
+        }
+    }
+
+    // endpoint para añadir un participante a un proyecto
+    @PostMapping("{id}/participantes/add")
+    public ResponseEntity<?> addParticipanteProyecto(@PathVariable Long id, @RequestBody Long idConsultor) {
+        try {
+            proyectoService.addParticipanteProyecto( id, idConsultor);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al añadir el participante: " + e.getMessage());
+        }
+    }
+
+    // Endpoints para obtener los participantes de un proyecto
+    @GetMapping("{id}/participantes")
+    public ResponseEntity<?> getParticipantesProyecto(@PathVariable Long id) {
+        try {
+            List<Participante> participantes = proyectoService.getParticipantesProyecto(id);
+            return ResponseEntity.ok(participantes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener los participantes: " + e.getMessage());
         }
     }
 
