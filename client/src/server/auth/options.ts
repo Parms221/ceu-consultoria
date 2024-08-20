@@ -52,15 +52,12 @@ export const authOptions: AuthOptions = {
 
         const payloadString = atob(data.token.split(".")[1]);
 
-        console.log(process.env.DOMAIN);
 
         cookies().set(ACCESS_TOKEN_COOKIE, data.token, {
-          secure: true,
+          secure: process.env.NEXTAUTH_URL?.startsWith("https://"),
           path: "/",
           maxAge: 60 * 60 * 24 * 7,
-          domain: process.env.DOMAIN,
           httpOnly: true,
-          sameSite: "none",
           expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         });
 
