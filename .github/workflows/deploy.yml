@@ -31,6 +31,7 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}}" >> .env
           echo "GOOGLE_REDIRECT_URI=${{secrets.GOOGLE_REDIRECT_URI}}" >> .env
           echo "GOOGLE_SCOPES=${{vars.GOOGLE_SCOPES}}" >> .env
+          echo "DOMAIN=${{vars.APP_DOMAIN}}" >> .env
 
       - name: Build
         run: npm run build
