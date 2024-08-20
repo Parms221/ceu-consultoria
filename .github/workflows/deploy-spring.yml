@@ -31,4 +31,13 @@ jobs:
       - name: Status
         run: ls -la target
 
+      - name: Push to server
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "gestion-proyectos/target/gestion-proyectos-0.0.1-SNAPSHOT.jar"
+          TARGET: "/var/www/ceu/server"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
       
