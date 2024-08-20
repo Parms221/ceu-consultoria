@@ -56,6 +56,7 @@ export const authOptions: AuthOptions = {
           secure: true,
           path: "/",
           maxAge: 60 * 60 * 24 * 7,
+          domain: process.env.DOMAIN,
           httpOnly: true,
           expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         });
