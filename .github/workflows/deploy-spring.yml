@@ -18,6 +18,25 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Create EnvFile
+        run: | 
+          touch .env
+          echo "DATABASE_JDBC_URL=${{secrets.DATABASE_JDBC_URL}}" >> .env
+          echo "DATABASE_USER=${{secrets.DATABASE_USER}}" >> .env
+          echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env
+          echo "HIBERNATE_DDL_AUTO=${{secrets.HIBERNATE_DDL_AUTO}}" >> .env
+          echo "APP_JWT_KEY=${{secrets.APP_JWT_KEY}}" >> .env
+          echo "APP_JWT_ISSUER=${{secrets.APP_JWT_ISSUER}}" >> .env
+          echo "APP_JWT_EXPIRES_IN=${{secrets.APP_JWT_EXPIRES_IN}}" >> .env
+          echo "PORT=${{secrets.PORT}}" >> .env
+          echo "FILES_PATH=${{secrets.FILES_PATH}}" >> .env
+          echo "GPT_API_KEY=${{secrets.GPT_API_KEY}}" >> .env
+          echo "GPT_API_MODEL=${{secrets.GPT_API_MODEL}}" >> .env
+          echo "GPT_ORGANIZATION_ID=${{secrets.GPT_ORGANIZATION_ID}}" >> .env
+          echo "GPT_PROJECT_ID=${{secrets.GPT_PROJECT_ID}}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}}" >> .env
+
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -27,9 +46,6 @@ jobs:
       
       - name: Build with Maven
         run: mvn -B package -DskipTests --file pom.xml
-
-      - name: Status
-        run: ls -la target
 
       - name: Push to server
         uses: easingthemes/ssh-deploy@v5.1.0
