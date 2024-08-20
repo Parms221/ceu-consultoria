@@ -52,6 +52,8 @@ export const authOptions: AuthOptions = {
 
         const payloadString = atob(data.token.split(".")[1]);
 
+        console.log(process.env.DOMAIN);
+
         cookies().set(ACCESS_TOKEN_COOKIE, data.token, {
           secure: true,
           path: "/",
