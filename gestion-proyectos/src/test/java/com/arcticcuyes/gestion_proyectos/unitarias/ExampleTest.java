@@ -6,7 +6,9 @@ import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,14 +68,29 @@ public class ExampleTest {
        mockServicio.setTitulo(servicioDTO.getTitulo());
        mockServicio.setDescripcion(servicioDTO.getDescripcion());
 
+       // Crear entregables mockeados
+        List<EntregableServicio> mockEntregables = new ArrayList<>();
+        for (EntregableServicioDTO entregableDTO : servicioDTO.getEntregablesDelServicio()) {
+            EntregableServicio mockEntregable = new EntregableServicio();
+            mockEntregable.setTitulo(entregableDTO.getTitulo());
+            mockEntregables.add(mockEntregable);
+        }
+
+        mockServicio.setEntregablesDelServicio(mockEntregables);
+
        // Configurar el mock del repositorio para devolver el servicio mockeado
-       when(this.servicioRepository.save(Mockito.any(Servicio.class))).thenReturn(mockServicio);    
-       
-       // Llamar al método que se está probando
-       Servicio resultado = this.servicioService.saveServicio(servicioDTO);
-    
+        when(this.servicioRepository.save(Mockito.any(Servicio.class))).thenReturn(mockServicio);  
+                        
+        when(this.entregableServicioRepository.save(Mockito.any(EntregableServicio.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Llamar al método que se está probando
+        Servicio resultado = this.servicioService.saveServicio(servicioDTO);
+            
        // Verificamos que se ha llamado al método save del repositorio
-       verify(this.servicioRepository, Mockito.times(2)).save(Mockito.any(Servicio.class));
+        verify(this.servicioRepository, Mockito.times(2)).save(Mockito.any(Servicio.class));
+        verify(this.entregableServicioRepository, Mockito.times(servicioDTO.getEntregablesDelServicio().size()))
+            .save(Mockito.any(EntregableServicio.class));
 
        // Verificaciones
        Assertions.assertNotNull(resultado.getIdServicio(), "El ID del servicio no debería ser nulo");
