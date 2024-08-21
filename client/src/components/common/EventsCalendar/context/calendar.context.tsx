@@ -4,6 +4,7 @@ import { AllEventsResponse } from "@/types/calendar/dto";
 import { EventContentArg, EventSourceInput } from "@fullcalendar/core/index.js";
 import { useQuery } from "@tanstack/react-query";
 import { useContext, createContext, useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface ICalendarContext {
     query : ReturnType<typeof useQuery<AllEventsResponse>>
@@ -32,7 +33,7 @@ export default function CalendarProvider(
     
         if (title) {
           calendarApi.addEvent({
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             title,
             start: selectInfo.startStr,
             end: selectInfo.endStr,

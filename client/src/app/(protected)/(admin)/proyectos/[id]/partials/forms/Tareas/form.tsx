@@ -31,6 +31,7 @@ import useTarea from "@/hooks/Tarea/useTarea";
 import SelectParticipantesTarea from "./partials/participantes";
 import { useTareaForm } from "@/hooks/Tarea/useTareaForm.context";
 import TimeInput from "@/components/ui/input-time";
+import { v4 as uuidv4 } from "uuid";
 
 export default function TareaForm() {
   const { updateTarea } = useTarea();
@@ -44,7 +45,7 @@ export default function TareaForm() {
 
   function saveTarea(values: z.infer<typeof tareaSchema>) {
     const currentTareas = hitoForm.getValues("tareas");
-    values.idTarea = crypto.randomUUID();
+    values.idTarea = uuidv4();
     console.log("currentTareas", currentTareas)
     if (currentTareas) {
       hitoForm.setValue("tareas", [...currentTareas, values]);

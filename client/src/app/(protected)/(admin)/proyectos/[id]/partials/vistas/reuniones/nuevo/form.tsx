@@ -30,6 +30,8 @@ import { cn } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
 import Link from "next/link";
 import GoogleMeetIcon from "@/components/common/Icons/GoogleMeet";
+import { v4 as uuidv4 } from "uuid";
+
 
 export default function NewReunionForm() {
   const queryClient = useQueryClient()
@@ -41,7 +43,7 @@ export default function NewReunionForm() {
   const res = getParticipantesDeProyectoQuery(projectId);
 
   const reunionDefaultValues = {
-    idReunion: crypto.randomUUID(),
+    idReunion: uuidv4(),
     titulo: "Nueva reunión",
     fechaFin: new Date(),
     fechaInicio: new Date(),

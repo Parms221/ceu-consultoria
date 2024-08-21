@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PROJECT_VIEWS } from "./vistas";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useProyecto from "@/hooks/Proyecto/useProyecto";
-import EventsCalendar from "./calendar/calendar";
 import TareaFormProvider from "@/hooks/Tarea/useTareaForm.context";
 
 
@@ -55,7 +54,6 @@ export default function ProjectDetails(
                       {proyecto && proyecto.titulo}
                       </h1>
                   </div>
-                  {/* <EventsCalendar /> */}
                 </header>
              {/* Tabs de navegación */}
                 <Tabs defaultValue={view} className="space-y-1.5 p-0">

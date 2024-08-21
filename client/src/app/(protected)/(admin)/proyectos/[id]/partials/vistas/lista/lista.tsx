@@ -50,7 +50,7 @@ export function VistaCronogramaActions (){
     const { isPending: updatingHitos, mutate: updateHitos, isSuccess : updatedHitos } = updateAllHitosByProject()
    
     const { gptHitosMutation } = useGPT()    
-    const { data: gptData, isPending, mutate: gptMutation, reset, isSuccess } = gptHitosMutation(projectId)
+    const { data: gptData, isPending, mutate: gptMutation, reset, isSuccess } = gptHitosMutation
     
     function acceptSuggestions(){
       if(!gptHitos) return 
