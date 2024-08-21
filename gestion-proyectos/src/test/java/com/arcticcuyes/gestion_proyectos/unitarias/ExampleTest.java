@@ -6,6 +6,7 @@ import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,12 +24,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.arcticcuyes.gestion_proyectos.dto.Reunion.InvitadoDTO;
+import com.arcticcuyes.gestion_proyectos.dto.Reunion.ReunionDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Servicio.EntregableServicioDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Servicio.ServicioDTO;
 import com.arcticcuyes.gestion_proyectos.models.EntregableServicio;
+import com.arcticcuyes.gestion_proyectos.models.InvitadoReunion;
+import com.arcticcuyes.gestion_proyectos.models.Reunion;
 import com.arcticcuyes.gestion_proyectos.models.Servicio;
 import com.arcticcuyes.gestion_proyectos.repositories.EntregableServicioRepository;
+import com.arcticcuyes.gestion_proyectos.repositories.ReunionRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ServicioRepository;
+import com.arcticcuyes.gestion_proyectos.services.ReunionService;
 import com.arcticcuyes.gestion_proyectos.services.ServicioService;
 
 @SpringBootTest
@@ -37,6 +44,9 @@ import com.arcticcuyes.gestion_proyectos.services.ServicioService;
 public class ExampleTest {
     
     @Mock
+    private ReunionRepository reunionRepository = Mockito.mock(ReunionRepository.class);
+
+    @Mock
     private ServicioRepository servicioRepository = Mockito.mock(ServicioRepository.class);
 
     @Mock
@@ -44,6 +54,9 @@ public class ExampleTest {
 
     @InjectMocks
     private ServicioService servicioService = new ServicioService();
+
+    @InjectMocks
+    private ReunionService reunionService = new ReunionService();
 
     @BeforeAll
     public static void beforeAll() {
@@ -105,6 +118,5 @@ public class ExampleTest {
            Assertions.assertNotNull(entregable, "El entregable no debería ser nulo");
            Assertions.assertEquals(entregableDTO.getTitulo(), entregable.getTitulo(), "El título del entregable no coincide");
        }        
-
    }
 }
