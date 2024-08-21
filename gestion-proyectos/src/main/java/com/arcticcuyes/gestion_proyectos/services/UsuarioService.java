@@ -134,4 +134,8 @@ public class UsuarioService {
     public Usuario findById(long id) {
         return uRepository.findById(id).orElse(null);
     }
+
+    public Usuario findByEmail(String email) {
+        return uRepository.findByEmail(email);
+    }
 }
