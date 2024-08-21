@@ -52,8 +52,9 @@ export const authOptions: AuthOptions = {
 
         const payloadString = atob(data.token.split(".")[1]);
 
+
         cookies().set(ACCESS_TOKEN_COOKIE, data.token, {
-          secure: true,
+          secure: process.env.NEXTAUTH_URL?.startsWith("https://"),
           path: "/",
           maxAge: 60 * 60 * 24 * 7,
           httpOnly: true,
