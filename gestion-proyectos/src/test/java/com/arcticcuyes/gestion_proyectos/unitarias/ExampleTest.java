@@ -3,7 +3,6 @@ package com.arcticcuyes.gestion_proyectos.unitarias;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,13 +19,9 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.arcticcuyes.gestion_proyectos.dto.Reunion.InvitadoDTO;
-import com.arcticcuyes.gestion_proyectos.dto.Reunion.ReunionDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Servicio.EntregableServicioDTO;
 import com.arcticcuyes.gestion_proyectos.dto.Servicio.ServicioDTO;
 import com.arcticcuyes.gestion_proyectos.models.EntregableServicio;
-import com.arcticcuyes.gestion_proyectos.models.InvitadoReunion;
-import com.arcticcuyes.gestion_proyectos.models.Reunion;
 import com.arcticcuyes.gestion_proyectos.models.Servicio;
 import com.arcticcuyes.gestion_proyectos.repositories.EntregableServicioRepository;
 import com.arcticcuyes.gestion_proyectos.repositories.ReunionRepository;
