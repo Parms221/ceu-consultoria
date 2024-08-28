@@ -1,6 +1,6 @@
 package com.arcticcuyes.gestion_proyectos.services;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -35,8 +35,8 @@ public class GptService {
     @Value("${openai.project.id}")
     private String projectId;
 
-    @Value("classpath:jsons/function_cronograma.json")
-    private Resource functionCronogramaJsonFile;
+    // @Value("classpath:jsons/function_cronograma.json")
+    // private Resource functionCronogramaJsonFile;
 
     private String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     
@@ -95,7 +95,8 @@ public class GptService {
         System.out.println("jsonNode: "+jsonNode.get("messages").get(0).get("content").asText());
         JsonNode jsonNodeFunction;
         try{
-            jsonNodeFunction = objectMapper.readTree(new File(functionCronogramaJsonFile.getURL().getPath())); 
+            InputStream is = GptService.class.getResourceAsStream("/jsons/function_cronograma.json");
+            jsonNodeFunction = objectMapper.readTree(is); 
         }catch(Exception e){
             e.printStackTrace();
             jsonNodeFunction = null;
